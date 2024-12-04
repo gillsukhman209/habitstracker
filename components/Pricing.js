@@ -12,7 +12,7 @@ const Pricing = () => {
         <div className="flex flex-col text-center w-full mb-20">
           <p className="font-medium text-primary mb-8">Pricing</p>
           <h2 className="font-bold text-3xl lg:text-5xl tracking-tight">
-            Save hours of repetitive code and ship faster!
+            Choose the Plan That Fits Your Habit Goals!
           </h2>
         </div>
 
@@ -28,13 +28,11 @@ const Pricing = () => {
                   </span>
                 </div>
               )}
-
               {plan.isFeatured && (
                 <div
                   className={`absolute -inset-[1px] rounded-[9px] bg-primary z-10`}
                 ></div>
               )}
-
               <div className="relative flex flex-col h-full gap-5 lg:gap-8 z-10 bg-base-100 p-8 rounded-lg">
                 <div className="flex justify-between items-center gap-4">
                   <div>

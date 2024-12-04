@@ -2,10 +2,10 @@ import themes from "daisyui/src/theming/themes";
 
 const config = {
   // REQUIRED
-  appName: "ShipFast",
+  appName: "Habit Builder",
   // REQUIRED: a short description of your app for SEO tags (can be overwritten)
   appDescription:
-    "The NextJS boilerplate with all you need to build your SaaS, AI tool, or any other web app.",
+    "Stay motivated with random reminders, track your growth, and make habit-building an exciting part of your daily life",
   // REQUIRED (no https://, not trialing slash at the end, just the naked domain)
   domainName: "shipfa.st",
   crisp: {
@@ -21,7 +21,7 @@ const config = {
         // REQUIRED — we use this to find the plan in the webhook (for instance if you want to update the user's credits based on the plan)
         priceId:
           process.env.NODE_ENV === "development"
-            ? "price_1Niyy5AxyNprDp7iZIqEyD2h"
+            ? "price_1QSN6JBCsrkMKvKtyl8cE95c"
             : "price_456",
         //  REQUIRED - Name of the plan, displayed on the pricing page
         name: "Starter",
@@ -33,11 +33,11 @@ const config = {
         priceAnchor: 99,
         features: [
           {
-            name: "NextJS boilerplate",
+            name: "Track up to 3 habits",
           },
-          { name: "User oauth" },
-          { name: "Database" },
-          { name: "Emails" },
+          { name: "Random reminders" },
+          { name: "Basic analytics" },
+          { name: "Email support" },
         ],
       },
       {
@@ -45,7 +45,7 @@ const config = {
         isFeatured: true,
         priceId:
           process.env.NODE_ENV === "development"
-            ? "price_1O5KtcAxyNprDp7iftKnrrpw"
+            ? "price_1QSN6UBCsrkMKvKtrGsffdQK"
             : "price_456",
         name: "Advanced",
         description: "You need more power",

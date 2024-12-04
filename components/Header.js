@@ -49,15 +49,6 @@ const Header = () => {
             href="/"
             title={`${config.appName} hompage`}
           >
-            <Image
-              src={logo}
-              alt={`${config.appName} logo`}
-              className="w-8"
-              placeholder="blur"
-              priority={true}
-              width={32}
-              height={32}
-            />
             <span className="font-extrabold text-lg">{config.appName}</span>
           </Link>
         </div>
@@ -101,7 +92,7 @@ const Header = () => {
         </div>
 
         {/* CTA on large screens */}
-        <div className="hidden lg:flex lg:justify-end lg:flex-1">{cta}</div>
+        <div className="hidden lg:flex lg:justify-end lg:flex-1">{cta} </div>
       </nav>
 
       {/* Mobile menu, show/hide based on menu state. */}
@@ -167,6 +158,7 @@ const Header = () => {
               </div>
             </div>
             <div className="divider"></div>
+
             {/* Your CTA on small screens */}
             <div className="flex flex-col">{cta}</div>
           </div>
