@@ -7,6 +7,7 @@ import Image from "next/image";
 import ButtonSignin from "./ButtonSignin";
 import logo from "@/app/icon.png";
 import config from "@/config";
+import { useSession, signOut } from "next-auth/react";
 
 const links = [
   {
@@ -30,6 +31,7 @@ const cta = <ButtonSignin extraStyle="btn-primary" />;
 const Header = () => {
   const searchParams = useSearchParams();
   const [isOpen, setIsOpen] = useState(false);
+  const { data: session, status } = useSession();
 
   // setIsOpen(false) when the route changes (i.e: when the user clicks on a link on mobile)
   useEffect(() => {
@@ -92,7 +94,22 @@ const Header = () => {
         </div>
 
         {/* CTA on large screens */}
-        <div className="hidden lg:flex lg:justify-end lg:flex-1">{cta} </div>
+        <div className="hidden lg:flex lg:justify-end lg:flex-1">
+          {session ? (
+            <>
+              <span className="text-white mr-4">{session.user.email}</span>
+              <button
+                type="button"
+                className="btn-primary"
+                onClick={() => signOut()}
+              >
+                Logout
+              </button>
+            </>
+          ) : (
+            cta
+          )}
+        </div>
       </nav>
 
       {/* Mobile menu, show/hide based on menu state. */}
@@ -160,7 +177,22 @@ const Header = () => {
             <div className="divider"></div>
 
             {/* Your CTA on small screens */}
-            <div className="flex flex-col">{cta}</div>
+            <div className="flex flex-col">
+              {session ? (
+                <>
+                  <span className="text-white mb-4">{session.user.email}</span>
+                  <button
+                    type="button"
+                    className="btn-primary"
+                    onClick={() => signOut()}
+                  >
+                    Logout
+                  </button>
+                </>
+              ) : (
+                cta
+              )}
+            </div>
           </div>
         </div>
       </div>

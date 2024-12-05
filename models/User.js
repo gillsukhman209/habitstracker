@@ -1,6 +1,12 @@
 import mongoose from "mongoose";
 import toJSON from "./plugins/toJSON";
 
+const habitSchema = new mongoose.Schema({
+  _id: { type: mongoose.Schema.Types.ObjectId, auto: true }, // Auto-generated unique ID
+  title: { type: String, required: true },
+  duration: { type: String, required: true }, // Duration in minutes
+  createdAt: { type: Date, default: Date.now },
+});
 // USER SCHEMA
 const userSchema = mongoose.Schema(
   {
@@ -36,12 +42,7 @@ const userSchema = mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    habits: [
-      {
-        title: { type: String, required: true },
-        completed: { type: Boolean, required: false, deafult: false },
-      },
-    ],
+    habits: [habitSchema],
   },
   {
     timestamps: true,

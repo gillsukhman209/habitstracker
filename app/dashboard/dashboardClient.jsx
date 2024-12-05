@@ -1,16 +1,54 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ButtonAccount from "@/components/ButtonAccount";
 import ButtonGradient from "@/components/ButtonGradient";
 import Chart from "@/components/Chart";
 import { toast } from "react-hot-toast";
+import ButtonPopover from "@/components/ButtonPopover";
 
 export default function Dashboard() {
   const [showPopup, setShowPopup] = useState(false); // State for showing/hiding the popup
   const [habitTitle, setHabitTitle] = useState(""); // State for habit title
   const [rawDuration, setRawDuration] = useState(""); // Raw duration input
   const [habitDuration, setHabitDuration] = useState(""); // State for habit duration in minutes
+  const [habits, setHabits] = useState([]); // State for habits
+
+  useEffect(() => {
+    fetchHabits();
+  }, []);
+
+  const fetchHabits = async () => {
+    console.log("fetching habits");
+    try {
+      const response = await fetch("/api/user/getHabits");
+      const data = await response.json();
+      setHabits(data.habits);
+    } catch (error) {
+      toast.error("Failed to fetch habits");
+    }
+  };
+
+  const deleteHabit = async (habitId) => {
+    try {
+      const response = await fetch("/api/user/deleteHabit", {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ habitId }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to delete habit");
+      }
+      fetchHabits();
+    } catch (error) {
+      console.error(error.message);
+    }
+  };
 
   const addHabit = async () => {
     if (!habitTitle || !habitDuration) {
@@ -84,6 +122,11 @@ export default function Dashboard() {
             <ButtonGradient
               title="Add Habit"
               onClick={() => setShowPopup(true)}
+            />
+            <ButtonPopover
+              habits={habits}
+              deleteHabit={deleteHabit}
+              fetchHabits={fetchHabits}
             />
           </div>
 
