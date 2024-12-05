@@ -34,10 +34,12 @@ export async function POST(req) {
 
   data = event.data;
   eventType = event.type;
+  console.log("eventtttt typeee is ", eventType);
 
   try {
     switch (eventType) {
       case "checkout.session.completed": {
+        console.log("checkout session was completed");
         // First payment is successful and a subscription is created (if mode was set to "subscription" in ButtonCheckout)
         // ✅ Grant access to the product
 

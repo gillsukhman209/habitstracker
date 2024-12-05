@@ -36,6 +36,12 @@ const userSchema = mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    habits: [
+      {
+        title: { type: String, required: true },
+        completed: { type: Boolean, required: false, deafult: false },
+      },
+    ],
   },
   {
     timestamps: true,
