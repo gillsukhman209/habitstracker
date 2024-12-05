@@ -6,6 +6,7 @@ import ButtonGradient from "@/components/ButtonGradient";
 import Chart from "@/components/Chart";
 import { toast } from "react-hot-toast";
 import ButtonPopover from "@/components/ButtonPopover";
+import Habits from "@/components/Habits";
 
 export default function Dashboard() {
   const [showPopup, setShowPopup] = useState(false); // State for showing/hiding the popup
@@ -44,7 +45,7 @@ export default function Dashboard() {
       if (!response.ok) {
         throw new Error(data.error || "Failed to delete habit");
       }
-      fetchHabits();
+      await fetchHabits();
     } catch (error) {
       console.error(error.message);
     }
@@ -57,7 +58,6 @@ export default function Dashboard() {
     }
 
     try {
-      console.log("sending", habitTitle, habitDuration);
       const response = await fetch("/api/user/addHabit", {
         method: "POST",
         headers: {
@@ -65,7 +65,7 @@ export default function Dashboard() {
         },
         body: JSON.stringify({
           habitTitle: habitTitle,
-          habitDuration: habitDuration, // Assuming the API expects duration in minutes
+          habitDuration: habitDuration,
         }),
       });
 
@@ -78,56 +78,36 @@ export default function Dashboard() {
       setHabitTitle(""); // Reset the habit title
       setRawDuration(""); // Reset the raw duration
       setHabitDuration(""); // Reset the habit duration
+      await fetchHabits();
     } catch (error) {
       toast.error(error.message);
     }
-  };
-
-  const handleDurationChange = (e) => {
-    const input = e.target.value;
-    setRawDuration(input); // Update the raw input value
-
-    // Convert duration to minutes
-    const duration = input.toLowerCase();
-    let totalMinutes = 0;
-
-    // Regex to match time values
-    const timeUnits = duration.match(/\d+\s*(days?|hours?|minutes?)/g);
-
-    if (timeUnits) {
-      timeUnits.forEach((unit) => {
-        const value = parseInt(unit.match(/\d+/)[0]);
-        if (unit.includes("day")) {
-          totalMinutes += value * 24 * 60; // Convert days to minutes
-        } else if (unit.includes("hour")) {
-          totalMinutes += value * 60; // Convert hours to minutes
-        } else if (unit.includes("minute")) {
-          totalMinutes += value; // Add minutes
-        }
-      });
-    }
-
-    setHabitDuration(totalMinutes.toString()); // Save total duration in minutes
   };
 
   return (
     <>
       <main className="min-h-screen p-8 pb-24 w-full">
         <section className="space-y-8">
-          <div className="flex flex-row justify-between items-center">
-            <ButtonAccount />
-            <h1 className="text-3xl md:text-4xl font-extrabold">
-              Habit Tracker
-            </h1>
-            <ButtonGradient
-              title="Add Habit"
-              onClick={() => setShowPopup(true)}
-            />
-            <ButtonPopover
-              habits={habits}
-              deleteHabit={deleteHabit}
-              fetchHabits={fetchHabits}
-            />
+          <div className="w-full  flex flex-row justify-between items-center space-x-4">
+            <div className="flex-1">
+              <ButtonAccount />
+            </div>
+            <div className="flex-1 text-center">
+              <h1 className="text-3xl md:text-4xl font-extrabold">
+                Habit Tracker
+              </h1>
+            </div>
+            <div className="flex-1 flex flex-row gap-5 justify-end">
+              <ButtonGradient
+                title="Add Habit"
+                onClick={() => setShowPopup(true)}
+              />
+              <ButtonPopover
+                habits={habits}
+                deleteHabit={deleteHabit}
+                fetchHabits={fetchHabits}
+              />
+            </div>
           </div>
 
           <div className="w-full flex items-center justify-center">
@@ -143,6 +123,7 @@ export default function Dashboard() {
               35%
             </div>
           </div>
+          <Habits habits={habits} />
 
           {/* Chart */}
           <Chart />
@@ -161,13 +142,18 @@ export default function Dashboard() {
                 />
                 <input
                   type="text"
-                  placeholder="Duration (e.g., 2 hours, 45 minutes)"
-                  value={rawDuration}
-                  onChange={handleDurationChange}
+                  placeholder="Duration (e.g., 45 minutes)"
+                  value={habitDuration}
+                  onChange={(e) => {
+                    const re = /^[0-9\b]+$/;
+                    if (e.target.value === "" || re.test(e.target.value)) {
+                      setHabitDuration(e.target.value);
+                    }
+                  }}
                   className="input input-bordered input-info w-full max-w-xs"
                 />
-                <div className="text-gray-500 text-sm mt-2">
-                  Duration in minutes: {habitDuration || 0}
+                <div className="text-gray-500 text-sm mt-2 ml-2">
+                  {habitDuration || 0} minutes
                 </div>
                 <div className="flex justify-end space-x-4 mt-4">
                   <button

@@ -4,6 +4,7 @@ import toJSON from "./plugins/toJSON";
 const habitSchema = new mongoose.Schema({
   _id: { type: mongoose.Schema.Types.ObjectId, auto: true }, // Auto-generated unique ID
   title: { type: String, required: true },
+  isComplete: { type: Boolean, default: false },
   duration: { type: String, required: true }, // Duration in minutes
   createdAt: { type: Date, default: Date.now },
 });

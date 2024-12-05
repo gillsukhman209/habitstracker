@@ -15,6 +15,7 @@ export default function Home() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [loading, setLoading] = useState(true);
+  const [hasPaid, setHasPaid] = useState(false);
 
   useEffect(() => {
     const checkAccess = async () => {
@@ -28,8 +29,10 @@ export default function Home() {
         const user = await response.json();
 
         if (user.hasAccess) {
+          setHasPaid(true);
           router.push("/dashboard");
         } else {
+          setHasPaid(false);
           setLoading(false);
         }
       } else {

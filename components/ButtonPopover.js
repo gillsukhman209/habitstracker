@@ -11,7 +11,6 @@ const ButtonPopover = ({ deleteHabit }) => {
     try {
       const response = await fetch("/api/user/getHabits");
       const data = await response.json();
-
       setHabits(data.habits);
     } catch (error) {
       toast.error("Failed to fetch habits");
@@ -21,14 +20,23 @@ const ButtonPopover = ({ deleteHabit }) => {
   useEffect(() => {
     fetchHabits();
   }, []);
+
+  const handleDeleteHabit = async (habitId) => {
+    try {
+      await deleteHabit(habitId); // Wait for the habit to be deleted
+      await fetchHabits(); // Refresh habits after successful deletion
+      toast.success("Habit deleted successfully");
+    } catch (error) {
+      toast.error("Failed to delete habit");
+    }
+  };
+
   return (
     <Popover className="relative z-10 w-full">
       {({ open }) => (
         <>
           <Popover.Button
-            onClick={() => {
-              fetchHabits();
-            }}
+            onClick={() => fetchHabits()}
             className="btn flex items-center gap-2 bg-blue-500 text-white hover:bg-blue-600 rounded-lg px-4 py-2"
           >
             Your Habits
@@ -86,12 +94,12 @@ const ButtonPopover = ({ deleteHabit }) => {
                       </span>
                       <div className="flex-grow">
                         <p className="font-bold">{habit.title}</p>
+                        <p className="text-gray-500">
+                          {habit.duration} minutes
+                        </p>
                       </div>
                       <button
-                        onClick={() => {
-                          deleteHabit(habit._id);
-                          fetchHabits();
-                        }}
+                        onClick={() => handleDeleteHabit(habit._id)}
                         className="ml-auto p-2 rounded-full bg-red-500 text-white hover:bg-red-600"
                       >
                         <svg
