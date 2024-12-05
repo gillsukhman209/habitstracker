@@ -11,7 +11,7 @@ import Habits from "@/components/Habits";
 export default function Dashboard() {
   const [showPopup, setShowPopup] = useState(false); // State for showing/hiding the popup
   const [habitTitle, setHabitTitle] = useState(""); // State for habit title
-  const [rawDuration, setRawDuration] = useState(""); // Raw duration input
+
   const [habitDuration, setHabitDuration] = useState(""); // State for habit duration in minutes
   const [habits, setHabits] = useState([]); // State for habits
 
@@ -76,7 +76,7 @@ export default function Dashboard() {
       toast.success("Habit added successfully!");
       setShowPopup(false); // Close the popup
       setHabitTitle(""); // Reset the habit title
-      setRawDuration(""); // Reset the raw duration
+
       setHabitDuration(""); // Reset the habit duration
       await fetchHabits();
     } catch (error) {

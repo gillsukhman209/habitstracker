@@ -66,7 +66,7 @@ function Habits({ habits }) {
                   habit.isComplete ? "line-through" : ""
                 }`}
               >
-                {habit.title}
+                {habit.title} - {habit.duration} minutes
               </span>
             </div>
           </div>

@@ -20,10 +20,8 @@ function HabitChart() {
         setDaysLeft((prev) => Math.max(prev - 1, 0)); // Decrease days left only once
       } else if (currentStatus === "complete") {
         newDays[index] = "missed";
-        // Do not increase daysLeft when marking "missed"
       } else if (currentStatus === "missed") {
         newDays[index] = null;
-        // Do not change daysLeft when reverting "missed"
       }
 
       return newDays;
