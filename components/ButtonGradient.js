@@ -1,8 +1,16 @@
-"use client";
-
-const ButtonGradient = ({ title = "Gradient Button", onClick = () => {} }) => {
+const ButtonGradient = ({
+  title = "Gradient Button",
+  onClick = () => {},
+  disabled = false,
+}) => {
   return (
-    <button className="btn btn-gradient animate-shimmer" onClick={onClick}>
+    <button
+      className={`btn btn-gradient animate-shimmer ${
+        disabled ? "opacity-50 cursor-not-allowed" : ""
+      }`}
+      onClick={disabled ? undefined : onClick}
+      disabled={disabled}
+    >
       {title}
     </button>
   );

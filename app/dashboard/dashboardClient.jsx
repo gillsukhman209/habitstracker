@@ -8,21 +8,21 @@ import Habits from "@/components/Habits";
 
 export default function Dashboard() {
   const [showPopup, setShowPopup] = useState(false); // State for showing/hiding the popup
-  const [habitTitle, setHabitTitle] = useState(""); // State for habit title
-
-  const [habitDuration, setHabitDuration] = useState(""); // State for habit duration in minutes
+  const [habitInputs, setHabitInputs] = useState([{ title: "", duration: "" }]); // State for habit inputs
   const [habits, setHabits] = useState([]); // State for habits
+  const [canAddHabits, setCanAddHabits] = useState(true); // State to control adding habits
 
   useEffect(() => {
     fetchHabits();
-  }, []);
+  }, [habits]);
 
   const fetchHabits = async () => {
-    console.log("fetching habits");
     try {
       const response = await fetch("/api/user/getHabits");
       const data = await response.json();
       setHabits(data.habits);
+
+      setCanAddHabits(data.habits.length === 0); // Unlock adding habits if none exist, lock if any exist
     } catch (error) {
       toast.error("Failed to fetch habits");
     }
@@ -49,33 +49,36 @@ export default function Dashboard() {
     }
   };
 
-  const addHabit = async () => {
-    if (!habitTitle || !habitDuration) {
-      toast.error("Please enter both habit title and duration.");
+  const addHabits = async () => {
+    const validInputs = habitInputs.filter(
+      (input) => input.title && input.duration
+    );
+    if (validInputs.length === 0) {
+      toast.error("Please enter habit titles and durations.");
       return;
     }
 
     try {
-      const response = await fetch("/api/user/addHabit", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          habitTitle: habitTitle,
-          habitDuration: habitDuration,
-        }),
-      });
+      for (const input of validInputs) {
+        const response = await fetch("/api/user/addHabit", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            habitTitle: input.title,
+            habitDuration: input.duration,
+          }),
+        });
 
-      if (!response.ok) {
-        throw new Error("Failed to add habit");
+        if (!response.ok) {
+          throw new Error("Failed to add habit");
+        }
       }
 
-      toast.success("Habit added successfully!");
+      toast.success("Habits added successfully!");
       setShowPopup(false); // Close the popup
-      setHabitTitle(""); // Reset the habit title
-
-      setHabitDuration(""); // Reset the habit duration
+      setHabitInputs([{ title: "", duration: "" }]); // Reset the habit inputs
       await fetchHabits();
     } catch (error) {
       toast.error(error.message);
@@ -84,15 +87,26 @@ export default function Dashboard() {
 
   const handleKeyPress = (e) => {
     if (e.key === "Enter") {
-      addHabit();
+      addHabits();
     }
+  };
+
+  const handleInputChange = (index, field, value) => {
+    const newHabitInputs = [...habitInputs];
+    newHabitInputs[index][field] = value;
+    setHabitInputs(newHabitInputs);
+  };
+
+  const addMoreHabitFields = () => {
+    setHabitInputs([...habitInputs, { title: "", duration: "" }]);
   };
 
   return (
     <>
       <main className="min-h-screen p-8 pb-24 w-full">
+        Can add Habits {canAddHabits.toString()}
         <section className="space-y-8">
-          <div className="w-full  flex flex-row justify-between items-center space-x-4">
+          <div className="w-full flex flex-row justify-between items-center space-x-4">
             <div className="flex-1">
               <ButtonAccount />
             </div>
@@ -105,6 +119,7 @@ export default function Dashboard() {
               <ButtonGradient
                 title="Add Habit"
                 onClick={() => setShowPopup(true)}
+                disabled={!canAddHabits}
               />
             </div>
           </div>
@@ -115,30 +130,46 @@ export default function Dashboard() {
           {showPopup && (
             <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50">
               <div className="bg-white p-6 rounded-md shadow-lg w-96">
-                <h2 className="text-xl font-bold mb-4">Add a New Habit</h2>
-                <input
-                  type="text"
-                  placeholder="Habit Title"
-                  value={habitTitle}
-                  onChange={(e) => setHabitTitle(e.target.value)}
-                  className="input input-bordered input-info w-full max-w-xs mb-4"
-                  onKeyPress={handleKeyPress}
-                />
-                <input
-                  type="text"
-                  placeholder="Duration (e.g., 45 minutes)"
-                  value={habitDuration}
-                  onChange={(e) => {
-                    const re = /^[0-9\b]+$/;
-                    if (e.target.value === "" || re.test(e.target.value)) {
-                      setHabitDuration(e.target.value);
-                    }
-                  }}
-                  className="input input-bordered input-info w-full max-w-xs"
-                  onKeyPress={handleKeyPress}
-                />
-                <div className="text-gray-500 text-sm mt-2 ml-2">
-                  {habitDuration || 0} minutes
+                <h2 className="text-xl font-bold mb-4">Add New Habits</h2>
+                {habitInputs.map((input, index) => (
+                  <div key={index} className="mb-4">
+                    <input
+                      type="text"
+                      placeholder="Habit Title"
+                      value={input.title}
+                      onChange={(e) =>
+                        handleInputChange(index, "title", e.target.value)
+                      }
+                      className="input input-bordered input-info w-full max-w-xs mb-2"
+                      onKeyPress={handleKeyPress}
+                    />
+                    <input
+                      type="text"
+                      placeholder="Duration (e.g., 45 minutes)"
+                      value={input.duration}
+                      onChange={(e) =>
+                        handleInputChange(index, "duration", e.target.value)
+                      }
+                      className="input input-bordered input-info w-full max-w-xs"
+                      onKeyPress={handleKeyPress}
+                    />
+                  </div>
+                ))}
+                <div className="flex justify-between mt-4">
+                  <button
+                    className="px-4 py-2 bg-gray-300 text-black rounded-md"
+                    onClick={addMoreHabitFields}
+                    disabled={!canAddHabits} // Disable button if habits exist
+                  >
+                    Add More Habits
+                  </button>
+                  <button
+                    className="px-4 py-2 bg-blue-500 text-white rounded-md"
+                    onClick={addHabits}
+                    disabled={!canAddHabits} // Disable button if habits exist
+                  >
+                    Save
+                  </button>
                 </div>
                 <div className="flex justify-end space-x-4 mt-4">
                   <button
@@ -146,12 +177,6 @@ export default function Dashboard() {
                     onClick={() => setShowPopup(false)}
                   >
                     Cancel
-                  </button>
-                  <button
-                    className="px-4 py-2 bg-blue-500 text-white rounded-md"
-                    onClick={addHabit}
-                  >
-                    Save
                   </button>
                 </div>
               </div>
