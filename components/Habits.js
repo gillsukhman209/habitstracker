@@ -2,14 +2,17 @@ import React, { useState, useEffect } from "react";
 import { toast } from "react-hot-toast";
 import { FaRegTrashAlt } from "react-icons/fa";
 import Chart from "./Chart";
+
 function Habits({ deleteHabit }) {
   const [habits, setHabits] = useState([]);
   const [currentDay, setCurrentDay] = useState(1);
-  const [daysLeft] = useState(21);
+  const [daysLeft, setDaysLeft] = useState(0);
+  const [resetTriggered, setResetTriggered] = useState(false);
+  const [confirmModal, setConfirmModal] = useState({
+    open: false,
+    habit: null,
+  });
 
-  const [resetTriggered, setResetTriggered] = useState(false); // Prevent repeated resets
-
-  // Fetch habits and calculate the current day
   const fetchHabits = async () => {
     try {
       const response = await fetch("/api/user/getHabits");
@@ -19,7 +22,8 @@ function Habits({ deleteHabit }) {
       setHabits(data.habits);
 
       if (data.habits.length > 0) {
-        const firstHabitDate = new Date(data.habits[0].createdAt);
+        const firstHabitDate = new Date(data.habits[0].dateAdded);
+
         calculateDays(firstHabitDate);
       }
     } catch (error) {
@@ -30,23 +34,22 @@ function Habits({ deleteHabit }) {
     }
   };
 
-  // Calculate the current day
   const calculateDays = (startDate) => {
     const now = new Date();
     const daysElapsed =
       Math.floor((now - startDate) / (1000 * 60 * 60 * 24)) + 1;
-    const cappedDay = Math.min(daysElapsed, 21); // Cap at 21 days
+    const cappedDay = Math.min(daysElapsed, 21);
     setCurrentDay(cappedDay);
+    setDaysLeft(21 - cappedDay);
 
     if (cappedDay > currentDay && !resetTriggered) {
-      resetDailyHabits(cappedDay);
+      // resetDailyHabits(cappedDay);
     }
   };
 
-  // Reset `isComplete` for all habits
   const resetDailyHabits = async (day) => {
     try {
-      setResetTriggered(true); // Prevent repeated calls
+      setResetTriggered(true);
       const response = await fetch("/api/user/resetHabits", {
         method: "PATCH",
         headers: {
@@ -58,12 +61,9 @@ function Habits({ deleteHabit }) {
       if (!response.ok) {
         toast.error("Failed to reset daily habits");
         throw new Error("Failed to reset daily habits");
-      } else {
-        toast.success("Habits reset for the new day!");
       }
 
-      await fetchHabits(); // Refresh habits to reflect reset
-      toast.success("Habits reset for the new day!");
+      await fetchHabits();
     } catch (error) {
       console.error("Error resetting habits:", error);
       if (!resetTriggered) {
@@ -98,7 +98,15 @@ function Habits({ deleteHabit }) {
   };
 
   const handleCheckboxClick = (habit) => {
-    updateHabit(habit._id, !habit.isComplete);
+    if (!habit.isComplete) {
+      setConfirmModal({ open: true, habit });
+    }
+  };
+
+  const confirmHabitCompletion = () => {
+    const { habit } = confirmModal;
+    updateHabit(habit._id, true);
+    setConfirmModal({ open: false, habit: null });
   };
 
   const handleDeleteHabit = async (habitId) => {
@@ -113,7 +121,7 @@ function Habits({ deleteHabit }) {
 
   useEffect(() => {
     fetchHabits();
-  }, [habits]);
+  }, []);
 
   return (
     <div className="w-full flex flex-col gap-4 bg-gray-800 p-4 rounded-lg">
@@ -126,7 +134,6 @@ function Habits({ deleteHabit }) {
         )}
       </div>
 
-      {/* List of habits */}
       {habits.length > 0 ? (
         habits.map((habit) => (
           <div
@@ -139,6 +146,7 @@ function Habits({ deleteHabit }) {
                 checked={habit.isComplete}
                 onChange={() => handleCheckboxClick(habit)}
                 className="form-checkbox h-5 w-5 text-blue-600"
+                disabled={habit.isComplete}
               />
               <span
                 className={`ml-3 text-sm ${
@@ -158,6 +166,29 @@ function Habits({ deleteHabit }) {
       )}
 
       <Chart habits={habits} currentDay={currentDay} />
+
+      {confirmModal.open && (
+        <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-6 rounded-md shadow-lg w-96">
+            <h2 className="text-xl font-bold mb-4">Confirm Completion</h2>
+            <p>Are you sure you want to mark this habit as complete?</p>
+            <div className="flex justify-end space-x-4 mt-4">
+              <button
+                className="px-4 py-2 bg-gray-300 text-black rounded-md"
+                onClick={() => setConfirmModal({ open: false, habit: null })}
+              >
+                Cancel
+              </button>
+              <button
+                className="px-4 py-2 bg-blue-500 text-white rounded-md"
+                onClick={confirmHabitCompletion}
+              >
+                Confirm
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
