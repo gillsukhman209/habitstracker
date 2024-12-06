@@ -104,7 +104,6 @@ export default function Dashboard() {
   return (
     <>
       <main className="min-h-screen p-8 pb-24 w-full">
-        Can add Habits {canAddHabits.toString()}
         <section className="space-y-8">
           <div className="w-full flex flex-row justify-between items-center space-x-4">
             <div className="flex-1">
