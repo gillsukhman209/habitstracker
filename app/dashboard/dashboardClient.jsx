@@ -3,9 +3,7 @@
 import { useState, useEffect } from "react";
 import ButtonAccount from "@/components/ButtonAccount";
 import ButtonGradient from "@/components/ButtonGradient";
-import Chart from "@/components/Chart";
 import { toast } from "react-hot-toast";
-import ButtonPopover from "@/components/ButtonPopover";
 import Habits from "@/components/Habits";
 
 export default function Dashboard() {
@@ -111,19 +109,6 @@ export default function Dashboard() {
             </div>
           </div>
 
-          <div className="w-full flex items-center justify-center">
-            <div
-              className="radial-progress"
-              style={{
-                "--value": "35",
-                "--size": "12rem",
-                "--thickness": "8px",
-              }}
-              role="progressbar"
-            >
-              35%
-            </div>
-          </div>
           <Habits habits={habits} deleteHabit={deleteHabit} />
 
           {/* Popup */}

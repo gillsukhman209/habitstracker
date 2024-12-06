@@ -7,9 +7,11 @@ import Modal from "./Modal";
 function Habits({ deleteHabit }) {
   const [habits, setHabits] = useState([]);
   const [currentDay, setCurrentDay] = useState(1);
+  const [daysLeft, setDaysLeft] = useState(21);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedHabit, setSelectedHabit] = useState(null);
 
+  // Fetch habits and calculate the current day
   const fetchHabits = async () => {
     try {
       const response = await fetch("/api/user/getHabits");
@@ -21,6 +23,10 @@ function Habits({ deleteHabit }) {
       if (data.habits.length > 0) {
         const firstHabitDate = new Date(data.habits[0].createdAt);
         calculateCurrentDay(firstHabitDate);
+      } else {
+        // Reset days when no habits exist
+        setCurrentDay(1);
+        setDaysLeft(21);
       }
     } catch (error) {
       toast.error("Failed to fetch habits");
@@ -28,11 +34,16 @@ function Habits({ deleteHabit }) {
     }
   };
 
+  // Calculate the current day based on the start date
   const calculateCurrentDay = (startDate) => {
     const now = new Date();
     const daysElapsed =
       Math.floor((now - startDate) / (1000 * 60 * 60 * 24)) + 1;
-    setCurrentDay(Math.min(daysElapsed, 21));
+    const cappedDay = Math.min(daysElapsed, 21); // Cap at 21 days
+    setCurrentDay(cappedDay);
+
+    // Calculate days left
+    setDaysLeft(21 - cappedDay);
   };
 
   const updateHabit = async (habitId, isComplete) => {
@@ -80,16 +91,20 @@ function Habits({ deleteHabit }) {
 
   useEffect(() => {
     fetchHabits();
-  }, []);
+  }, [habits]);
 
   return (
     <div className="w-full flex flex-col gap-4 bg-gray-800 p-4 rounded-lg">
       <div className="text-center text-white mb-4">
-        <h2 className="text-xl font-bold">Day {currentDay} / 21</h2>
+        <h2 className="text-xl font-bold">
+          Day {currentDay} / 21 - {daysLeft} days left
+        </h2>
         {currentDay === 21 && (
           <p>Congratulations! You have completed 21 days.</p>
         )}
       </div>
+
+      {/* List of habits */}
       {habits.length > 0 ? (
         habits.map((habit) => (
           <div
@@ -101,7 +116,6 @@ function Habits({ deleteHabit }) {
                 type="checkbox"
                 checked={habit.isComplete}
                 onChange={() => handleCheckboxClick(habit)}
-                disabled={habit.isComplete}
                 className="form-checkbox h-5 w-5 text-blue-600"
               />
               <span
@@ -120,7 +134,10 @@ function Habits({ deleteHabit }) {
       ) : (
         <p className="text-gray-400 text-center">No habits found</p>
       )}
-      <Chart currentDay={currentDay} />
+
+      <Chart habits={habits} currentDay={currentDay} />
+
+      {/* Modal for confirmation */}
       {isModalOpen && (
         <Modal isModalOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
           <p>Are you sure you want to mark this habit as complete?</p>
