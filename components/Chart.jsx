@@ -28,15 +28,21 @@ function HabitChart({ habits, currentDay }) {
   ).toFixed(2);
 
   return (
-    <div className="w-full flex flex-col items-center p-6 bg-gray-900">
-      <h1 className="text-2xl font-bold mb-4 text-white">Your Habit Tracker</h1>
-
-      <p className="text-gray-300 mb-6">{completedPercentage}% completed</p>
-      <div className="grid grid-cols-7 gap-4">
+    <div className="w-full flex flex-col items-center p-8 bg-gray-900">
+      {" "}
+      {/* Increased padding for a bigger chart */}
+      <p className="text-gray-300 mb-8">
+        {completedPercentage}% completed
+      </p>{" "}
+      {/* Increased margin for better spacing */}
+      <div className="grid grid-cols-7 gap-6">
+        {" "}
+        {/* Increased gap for larger boxes */}
         {days.map((status, index) => (
           <div
             key={index}
-            className={`w-12 h-12 flex items-center justify-center rounded-md text-white font-bold ${
+            className={`w-16 h-16 flex items-center justify-center rounded-md text-white font-bold ${
+              // Increased width and height for larger boxes
               status === "complete"
                 ? "bg-green-500"
                 : status === "missed"
