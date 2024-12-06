@@ -1,78 +1,65 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
-function HabitChart() {
+function HabitChart({ currentDay }) {
   const totalDays = 21; // Total number of days for the habit tracker
   const [days, setDays] = useState(
     Array.from({ length: totalDays }, () => null)
   ); // Initialize days
-  const [daysLeft, setDaysLeft] = useState(totalDays); // Initialize days left
 
-  // Function to toggle completion status
-  const toggleDayStatus = (index) => {
-    setDays((prevDays) => {
-      const newDays = [...prevDays];
-      const currentStatus = newDays[index];
+  // Check if all habits for the current day are completed
+  const checkHabitsCompletion = async () => {
+    try {
+      const response = await fetch("/api/user/getHabits");
+      if (!response.ok) throw new Error("Failed to fetch habits");
 
-      // Update the status of the selected day
-      if (currentStatus === null) {
-        newDays[index] = "complete";
-        setDaysLeft((prev) => Math.max(prev - 1, 0)); // Decrease days left only once
-      } else if (currentStatus === "complete") {
-        newDays[index] = "missed";
-      } else if (currentStatus === "missed") {
-        newDays[index] = null;
-      }
+      const data = await response.json();
+      const allCompleted = data.habits.every((habit) => habit.isComplete);
 
-      return newDays;
-    });
+      setDays((prevDays) => {
+        const updatedDays = [...prevDays];
+        updatedDays[currentDay - 1] = allCompleted ? "complete" : "missed";
+        return updatedDays;
+      });
+    } catch (error) {
+      console.error("Error checking habits completion:", error);
+    }
   };
 
+  useEffect(() => {
+    checkHabitsCompletion(); // Check habits on component mount
+  }, [currentDay]); // Recheck whenever the current day changes
+
+  const completedPercentage = (
+    (days.filter((status) => status === "complete").length / totalDays) *
+    100
+  ).toFixed(2);
+
+  const daysLeft = totalDays - currentDay;
+
   return (
-    <div className="w-full min-h-screen bg-gray-100 flex flex-col items-center p-6">
-      <h1 className="text-2xl font-bold mb-4">Your Habit Tracker</h1>
-      <p className="text-gray-700 mb-2">{daysLeft} days left</p>
-      <p className="text-gray-700 mb-6">
-        {(
-          (days.filter((status) => status === "complete").length / totalDays) *
-          100
-        ).toFixed(2)}
-        % completed
-      </p>
+    <div className="w-full min-h-screen bg-gray-900 flex flex-col items-center p-6">
+      <h1 className="text-2xl font-bold mb-4 text-white">Your Habit Tracker</h1>
+      <p className="text-gray-300 mb-2">{daysLeft} days left</p>
+      <p className="text-gray-300 mb-6">{completedPercentage}% completed</p>
 
       <div className="grid grid-cols-7 gap-4">
         {days.map((status, index) => (
-          <button
+          <div
             key={index}
-            onClick={() => toggleDayStatus(index)}
             className={`w-12 h-12 flex items-center justify-center rounded-md text-white font-bold ${
               status === "complete"
                 ? "bg-green-500"
                 : status === "missed"
                 ? "bg-red-500"
-                : "bg-gray-300"
+                : "bg-gray-500"
             }`}
           >
             {status === "complete" && "✓"}
             {status === "missed" && "X"}
             {status === null && index + 1}
-          </button>
+          </div>
         ))}
-      </div>
-
-      <div className="mt-6 flex justify-between w-full max-w-md">
-        <button
-          className="px-4 py-2 bg-gray-400 text-white rounded-md"
-          disabled
-        >
-          Previous
-        </button>
-        <button
-          className="px-4 py-2 bg-gray-400 text-white rounded-md"
-          disabled
-        >
-          Next
-        </button>
       </div>
     </div>
   );

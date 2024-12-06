@@ -84,6 +84,12 @@ export default function Dashboard() {
     }
   };
 
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") {
+      addHabit();
+    }
+  };
+
   return (
     <>
       <main className="min-h-screen p-8 pb-24 w-full">
@@ -102,11 +108,6 @@ export default function Dashboard() {
                 title="Add Habit"
                 onClick={() => setShowPopup(true)}
               />
-              <ButtonPopover
-                habits={habits}
-                deleteHabit={deleteHabit}
-                fetchHabits={fetchHabits}
-              />
             </div>
           </div>
 
@@ -123,10 +124,7 @@ export default function Dashboard() {
               35%
             </div>
           </div>
-          <Habits habits={habits} />
-
-          {/* Chart */}
-          <Chart />
+          <Habits habits={habits} deleteHabit={deleteHabit} />
 
           {/* Popup */}
           {showPopup && (
@@ -139,6 +137,7 @@ export default function Dashboard() {
                   value={habitTitle}
                   onChange={(e) => setHabitTitle(e.target.value)}
                   className="input input-bordered input-info w-full max-w-xs mb-4"
+                  onKeyPress={handleKeyPress}
                 />
                 <input
                   type="text"
@@ -151,6 +150,7 @@ export default function Dashboard() {
                     }
                   }}
                   className="input input-bordered input-info w-full max-w-xs"
+                  onKeyPress={handleKeyPress}
                 />
                 <div className="text-gray-500 text-sm mt-2 ml-2">
                   {habitDuration || 0} minutes
