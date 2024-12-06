@@ -2,14 +2,12 @@ import React, { useState, useEffect } from "react";
 import { toast } from "react-hot-toast";
 import { FaRegTrashAlt } from "react-icons/fa";
 import Chart from "./Chart";
-import Modal from "./Modal";
-
 function Habits({ deleteHabit }) {
   const [habits, setHabits] = useState([]);
   const [currentDay, setCurrentDay] = useState(1);
-  const [daysLeft, setDaysLeft] = useState(21);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedHabit, setSelectedHabit] = useState(null);
+  const [daysLeft] = useState(21);
+
+  const [resetTriggered, setResetTriggered] = useState(false); // Prevent repeated resets
 
   // Fetch habits and calculate the current day
   const fetchHabits = async () => {
@@ -22,28 +20,56 @@ function Habits({ deleteHabit }) {
 
       if (data.habits.length > 0) {
         const firstHabitDate = new Date(data.habits[0].createdAt);
-        calculateCurrentDay(firstHabitDate);
-      } else {
-        // Reset days when no habits exist
-        setCurrentDay(1);
-        setDaysLeft(21);
+        calculateDays(firstHabitDate);
       }
     } catch (error) {
-      toast.error("Failed to fetch habits");
-      console.error("Error fetching habits:", error);
+      if (!resetTriggered) {
+        toast.error("Failed to fetch habits");
+        console.error("Error fetching habits:", error);
+      }
     }
   };
 
-  // Calculate the current day based on the start date
-  const calculateCurrentDay = (startDate) => {
+  // Calculate the current day
+  const calculateDays = (startDate) => {
     const now = new Date();
     const daysElapsed =
       Math.floor((now - startDate) / (1000 * 60 * 60 * 24)) + 1;
     const cappedDay = Math.min(daysElapsed, 21); // Cap at 21 days
     setCurrentDay(cappedDay);
 
-    // Calculate days left
-    setDaysLeft(21 - cappedDay);
+    if (cappedDay > currentDay && !resetTriggered) {
+      resetDailyHabits(cappedDay);
+    }
+  };
+
+  // Reset `isComplete` for all habits
+  const resetDailyHabits = async (day) => {
+    try {
+      setResetTriggered(true); // Prevent repeated calls
+      const response = await fetch("/api/user/resetHabits", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ currentDay: day }),
+      });
+
+      if (!response.ok) {
+        toast.error("Failed to reset daily habits");
+        throw new Error("Failed to reset daily habits");
+      } else {
+        toast.success("Habits reset for the new day!");
+      }
+
+      await fetchHabits(); // Refresh habits to reflect reset
+      toast.success("Habits reset for the new day!");
+    } catch (error) {
+      console.error("Error resetting habits:", error);
+      if (!resetTriggered) {
+        toast.error("Failed to reset daily habits");
+      }
+    }
   };
 
   const updateHabit = async (habitId, isComplete) => {
@@ -63,6 +89,7 @@ function Habits({ deleteHabit }) {
           habit._id === habitId ? { ...habit, isComplete } : habit
         )
       );
+
       toast.success("Habit updated successfully!");
     } catch (error) {
       toast.error("Failed to update habit");
@@ -71,12 +98,7 @@ function Habits({ deleteHabit }) {
   };
 
   const handleCheckboxClick = (habit) => {
-    if (!habit.isComplete) {
-      setSelectedHabit(habit);
-      setIsModalOpen(true);
-    } else {
-      updateHabit(habit._id, !habit.isComplete);
-    }
+    updateHabit(habit._id, !habit.isComplete);
   };
 
   const handleDeleteHabit = async (habitId) => {
@@ -136,30 +158,6 @@ function Habits({ deleteHabit }) {
       )}
 
       <Chart habits={habits} currentDay={currentDay} />
-
-      {/* Modal for confirmation */}
-      {isModalOpen && (
-        <Modal isModalOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
-          <p>Are you sure you want to mark this habit as complete?</p>
-          <div className="mt-4 flex justify-end">
-            <button
-              onClick={() => {
-                updateHabit(selectedHabit._id, true);
-                setIsModalOpen(false);
-              }}
-              className="px-4 py-2 bg-blue-600 text-white rounded-md"
-            >
-              Confirm
-            </button>
-            <button
-              onClick={() => setIsModalOpen(false)}
-              className="px-4 py-2 ml-2 bg-gray-400 text-white rounded-md"
-            >
-              Cancel
-            </button>
-          </div>
-        </Modal>
-      )}
     </div>
   );
 }
