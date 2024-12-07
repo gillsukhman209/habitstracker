@@ -41,6 +41,10 @@ const userSchema = mongoose.Schema(
       default: false,
     },
     habits: [habitSchema],
+    lastResetDay: {
+      type: String,
+      default: () => new Date().toISOString().split("T")[0],
+    },
   },
   {
     timestamps: true,

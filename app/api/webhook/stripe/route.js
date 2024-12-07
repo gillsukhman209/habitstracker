@@ -34,7 +34,6 @@ export async function POST(req) {
 
   data = event.data;
   eventType = event.type;
-  console.log("eventtttt typeee is ", eventType);
 
   try {
     switch (eventType) {
@@ -71,7 +70,6 @@ export async function POST(req) {
             await user.save();
           }
         } else {
-          console.error("No user found");
           throw new Error("No user found");
         }
 

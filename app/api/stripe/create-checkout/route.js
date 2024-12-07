@@ -37,8 +37,6 @@ export async function POST(req) {
     await connectMongo();
 
     const user = await User.findById(session?.user?.id);
-    console.log(session.user);
-    console.log("user inside create checkout is ", user);
 
     const { priceId, mode, successUrl, cancelUrl } = body;
 

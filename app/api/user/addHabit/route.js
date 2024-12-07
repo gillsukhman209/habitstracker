@@ -29,9 +29,7 @@ export async function POST(req) {
       duration: habitDuration,
       createdAt: new Date(),
     });
-    user.dateAdded = new Date();
-    console.log(user.dateAdded);
-
+    user.lastResetDay = new Date().toISOString().split("T")[0];
     await user.save();
 
     return NextResponse.json({ success: true, habit: habitTitle });

@@ -13,17 +13,25 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Find the user by their ID
     const user = await User.findById(session.user.id);
 
     if (!user) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    // Return the user's habits
-    const habits = user.habits || [];
+    const today = new Date().toISOString().split("T")[0]; // Get today's date in YYYY-MM-DD format
 
-    return NextResponse.json({ habits });
+    // Check if the habits need to be reset
+    if (user.lastResetDay !== today) {
+      // Reset habits
+      user.habits.forEach((habit) => {
+        habit.isComplete = false; // Reset each habit
+      });
+      user.lastResetDay = today; // Update last reset day
+      await user.save(); // Save changes
+    }
+
+    return NextResponse.json({ habits: user.habits });
   } catch (error) {
     console.error(error);
     return NextResponse.json(

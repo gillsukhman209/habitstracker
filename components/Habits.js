@@ -14,6 +14,7 @@ function Habits({ deleteHabit }) {
     habit: null,
   });
   const [loading, setLoading] = useState(true); // New loading state
+  const [lastResetDay, setLastResetDay] = useState(0); // New state for last reset day
 
   const fetchHabits = async () => {
     setLoading(true); // Set loading to true when fetching starts
@@ -23,11 +24,7 @@ function Habits({ deleteHabit }) {
 
       const data = await response.json();
       setHabits(data.habits);
-
-      if (data.habits.length > 0) {
-        const firstHabitDate = new Date(data.habits[0].dateAdded);
-        calculateDays(firstHabitDate);
-      }
+      return data.habits;
     } catch (error) {
       if (!resetTriggered) {
         toast.error("Failed to fetch habits");
@@ -39,21 +36,30 @@ function Habits({ deleteHabit }) {
   };
 
   const calculateDays = (startDate) => {
-    const now = new Date();
+    console.log("Calculating days...");
+    // const now = new Date();
+    const now = new Date(
+      "Sat Dec 21 2024 01:22:43 GMT-0800 (Pacific Standard Time)"
+    );
+    console.log("Now:", now);
     const daysElapsed =
       Math.floor((now - startDate) / (1000 * 60 * 60 * 24)) + 1;
     const cappedDay = Math.min(daysElapsed, 21);
     setCurrentDay(cappedDay);
     setDaysLeft(21 - cappedDay);
 
-    if (cappedDay > currentDay && !resetTriggered) {
-      // resetDailyHabits(cappedDay);
+    // Only reset if cappedDay has changed and reset hasn't been triggered
+    if (cappedDay > lastResetDay && !resetTriggered) {
+      setResetTriggered(true);
+      resetDailyHabits(cappedDay);
+
+      setLastResetDay(cappedDay);
     }
   };
 
   const resetDailyHabits = async (day) => {
+    console.log("Resetting habits for day:", day);
     try {
-      setResetTriggered(true);
       const response = await fetch("/api/user/resetHabits", {
         method: "PATCH",
         headers: {
@@ -124,7 +130,18 @@ function Habits({ deleteHabit }) {
   };
 
   useEffect(() => {
-    fetchHabits();
+    const fetchData = async () => {
+      console.log("Running fetchData...");
+      await fetchHabits().then((habits) => {
+        console.log("Habits fetched", habits);
+        if (habits.length > 0) {
+          const firstHabitDate = new Date(habits[0].dateAdded);
+          console.log("First habit date:", firstHabitDate);
+          calculateDays(firstHabitDate);
+        }
+      });
+    };
+    fetchData();
   }, []);
 
   return (
@@ -176,6 +193,7 @@ function Habits({ deleteHabit }) {
           )}
 
           <Chart habits={habits} currentDay={currentDay} />
+          {resetTriggered.toString()}
 
           {confirmModal.open && (
             <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50">

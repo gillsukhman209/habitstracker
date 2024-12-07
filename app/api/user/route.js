@@ -13,9 +13,8 @@ export async function GET() {
   }
 
   await connectMongo();
-  console.log("session.user.id is ", session.user.id);
+
   const user = await User.findById(session.user.id);
-  console.log("user inside user route.js", user);
 
   if (!user) {
     return NextResponse.json({ error: "User not found" }, { status: 404 });
