@@ -6,9 +6,10 @@ import Chart from "./Chart";
 
 function Habits({ deleteHabit }) {
   const [habits, setHabits] = useState([]);
+  const [lastResetDate, setLastResetDate] = useState(0);
+  const [today, setToday] = useState(11);
   const [currentDay, setCurrentDay] = useState(1);
-  const [daysLeft, setDaysLeft] = useState(0);
-  const [resetTriggered, setResetTriggered] = useState(false);
+
   const [confirmModal, setConfirmModal] = useState({
     open: false,
     habit: null,
@@ -24,61 +25,26 @@ function Habits({ deleteHabit }) {
 
       const data = await response.json();
       setHabits(data.habits);
-      return data.habits;
-    } catch (error) {
-      if (!resetTriggered) {
-        toast.error("Failed to fetch habits");
-        console.error("Error fetching habits:", error);
-      }
+      setLastResetDate(data.lastResetDate);
+      calculateDay(data.lastResetDate, data.habits[0]?.dateAdded || 1);
     } finally {
       setLoading(false); // Set loading to false when fetching is done
     }
   };
-
-  const calculateDays = (startDate) => {
-    console.log("Calculating days...");
-    // const now = new Date();
-    const now = new Date(
-      "Sat Dec 21 2024 01:22:43 GMT-0800 (Pacific Standard Time)"
-    );
-    console.log("Now:", now);
-    const daysElapsed =
-      Math.floor((now - startDate) / (1000 * 60 * 60 * 24)) + 1;
-    const cappedDay = Math.min(daysElapsed, 21);
-    setCurrentDay(cappedDay);
-    setDaysLeft(21 - cappedDay);
-
-    // Only reset if cappedDay has changed and reset hasn't been triggered
-    if (cappedDay > lastResetDay && !resetTriggered) {
-      setResetTriggered(true);
-      resetDailyHabits(cappedDay);
-
-      setLastResetDay(cappedDay);
-    }
-  };
-
-  const resetDailyHabits = async (day) => {
-    console.log("Resetting habits for day:", day);
-    try {
+  const calculateDay = async (resetDate, firstHabitDate) => {
+    // Calculate how many days has it been since the first habit was added
+    const firstHabitDay = new Date(firstHabitDate).getDate();
+    setCurrentDay(today - firstHabitDay + 1);
+    // const today = parseInt(new Date().getDate());
+    // console.log("today", today);
+    // console.log("resetDate", resetDate);
+    if (today !== resetDate) {
+      // console.log("resetting habits");
+      // Make a patch call to resetHabits
       const response = await fetch("/api/user/resetHabits", {
         method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ currentDay: day }),
       });
-
-      if (!response.ok) {
-        toast.error("Failed to reset daily habits");
-        throw new Error("Failed to reset daily habits");
-      }
-
-      await fetchHabits();
-    } catch (error) {
-      console.error("Error resetting habits:", error);
-      if (!resetTriggered) {
-        toast.error("Failed to reset daily habits");
-      }
+      if (!response.ok) throw new Error("Failed to reset habits");
     }
   };
 
@@ -153,12 +119,7 @@ function Habits({ deleteHabit }) {
       ) : (
         <>
           <div className="text-center text-white mb-4">
-            <h2 className="text-xl font-bold">
-              Day {currentDay} / 21 - {daysLeft} days left
-            </h2>
-            {currentDay === 21 && (
-              <p>Congratulations! You have completed 21 days.</p>
-            )}
+            <h2 className="text-xl font-bold">Day {currentDay} / 21</h2>
           </div>
 
           {habits.length > 0 ? (
@@ -193,7 +154,6 @@ function Habits({ deleteHabit }) {
           )}
 
           <Chart habits={habits} currentDay={currentDay} />
-          {resetTriggered.toString()}
 
           {confirmModal.open && (
             <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50">

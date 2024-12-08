@@ -21,6 +21,7 @@ export async function GET() {
 
     const today = new Date().toISOString().split("T")[0]; // Get today's date in YYYY-MM-DD format
 
+<<<<<<< HEAD
     // Check if the habits need to be reset
     if (user.lastResetDay !== today) {
       // Reset habits
@@ -32,6 +33,12 @@ export async function GET() {
     }
 
     return NextResponse.json({ habits: user.habits });
+=======
+    return NextResponse.json({
+      habits: habits,
+      lastResetDate: user.lastResetDate,
+    });
+>>>>>>> ed14104 (new method added)
   } catch (error) {
     console.error(error);
     return NextResponse.json(

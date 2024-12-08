@@ -41,11 +41,22 @@ const userSchema = mongoose.Schema(
       default: false,
     },
     habits: [habitSchema],
+<<<<<<< HEAD
     lastResetDay: {
       type: String,
       default: () => new Date().toISOString().split("T")[0],
+=======
+    lastResetDate: {
+      type: Number,
+      default: parseInt(new Date().getDate()),
+    },
+    completedDays: {
+      type: [Number],
+      default: [],
+>>>>>>> ed14104 (new method added)
     },
   },
+
   {
     timestamps: true,
     toJSON: { virtuals: true },
