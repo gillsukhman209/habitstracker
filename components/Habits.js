@@ -7,7 +7,9 @@ import Chart from "./Chart";
 function Habits({ deleteHabit }) {
   const [habits, setHabits] = useState([]);
   const [lastResetDate, setLastResetDate] = useState(0);
-  const [today, setToday] = useState(11);
+  const [today, setToday] = useState(parseInt(new Date().getDate()));
+  // const [today, setToday] = useState(12);
+
   const [currentDay, setCurrentDay] = useState(1);
 
   const [confirmModal, setConfirmModal] = useState({
@@ -26,18 +28,15 @@ function Habits({ deleteHabit }) {
       const data = await response.json();
       setHabits(data.habits);
       setLastResetDate(data.lastResetDate);
+      console.log("data.habits[0]?.dateAdded", data.habits[0]?.dateAdded);
       calculateDay(data.lastResetDate, data.habits[0]?.dateAdded || 1);
     } finally {
       setLoading(false); // Set loading to false when fetching is done
     }
   };
-  const calculateDay = async (resetDate, firstHabitDate) => {
+  const calculateDay = async (resetDate, firstHabitDay) => {
     // Calculate how many days has it been since the first habit was added
-    const firstHabitDay = new Date(firstHabitDate).getDate();
-    setCurrentDay(today - firstHabitDay + 1);
-    // const today = parseInt(new Date().getDate());
-    // console.log("today", today);
-    // console.log("resetDate", resetDate);
+
     if (today !== resetDate) {
       // console.log("resetting habits");
       // Make a patch call to resetHabits
@@ -46,6 +45,18 @@ function Habits({ deleteHabit }) {
       });
       if (!response.ok) throw new Error("Failed to reset habits");
     }
+    if (firstHabitDay === 1) {
+      setCurrentDay(1);
+      return;
+    }
+
+    const firstHabitDate = new Date(firstHabitDay).getDate();
+    console.log("firstHabitDay", firstHabitDate);
+
+    setCurrentDay(today - firstHabitDate + 1);
+    // const today = parseInt(new Date().getDate());
+    // console.log("today", today);
+    // console.log("resetDate", resetDate);
   };
 
   const updateHabit = async (habitId, isComplete) => {

@@ -84,13 +84,15 @@ function HabitChart({ habits, currentDay }) {
             className={`w-16 h-16 flex items-center justify-center rounded-md text-white font-bold ${
               status === "complete"
                 ? "bg-green-500"
+                : index + 1 === currentDay
+                ? "bg-blue-500 opacity-50"
                 : status === "missed"
                 ? "bg-gray-500"
                 : "bg-gray-500"
             }`}
           >
             {status === "complete" && "✓"}
-            {status === "missed" && "X"}
+
             {status === null && index + 1}
           </div>
         ))}
