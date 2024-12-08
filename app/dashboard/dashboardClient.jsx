@@ -7,6 +7,7 @@ import { toast } from "react-hot-toast";
 import Habits from "@/components/Habits";
 
 export default function Dashboard() {
+  ``;
   const [showPopup, setShowPopup] = useState(false); // State for showing/hiding the popup
   const [habitInputs, setHabitInputs] = useState([{ title: "", duration: "" }]); // State for habit inputs
   const [habits, setHabits] = useState([]); // State for habits
@@ -14,7 +15,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     fetchHabits();
-  }, [habits]);
+  }, []);
 
   const fetchHabits = async () => {
     try {

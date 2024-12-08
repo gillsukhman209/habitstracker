@@ -7,8 +7,8 @@ import Chart from "./Chart";
 function Habits({ deleteHabit }) {
   const [habits, setHabits] = useState([]);
   const [lastResetDate, setLastResetDate] = useState(0);
-  const [today, setToday] = useState(parseInt(new Date().getDate()));
-  // const [today, setToday] = useState(12);
+  // const [today, setToday] = useState(parseInt(new Date().getDate()));
+  const [today, setToday] = useState(19);
 
   const [currentDay, setCurrentDay] = useState(1);
 
@@ -27,9 +27,11 @@ function Habits({ deleteHabit }) {
 
       const data = await response.json();
       setHabits(data.habits);
+
       setLastResetDate(data.lastResetDate);
-      console.log("data.habits[0]?.dateAdded", data.habits[0]?.dateAdded);
-      calculateDay(data.lastResetDate, data.habits[0]?.dateAdded || 1);
+      const firstHabitDate = new Date(data.habits[0]?.dateAdded || 1).getDate();
+
+      calculateDay(data.lastResetDate, parseInt(firstHabitDate));
     } finally {
       setLoading(false); // Set loading to false when fetching is done
     }
@@ -38,8 +40,7 @@ function Habits({ deleteHabit }) {
     // Calculate how many days has it been since the first habit was added
 
     if (today !== resetDate) {
-      // console.log("resetting habits");
-      // Make a patch call to resetHabits
+      console.log("today", today, "resetDate", resetDate);
       const response = await fetch("/api/user/resetHabits", {
         method: "PATCH",
       });
@@ -50,13 +51,7 @@ function Habits({ deleteHabit }) {
       return;
     }
 
-    const firstHabitDate = new Date(firstHabitDay).getDate();
-    console.log("firstHabitDay", firstHabitDate);
-
-    setCurrentDay(today - firstHabitDate + 1);
-    // const today = parseInt(new Date().getDate());
-    // console.log("today", today);
-    // console.log("resetDate", resetDate);
+    setCurrentDay(today - firstHabitDay + 1);
   };
 
   const updateHabit = async (habitId, isComplete) => {
@@ -107,18 +102,7 @@ function Habits({ deleteHabit }) {
   };
 
   useEffect(() => {
-    const fetchData = async () => {
-      console.log("Running fetchData...");
-      await fetchHabits().then((habits) => {
-        console.log("Habits fetched", habits);
-        if (habits.length > 0) {
-          const firstHabitDate = new Date(habits[0].dateAdded);
-          console.log("First habit date:", firstHabitDate);
-          calculateDays(firstHabitDate);
-        }
-      });
-    };
-    fetchData();
+    fetchHabits();
   }, []);
 
   return (
@@ -131,6 +115,7 @@ function Habits({ deleteHabit }) {
         <>
           <div className="text-center text-white mb-4">
             <h2 className="text-xl font-bold">Day {currentDay} / 21</h2>
+            <p className="text-sm text-gray-400">Last reset: {lastResetDate}</p>
           </div>
 
           {habits.length > 0 ? (
