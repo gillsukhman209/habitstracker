@@ -10,7 +10,6 @@ function HabitChart({ habits, currentDay }) {
 
   useEffect(() => {
     const fetchCompletedDays = async () => {
-      console.log("fetching completed days");
       try {
         const response = await fetch("/api/user/getDays");
         if (!response.ok) {
@@ -18,7 +17,6 @@ function HabitChart({ habits, currentDay }) {
         }
         const data = await response.json();
         const completedDays = data.completedDays || [];
-        console.log("completedDays", completedDays);
 
         // Mark the completed days as "complete"
         const updatedDays = Array.from({ length: totalDays }, (_, index) =>
@@ -34,20 +32,18 @@ function HabitChart({ habits, currentDay }) {
   }, []);
 
   useEffect(() => {
-    console.log("running chart with day ", currentDay);
     if (habits.length === 0) {
       // Reset the chart if no habits
       setDays(Array.from({ length: totalDays }, () => null));
     } else {
       const allCompleted = habits.every((habit) => habit.isComplete);
-      console.log("Habits completed yes or no", allCompleted);
+
       setDays((prevDays) => {
         const updatedDays = [...prevDays];
         updatedDays[currentDay - 1] = allCompleted ? "complete" : "missed";
 
         // If all habits for the day are completed, push the day to the database
         if (allCompleted) {
-          console.log("habits completed for day", currentDay);
           updateChart(currentDay);
         }
 
@@ -57,7 +53,6 @@ function HabitChart({ habits, currentDay }) {
   }, []);
 
   const updateChart = async (day) => {
-    console.log("updating chart for day", day);
     try {
       const response = await fetch("/api/user/updateChart", {
         method: "POST",
@@ -90,15 +85,17 @@ function HabitChart({ habits, currentDay }) {
             className={`w-16 h-16 flex items-center justify-center rounded-md text-white font-bold ${
               status === "complete"
                 ? "bg-green-500"
+                : index + 1 < currentDay
+                ? "bg-red-500"
                 : index + 1 === currentDay
                 ? "bg-blue-500 opacity-50"
                 : status === "missed"
                 ? "bg-gray-500"
-                : "bg-gray-500"
+                : ""
             }`}
           >
             {status === "complete" && "✓"}
-
+            {index + 1 < currentDay && status === "missed" && "𝚡"}
             {status === null && index + 1}
           </div>
         ))}

@@ -7,22 +7,35 @@ import { authOptions } from "@/libs/next-auth";
 export async function POST(req) {
   try {
     await connectMongo();
+
     const session = await getServerSession(authOptions);
+
     const body = await req.json();
+
     const { day } = body;
 
     if (!day) {
       return NextResponse.json({ error: "Day is required" }, { status: 400 });
     }
 
-    const user = await User.findById(session?.user?.id);
+    const user = await User.findById(session?.user?.id).exec();
+
     if (!user) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
     // Update the completedDays array
     if (!user.completedDays.includes(day)) {
-      user.completedDays.push(day);
+      console.log(
+        "user.completed days",
+        user.completedDays,
+        "doens't include day",
+        day
+      );
+      await User.updateOne(
+        { _id: session.user.id },
+        { $addToSet: { completedDays: day } }
+      );
     }
 
     await user.save();

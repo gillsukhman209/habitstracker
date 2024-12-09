@@ -8,7 +8,7 @@ function Habits({ deleteHabit }) {
   const [habits, setHabits] = useState([]);
   const [lastResetDate, setLastResetDate] = useState(0);
   // const [today, setToday] = useState(parseInt(new Date().getDate()));
-  const [today, setToday] = useState(19);
+  const [today, setToday] = useState(17);
 
   const [currentDay, setCurrentDay] = useState(1);
 
@@ -29,29 +29,66 @@ function Habits({ deleteHabit }) {
       setHabits(data.habits);
 
       setLastResetDate(data.lastResetDate);
-      const firstHabitDate = new Date(data.habits[0]?.dateAdded || 1).getDate();
-
-      calculateDay(data.lastResetDate, parseInt(firstHabitDate));
+      if (data.habits[0]?.dateAdded) {
+        const firstHabitDate = new Date(data.habits[0]?.dateAdded).getDate();
+        calculateDay(data.lastResetDate, parseInt(firstHabitDate));
+      } else {
+        calculateDay(data.lastResetDate, 1);
+      }
     } finally {
       setLoading(false); // Set loading to false when fetching is done
     }
   };
   const calculateDay = async (resetDate, firstHabitDay) => {
-    // Calculate how many days has it been since the first habit was added
+    // Fetch completed days
+    const response = await fetch("/api/user/getDays");
+    if (!response.ok) throw new Error("Failed to fetch completed days");
+    const data = await response.json();
+    const completedDays = data.completedDays || [];
+
+    // check if yesterday is completed
+
+    // // Check if all previous days are completed
+
+    // const allPreviousDaysCompleted = Array.from(
+    //   { length: currentDay - 1 },
+    //   (_, i) => i + 1
+    // ).every((day) => completedDays.includes(day));
+
+    // if (!allPreviousDaysCompleted) {
+    //   console.log("Not all previous days are completed. Resetting progress.");
+    //   const resetResponse = await fetch("/api/user/resetHabits", {
+    //     method: "PATCH",
+    //   });
+    //   if (!resetResponse.ok) throw new Error("Failed to reset habits");
+    //   return;
+    // }
 
     if (today !== resetDate) {
-      console.log("today", today, "resetDate", resetDate);
       const response = await fetch("/api/user/resetHabits", {
         method: "PATCH",
       });
       if (!response.ok) throw new Error("Failed to reset habits");
     }
+
     if (firstHabitDay === 1) {
       setCurrentDay(1);
       return;
     }
 
-    setCurrentDay(today - firstHabitDay + 1);
+    const currentDay = today - firstHabitDay + 1;
+    setCurrentDay(currentDay);
+    const yesterday = currentDay - 1;
+
+    const isYesterdayCompleted = completedDays.includes(yesterday);
+    if (!isYesterdayCompleted) {
+      console.log("Yesterday is not completed. Resetting progress.");
+      const resetResponse = await fetch("/api/user/resetHabits", {
+        method: "PATCH",
+      });
+      if (!resetResponse.ok) throw new Error("Failed to reset habits");
+      return;
+    }
   };
 
   const updateHabit = async (habitId, isComplete) => {
@@ -73,6 +110,7 @@ function Habits({ deleteHabit }) {
       );
 
       toast.success("Habit updated successfully!");
+      await fetchHabits();
     } catch (error) {
       toast.error("Failed to update habit");
       console.error("Error updating habit:", error);

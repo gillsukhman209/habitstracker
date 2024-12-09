@@ -19,7 +19,6 @@ export async function GET() {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    console.log("returning habits", user.habits);
     return NextResponse.json({
       habits: user.habits,
       lastResetDate: user.lastResetDate,

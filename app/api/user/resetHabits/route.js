@@ -18,7 +18,7 @@ export async function PATCH(req) {
       habit.isComplete = false;
     });
 
-    user.lastResetDate = parseInt(new Date().getDate() + 11);
+    user.lastResetDate = parseInt(new Date().getDate() + 8);
 
     await user.save();
 
