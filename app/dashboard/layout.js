@@ -21,7 +21,7 @@ export default async function LayoutPrivate({ children }) {
   await connectMongo();
   const user = await User.findById(session.user.id);
   if (!user || !user.hasAccess) {
-    redirect("http://localhost:3000");
+    redirect("https://www.21habits.co");
   }
 
   return <>{children}</>;
