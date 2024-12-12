@@ -82,6 +82,7 @@ function Habits({ deleteHabit }) {
       });
       setCurrentDay(1);
       setReset(true); // Set reset to true when resetHabits is called
+      await fetchHabits();
       if (!resetResponse.ok) throw new Error("Failed to reset habits");
       return;
     }
