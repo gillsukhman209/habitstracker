@@ -97,10 +97,9 @@ const Header = () => {
         <div className="hidden lg:flex lg:justify-end lg:flex-1">
           {session ? (
             <>
-              <span className="text-white mr-4">{session.user.email}</span>
               <button
                 type="button"
-                className="btn-primary"
+                className="btn btn-outline btn-primary transition duration-300 ease-in-out hover:bg-primary hover:text-white"
                 onClick={() => signOut()}
               >
                 Logout
@@ -180,10 +179,9 @@ const Header = () => {
             <div className="flex flex-col">
               {session ? (
                 <>
-                  <span className="text-white mb-4">{session.user.email}</span>
                   <button
                     type="button"
-                    className="btn-primary"
+                    className="btn btn-outline btn-primary transition duration-300 ease-in-out hover:bg-primary hover:text-white"
                     onClick={() => signOut()}
                   >
                     Logout

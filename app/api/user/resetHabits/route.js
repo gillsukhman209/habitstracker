@@ -17,7 +17,6 @@ export async function PATCH(req) {
     const user = await User.findById(session.user.id);
 
     if (reset) {
-      console.log("Resetting completed dssays []");
       user.completedDays = [];
 
       await user.save();

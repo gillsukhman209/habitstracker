@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 
-function HabitChart({ currentDay }) {
+function HabitChart({ currentDay, missedDays }) {
   const [completedDays, setCompletedDays] = useState([]);
 
   const fetchCompletedDays = async () => {
@@ -59,11 +59,9 @@ function HabitChart({ currentDay }) {
           {calculateProgress()}%
         </span>
       </div>
-
       <div className="grid grid-cols-7 gap-4 place-items-center">
         {renderDays()}
       </div>
-
       <div className="mt-6 flex justify-center gap-6 text-sm text-gray-400">
         <div className="flex items-center gap-2">
           <div className="h-3 w-3 rounded-full bg-emerald-500"></div>
@@ -78,15 +76,17 @@ function HabitChart({ currentDay }) {
           <span>Upcoming</span>
         </div>
       </div>
-
-      {/* Show all completed days */}
+      {/* Show all completed days
       <div className="mt-6 flex flex-col gap-2">
+        Completed Days:
         {completedDays.map((day) => (
           <div key={day} className="text-gray-400">
             Day {day}
           </div>
         ))}
-      </div>
+      </div> */}
+      {/* Missed Days */}
+      {/* <div className="mt-6 flex flex-col gap-2">Missed Days: {missedDays}</div> */}
     </div>
   );
 }

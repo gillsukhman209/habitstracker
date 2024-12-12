@@ -1,4 +1,3 @@
-// components/Habits.js
 import React, { useState, useEffect } from "react";
 import { toast } from "react-hot-toast";
 import { FaRegTrashAlt } from "react-icons/fa";
@@ -6,21 +5,20 @@ import Chart from "./Chart";
 
 function Habits({ deleteHabit }) {
   const [habits, setHabits] = useState([]);
-  const [lastResetDate, setLastResetDate] = useState(0);
   // const [today, setToday] = useState(parseInt(new Date().getDate()));
-  const [today, setToday] = useState(11);
-
+  const [today, setToday] = useState(12);
   const [currentDay, setCurrentDay] = useState(1);
+  const [loading, setLoading] = useState(true);
+  const [reset, setReset] = useState(false);
+  const [missedDays, setMissedDays] = useState(0);
+
   const [confirmModal, setConfirmModal] = useState({
     open: false,
     habit: null,
   });
-  const [loading, setLoading] = useState(true); // New loading state
-  const [lastResetDay, setLastResetDay] = useState(0); // New state for last reset day
-  const [reset, setReset] = useState(false); // New state for reset
 
   const fetchHabits = async () => {
-    setLoading(true); // Set loading to true when fetching starts
+    setLoading(true);
     try {
       const response = await fetch("/api/user/getHabits");
       if (!response.ok) throw new Error("Failed to fetch habits");
@@ -28,7 +26,6 @@ function Habits({ deleteHabit }) {
       const data = await response.json();
       setHabits(data.habits);
 
-      setLastResetDate(data.lastResetDate);
       if (data.habits[0]?.dateAdded) {
         const firstHabitDate = new Date(data.habits[0]?.dateAdded).getDate();
         calculateDay(data.lastResetDate, parseInt(firstHabitDate));
@@ -36,19 +33,17 @@ function Habits({ deleteHabit }) {
         calculateDay(data.lastResetDate, 1);
       }
     } finally {
-      setLoading(false); // Set loading to false when fetching is done
+      setLoading(false);
     }
   };
 
   const calculateDay = async (resetDate, firstHabitDay) => {
-    // Fetch completed days
     const response = await fetch("/api/user/getDays");
     if (!response.ok) throw new Error("Failed to fetch completed days");
     const data = await response.json();
     const completedDays = data.completedDays || [];
 
     if (today !== resetDate) {
-      console.log("today !== resetDate", today, resetDate);
       const response = await fetch("/api/user/resetHabits", {
         method: "PATCH",
         body: JSON.stringify({ reset: false }),
@@ -57,8 +52,7 @@ function Habits({ deleteHabit }) {
         },
       });
       if (!response.ok) throw new Error("Failed to reset habits in habits.js");
-      setReset(true); // Set reset to true when resetHabits is called
-      await fetchHabits();
+      setReset(true);
     }
 
     if (firstHabitDay === 1) {
@@ -70,9 +64,9 @@ function Habits({ deleteHabit }) {
     setCurrentDay(currentDay);
 
     const missedDays = currentDay - 1 - completedDays.length;
+    setMissedDays(missedDays);
 
     if (missedDays > 2) {
-      console.log("missedDays > 2", missedDays);
       const resetResponse = await fetch("/api/user/resetHabits", {
         method: "PATCH",
         body: JSON.stringify({ reset: true }),
@@ -81,8 +75,8 @@ function Habits({ deleteHabit }) {
         },
       });
       setCurrentDay(1);
-      setReset(true); // Set reset to true when resetHabits is called
-      await fetchHabits();
+      setReset(true);
+
       if (!resetResponse.ok) throw new Error("Failed to reset habits");
       return;
     }
@@ -161,7 +155,7 @@ function Habits({ deleteHabit }) {
 
   return (
     <div className="w-full flex flex-col gap-4 bg-gray-800 p-4 rounded-lg">
-      {loading ? ( // Show loading message if loading is true
+      {loading ? (
         <div className="text-center text-white">
           <h2 className="text-xl">Loading...</h2>
         </div>
@@ -200,8 +194,12 @@ function Habits({ deleteHabit }) {
           ) : (
             <p className="text-gray-400 text-center">No habits found</p>
           )}
-          <Chart habits={habits} currentDay={currentDay} reset={reset} />{" "}
-          {/* Pass reset to Chart */}
+          <Chart
+            habits={habits}
+            currentDay={currentDay}
+            reset={reset}
+            missedDays={missedDays}
+          />
           {confirmModal.open && (
             <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50">
               <div className="bg-white p-6 rounded-md shadow-lg w-96">

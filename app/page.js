@@ -62,7 +62,7 @@ export default function Home() {
         <FeaturesAccordion />
         <Pricing />
         <FAQ />
-        <CTA />
+        {/* <CTA /> */}
       </main>
       <Footer />
     </>
