@@ -8,16 +8,16 @@ function Habits({ deleteHabit }) {
   const [habits, setHabits] = useState([]);
   const [lastResetDate, setLastResetDate] = useState(0);
   // const [today, setToday] = useState(parseInt(new Date().getDate()));
-  const [today, setToday] = useState(17);
+  const [today, setToday] = useState(11);
 
   const [currentDay, setCurrentDay] = useState(1);
-
   const [confirmModal, setConfirmModal] = useState({
     open: false,
     habit: null,
   });
   const [loading, setLoading] = useState(true); // New loading state
   const [lastResetDay, setLastResetDay] = useState(0); // New state for last reset day
+  const [reset, setReset] = useState(false); // New state for reset
 
   const fetchHabits = async () => {
     setLoading(true); // Set loading to true when fetching starts
@@ -39,6 +39,7 @@ function Habits({ deleteHabit }) {
       setLoading(false); // Set loading to false when fetching is done
     }
   };
+
   const calculateDay = async (resetDate, firstHabitDay) => {
     // Fetch completed days
     const response = await fetch("/api/user/getDays");
@@ -46,29 +47,18 @@ function Habits({ deleteHabit }) {
     const data = await response.json();
     const completedDays = data.completedDays || [];
 
-    // check if yesterday is completed
-
-    // // Check if all previous days are completed
-
-    // const allPreviousDaysCompleted = Array.from(
-    //   { length: currentDay - 1 },
-    //   (_, i) => i + 1
-    // ).every((day) => completedDays.includes(day));
-
-    // if (!allPreviousDaysCompleted) {
-    //   console.log("Not all previous days are completed. Resetting progress.");
-    //   const resetResponse = await fetch("/api/user/resetHabits", {
-    //     method: "PATCH",
-    //   });
-    //   if (!resetResponse.ok) throw new Error("Failed to reset habits");
-    //   return;
-    // }
-
     if (today !== resetDate) {
+      console.log("today !== resetDate", today, resetDate);
       const response = await fetch("/api/user/resetHabits", {
         method: "PATCH",
+        body: JSON.stringify({ reset: false }),
+        headers: {
+          "Content-Type": "application/json",
+        },
       });
-      if (!response.ok) throw new Error("Failed to reset habits");
+      if (!response.ok) throw new Error("Failed to reset habits in habits.js");
+      setReset(true); // Set reset to true when resetHabits is called
+      await fetchHabits();
     }
 
     if (firstHabitDay === 1) {
@@ -78,14 +68,20 @@ function Habits({ deleteHabit }) {
 
     const currentDay = today - firstHabitDay + 1;
     setCurrentDay(currentDay);
-    const yesterday = currentDay - 1;
 
-    const isYesterdayCompleted = completedDays.includes(yesterday);
-    if (!isYesterdayCompleted) {
-      console.log("Yesterday is not completed. Resetting progress.");
+    const missedDays = currentDay - 1 - completedDays.length;
+
+    if (missedDays > 2) {
+      console.log("missedDays > 2", missedDays);
       const resetResponse = await fetch("/api/user/resetHabits", {
         method: "PATCH",
+        body: JSON.stringify({ reset: true }),
+        headers: {
+          "Content-Type": "application/json",
+        },
       });
+      setCurrentDay(1);
+      setReset(true); // Set reset to true when resetHabits is called
       if (!resetResponse.ok) throw new Error("Failed to reset habits");
       return;
     }
@@ -120,6 +116,25 @@ function Habits({ deleteHabit }) {
   const handleCheckboxClick = (habit) => {
     if (!habit.isComplete) {
       setConfirmModal({ open: true, habit });
+      updateCompletedDays(currentDay);
+    }
+  };
+
+  const updateCompletedDays = async (day) => {
+    try {
+      const response = await fetch("/api/user/updateCompletedDays", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ day }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to update completed days");
+      }
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -153,9 +168,7 @@ function Habits({ deleteHabit }) {
         <>
           <div className="text-center text-white mb-4">
             <h2 className="text-xl font-bold">Day {currentDay} / 21</h2>
-            <p className="text-sm text-gray-400">Last reset: {lastResetDate}</p>
           </div>
-
           {habits.length > 0 ? (
             habits.map((habit) => (
               <div
@@ -186,9 +199,8 @@ function Habits({ deleteHabit }) {
           ) : (
             <p className="text-gray-400 text-center">No habits found</p>
           )}
-
-          <Chart habits={habits} currentDay={currentDay} />
-
+          <Chart habits={habits} currentDay={currentDay} reset={reset} />{" "}
+          {/* Pass reset to Chart */}
           {confirmModal.open && (
             <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50">
               <div className="bg-white p-6 rounded-md shadow-lg w-96">

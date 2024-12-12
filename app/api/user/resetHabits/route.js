@@ -12,13 +12,22 @@ export async function PATCH(req) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    const { reset } = await req.json();
+
     const user = await User.findById(session.user.id);
+
+    if (reset) {
+      console.log("Resetting completed dssays []");
+      user.completedDays = [];
+
+      await user.save();
+    }
 
     user.habits.forEach((habit) => {
       habit.isComplete = false;
     });
 
-    user.lastResetDate = parseInt(new Date().getDate() + 8);
+    user.lastResetDate = parseInt(new Date().getDate() + 0);
 
     await user.save();
 

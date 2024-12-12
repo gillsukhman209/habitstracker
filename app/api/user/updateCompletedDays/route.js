@@ -13,8 +13,7 @@ export async function POST(req) {
     const body = await req.json();
 
     const { day } = body;
-
-    if (!day) {
+    if (day === undefined || day === null) {
       return NextResponse.json({ error: "Day is required" }, { status: 400 });
     }
 
@@ -26,12 +25,7 @@ export async function POST(req) {
 
     // Update the completedDays array
     if (!user.completedDays.includes(day)) {
-      console.log(
-        "user.completed days",
-        user.completedDays,
-        "doens't include day",
-        day
-      );
+      console.log("Adding day to completedDays", day);
       await User.updateOne(
         { _id: session.user.id },
         { $addToSet: { completedDays: day } }
