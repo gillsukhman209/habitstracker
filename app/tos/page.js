@@ -13,7 +13,7 @@ import config from "@/config";
 
 // I need your help to write a simple Terms & Services for my website. Here is some context:
 // - Website: https://shipfa.st
-// - Name: Habit Builder
+// - Name: 21 Habits
 // - Contact information: marc@shipfa.st
 // - Description: A JavaScript code boilerplate to help entrepreneurs launch their startups faster
 // - Ownership: when buying a package, users can download code to create apps. They own the code but they do not have the right to resell it. They can ask for a full refund within 7 day after the purchase.
@@ -59,17 +59,17 @@ const TOS = () => {
         >
           {`Last Updated: September 26, 2023
 
-Welcome to Habit Builder!
+Welcome to 21 Habits!
 
-These Terms of Service ("Terms") govern your use of the Habit Builder website at https://shipfa.st ("Website") and the services provided by Habit Builder. By using our Website and services, you agree to these Terms.
+These Terms of Service ("Terms") govern your use of the 21 Habits website at https://shipfa.st ("Website") and the services provided by 21 Habits. By using our Website and services, you agree to these Terms.
 
-1. Description of Habit Builder
+1. Description of 21 Habits
 
-Habit Builder is a platform that offers a JavaScript code boilerplate to assist entrepreneurs in launching their startups more efficiently.
+21 Habits is a platform that offers a JavaScript code boilerplate to assist entrepreneurs in launching their startups more efficiently.
 
 2. Ownership and Usage Rights
 
-When you purchase a package from Habit Builder, you gain the right to download and use the code provided for creating applications. You own the code you create but do not have the right to resell it. We offer a full refund within 7 days of purchase, as specified in our refund policy.
+When you purchase a package from 21 Habits, you gain the right to download and use the code provided for creating applications. You own the code you create but do not have the right to resell it. We offer a full refund within 7 days of purchase, as specified in our refund policy.
 
 3. User Data and Privacy
 
@@ -89,7 +89,7 @@ We may update these Terms from time to time. Users will be notified of any chang
 
 For any questions or concerns regarding these Terms of Service, please contact us at marc@shipfa.st.
 
-Thank you for using Habit Builder!`}
+Thank you for using 21 Habits!`}
         </pre>
       </div>
     </main>

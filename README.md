@@ -1,6 +1,6 @@
-# Habit Builder — Javascript
+# 21 Habits — Javascript
 
-Hey maker 👋 it's Marc from [Habit Builder](https://shipfa.st/docs). Let's get your startup off the ground, FAST ⚡️
+Hey maker 👋 it's Marc from [21 Habits](https://shipfa.st/docs). Let's get your startup off the ground, FAST ⚡️
 
 <sub>**Watch/Star the repo to be notified when updates are pushed**</sub>
 
@@ -15,7 +15,7 @@ Hey maker 👋 it's Marc from [Habit Builder](https://shipfa.st/docs). Let's get
 ## Links
 
 - [📚 Documentation](https://shipfa.st/docs)
-- [📣 Updates](https://Habit Builder.beehiiv.com/)
+- [📣 Updates](https://21 Habits.beehiiv.com/)
 - [🧑‍💻 Discord](https://shipfa.st/dashboard)
 - [🥇 Leaderboard](https://shipfa.st/leaderboard)
 
@@ -29,9 +29,9 @@ Let's ship it, FAST ⚡️
 
 P.S.
 
-- Want to showcase your startups? Get your [Indie Page](https://indiepa.ge?ref=Habit Builder_readme) and share your entrepreneur's journey. Join 3,132 founders ⭐️
-- Don't get banned from Stripe for 1 dispute. Use [ByeDispute](https://byedispute.com/?ref=Habit Builder_readme) to prevent them from happenening 🛡️
-- Make your launch go viral and get your first customers with [LaunchViral](https://launchvir.al/?ref=Habit Builder_readme) 🚀
-- Stop paying 0.4% per Stripe invoices [Zenvoice](https://zenvoice.io/?ref=Habit Builder_readme) 🤕
+- Want to showcase your startups? Get your [Indie Page](https://indiepa.ge?ref=21 Habits_readme) and share your entrepreneur's journey. Join 3,132 founders ⭐️
+- Don't get banned from Stripe for 1 dispute. Use [ByeDispute](https://byedispute.com/?ref=21 Habits_readme) to prevent them from happenening 🛡️
+- Make your launch go viral and get your first customers with [LaunchViral](https://launchvir.al/?ref=21 Habits_readme) 🚀
+- Stop paying 0.4% per Stripe invoices [Zenvoice](https://zenvoice.io/?ref=21 Habits_readme) 🤕
 
 # habitstracker

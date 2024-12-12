@@ -3,10 +3,10 @@ import { toast } from "react-hot-toast";
 import { FaRegTrashAlt } from "react-icons/fa";
 import Chart from "./Chart";
 
-function Habits({ deleteHabit }) {
-  const [habits, setHabits] = useState([]);
-  // const [today, setToday] = useState(parseInt(new Date().getDate()));
-  const [today, setToday] = useState(12);
+function Habits({ habits, deleteHabit, onHabitsChange }) {
+  const [localHabits, setLocalHabits] = useState([]);
+  const [today, setToday] = useState(parseInt(new Date().getDate()) + 0);
+  // const [today, setToday] = useState(13);
   const [currentDay, setCurrentDay] = useState(1);
   const [loading, setLoading] = useState(true);
   const [reset, setReset] = useState(false);
@@ -24,7 +24,8 @@ function Habits({ deleteHabit }) {
       if (!response.ok) throw new Error("Failed to fetch habits");
 
       const data = await response.json();
-      setHabits(data.habits);
+      setLocalHabits(data.habits);
+      onHabitsChange && onHabitsChange();
 
       if (data.habits[0]?.dateAdded) {
         const firstHabitDate = new Date(data.habits[0]?.dateAdded).getDate();
@@ -94,7 +95,7 @@ function Habits({ deleteHabit }) {
 
       if (!response.ok) throw new Error("Failed to update habit");
 
-      setHabits((prevHabits) =>
+      setLocalHabits((prevHabits) =>
         prevHabits.map((habit) =>
           habit._id === habitId ? { ...habit, isComplete } : habit
         )

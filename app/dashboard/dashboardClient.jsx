@@ -7,7 +7,6 @@ import { toast } from "react-hot-toast";
 import Habits from "@/components/Habits";
 
 export default function Dashboard() {
-  ``;
   const [showPopup, setShowPopup] = useState(false); // State for showing/hiding the popup
   const [habitInputs, setHabitInputs] = useState([{ title: "", duration: "" }]); // State for habit inputs
   const [habits, setHabits] = useState([]); // State for habits
@@ -74,13 +73,21 @@ export default function Dashboard() {
 
         if (!response.ok) {
           throw new Error("Failed to add habit");
+        } else {
+          console.log("Added habitsssss in dash client.jsx");
+          // Immediately update the habits state with the new habit
+          setHabits((prevHabits) => [
+            ...prevHabits,
+            { title: input.title, duration: input.duration, isComplete: false },
+          ]);
         }
       }
 
       toast.success("Habits added successfully!");
       setShowPopup(false); // Close the popup
       setHabitInputs([{ title: "", duration: "" }]); // Reset the habit inputs
-      await fetchHabits();
+      await fetchHabits(); // Fetch updated habits
+      setCanAddHabits(false); // Disable adding more habits
     } catch (error) {
       toast.error(error.message);
     }
@@ -124,7 +131,11 @@ export default function Dashboard() {
             </div>
           </div>
 
-          <Habits habits={habits} deleteHabit={deleteHabit} />
+          <Habits
+            habits={habits}
+            deleteHabit={deleteHabit}
+            onHabitsChange={fetchHabits}
+          />
 
           {/* Popup */}
           {showPopup && (

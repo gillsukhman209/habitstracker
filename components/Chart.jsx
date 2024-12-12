@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 
-function HabitChart({ currentDay, missedDays }) {
+function HabitChart({ currentDay }) {
   const [completedDays, setCompletedDays] = useState([]);
 
   const fetchCompletedDays = async () => {
@@ -33,7 +33,7 @@ function HabitChart({ currentDay, missedDays }) {
         <div
           key={i}
           className={`
-            w-8 h-8 rounded-full transition-all duration-300
+            w-10 h-10 rounded-full transition-all duration-500 transform hover:scale-110
             ${isCompleted ? "bg-emerald-500" : "bg-gray-700"}
             ${
               isCurrent
@@ -52,10 +52,12 @@ function HabitChart({ currentDay, missedDays }) {
   };
 
   return (
-    <div className="w-full rounded-xl bg-gray-900 p-8 shadow-lg">
+    <div className="w-full h-[500px] rounded-xl bg-gray-900 p-10 shadow-lg ">
       <div className="mb-8 flex items-center justify-between">
-        <h3 className="text-lg font-medium text-gray-200">21 Days Progress</h3>
-        <span className="text-2xl font-bold text-emerald-500">
+        <h3 className="text-xl font-semibold text-gray-200">
+          21 Days Progress
+        </h3>
+        <span className="text-3xl font-bold text-emerald-500">
           {calculateProgress()}%
         </span>
       </div>
@@ -64,29 +66,18 @@ function HabitChart({ currentDay, missedDays }) {
       </div>
       <div className="mt-6 flex justify-center gap-6 text-sm text-gray-400">
         <div className="flex items-center gap-2">
-          <div className="h-3 w-3 rounded-full bg-emerald-500"></div>
+          <div className="h-4 w-4 rounded-full bg-emerald-500"></div>
           <span>Completed</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="h-3 w-3 rounded-full bg-red-500/50"></div>
+          <div className="h-4 w-4 rounded-full bg-red-500/50"></div>
           <span>Missed</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="h-3 w-3 rounded-full bg-gray-700"></div>
+          <div className="h-4 w-4 rounded-full bg-gray-700"></div>
           <span>Upcoming</span>
         </div>
       </div>
-      {/* Show all completed days
-      <div className="mt-6 flex flex-col gap-2">
-        Completed Days:
-        {completedDays.map((day) => (
-          <div key={day} className="text-gray-400">
-            Day {day}
-          </div>
-        ))}
-      </div> */}
-      {/* Missed Days */}
-      {/* <div className="mt-6 flex flex-col gap-2">Missed Days: {missedDays}</div> */}
     </div>
   );
 }

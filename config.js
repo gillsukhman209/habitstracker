@@ -2,10 +2,10 @@ import themes from "daisyui/src/theming/themes";
 
 const config = {
   // REQUIRED
-  appName: "Habit Builder",
+  appName: "21 Habits",
   // REQUIRED: a short description of your app for SEO tags (can be overwritten)
   appDescription:
-    "Stay motivated with random reminders, track your growth, and make habit-building an exciting part of your daily life",
+    "Add habits and challenge yourself to do them every day for 21 days",
   // REQUIRED (no https://, not trialing slash at the end, just the naked domain)
   domainName: "shipfa.st",
   crisp: {
@@ -33,7 +33,7 @@ const config = {
         priceAnchor: 99,
         features: [
           {
-            name: "Track up to 3 habits",
+            name: "Track unlimited habits",
           },
           { name: "Random reminders" },
           { name: "Basic analytics" },
@@ -74,9 +74,9 @@ const config = {
     // subdomain to use when sending emails, if you don't have a subdomain, just remove it. Highly recommended to have one (i.e. mg.yourdomain.com or mail.yourdomain.com)
     subdomain: "mg",
     // REQUIRED — Email 'From' field to be used when sending magic login links
-    fromNoReply: `Habit Builder <noreply@mg.shipfa.st>`,
+    fromNoReply: `21 Habits <noreply@mg.shipfa.st>`,
     // REQUIRED — Email 'From' field to be used when sending other emails, like abandoned carts, updates etc..
-    fromAdmin: `Marc at Habit Builder <marc@mg.shipfa.st>`,
+    fromAdmin: `Marc at 21 Habits <marc@mg.shipfa.st>`,
     // Email shown to customer if need support. Leave empty if not needed => if empty, set up Crisp above, otherwise you won't be able to offer customer support."
     supportEmail: "marc@mg.shipfa.st",
     // When someone replies to supportEmail sent by the app, forward it to the email below (otherwise it's lost). If you set supportEmail to empty, this will be ignored.

@@ -8,14 +8,14 @@ import Problem from "@/components/Problem";
 import FeaturesAccordion from "@/components/FeaturesAccordion";
 import Pricing from "@/components/Pricing";
 import FAQ from "@/components/FAQ";
-import CTA from "@/components/CTA";
+import { renderSchemaTags } from "@/libs/seo";
+
 import Footer from "@/components/Footer";
 
 export default function Home() {
-  const { data: session, status } = useSession();
+  const { data: status } = useSession();
   const router = useRouter();
   const [loading, setLoading] = useState(true);
-  const [hasPaid, setHasPaid] = useState(false);
 
   useEffect(() => {
     const checkAccess = async () => {
@@ -29,10 +29,8 @@ export default function Home() {
         const user = await response.json();
 
         if (user.hasAccess) {
-          setHasPaid(true);
           router.push("/dashboard");
         } else {
-          setHasPaid(false);
           setLoading(false);
         }
       } else {
@@ -53,6 +51,7 @@ export default function Home() {
 
   return (
     <>
+      {renderSchemaTags()}
       <Suspense>
         <Header />
       </Suspense>
