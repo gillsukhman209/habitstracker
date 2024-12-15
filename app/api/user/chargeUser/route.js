@@ -69,7 +69,7 @@ export async function POST(req) {
 
     console.log("charging user");
 
-    const today = "12/19/2024";
+    const today = "12/15/2024";
 
     // Generate an idempotency key based on user ID and current date
     const idempotencyKey = `${user.id}-${today}`;
