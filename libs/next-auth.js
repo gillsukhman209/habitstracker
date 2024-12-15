@@ -24,16 +24,9 @@ export const authOptions = {
     }),
     // Follow the "Login with Email" tutorial to set up your email server
     // Requires a MongoDB database. Set MONOGODB_URI env variable.
-    ...(connectMongo
-      ? [
-          EmailProvider({
-            server: process.env.EMAIL_SERVER,
-            from: config.mailgun.fromNoReply,
-          }),
-        ]
-      : []),
   ],
-  // New users will be saved in Database (MongoDB Atlas). Each user (model) has some fields like name, email, image, etc..
+  // New users will be saved in Database (MongoDB Atlas).
+  // Each user model has fields like name, email, image, etc.
   // Requires a MongoDB database. Set MONOGODB_URI env variable.
   // Learn more about the model type: https://next-auth.js.org/v3/adapters/models
   ...(connectMongo && { adapter: MongoDBAdapter(connectMongo) }),
@@ -51,8 +44,7 @@ export const authOptions = {
   },
   theme: {
     brandColor: config.colors.main,
-    // Add you own logo below. Recommended size is rectangle (i.e. 200x50px) and show your logo + name.
-    // It will be used in the login flow to display your logo. If you don't add it, it will look faded.
-    logo: `https://${config.domainName}/logoAndName.png`,
+    // Use the URL path to the logo instead of importing
+    logo: "/appLogo.png",
   },
 };

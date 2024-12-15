@@ -1,6 +1,7 @@
 import config from "@/config";
 import ButtonCheckout from "./ButtonCheckout";
 import { useSession } from "next-auth/react";
+import ButtonSignin from "./ButtonSignin";
 
 // <Pricing/> displays the pricing plan for your app
 // It's your Stripe config in config.js.stripe.plans that will be used to display the plan
@@ -90,18 +91,21 @@ const Pricing = () => {
               )}
               <div className="flex flex-col items-center space-y-2">
                 {session ? (
-                  <ButtonCheckout
-                    priceId={plan.priceId}
-                    className="btn btn-primary transition-transform transform hover:scale-105 active:scale-95 shadow-lg rounded-lg"
-                  />
+                  <div>
+                    <ButtonCheckout
+                      priceId={plan.priceId}
+                      className="btn btn-primary transition-transform transform hover:scale-105 active:scale-95 shadow-lg rounded-lg"
+                    />
+                    <p className="text-sm text-center text-base-content/80 font-medium">
+                      Pay once. Access forever.
+                    </p>
+                  </div>
                 ) : (
-                  <p className="text-red-500 text-center font-semibold">
-                    Please log in to purchase this plan.
-                  </p>
+                  <ButtonSignin
+                    extraStyle="btn-primary"
+                    text="Login / Signup"
+                  />
                 )}
-                <p className="text-sm text-center text-base-content/80 font-medium">
-                  Pay once. Access forever.
-                </p>
               </div>
             </div>
           </div>

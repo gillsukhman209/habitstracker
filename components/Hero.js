@@ -1,9 +1,14 @@
 import Image from "next/image";
 import TestimonialsAvatars from "./TestimonialsAvatars";
 import config from "@/config";
-import ButtonLead from "@/components/ButtonLead";
+import ButtonCheckout from "./ButtonCheckout";
+import { useSession } from "next-auth/react";
+import ButtonSignin from "./ButtonSignin";
 
 const Hero = () => {
+  const plan = config.stripe.plans[0];
+  const { data: session } = useSession();
+
   return (
     <section className="max-w-7xl mx-auto bg-base-100 flex flex-col lg:flex-row items-center justify-center gap-16 lg:gap-20 px-8 py-8 lg:py-20">
       <div className="flex flex-col gap-10 lg:gap-14 items-center justify-center text-center lg:text-left lg:items-start">
@@ -30,7 +35,21 @@ const Hero = () => {
           Stay motivated with random reminders, track your growth, and make
           habit-building an exciting part of your daily life
         </p>
-        <button className="btn btn-primary btn-wide">Get 21 Habits</button>
+        <div className="flex flex-col items-center space-y-2">
+          {session ? (
+            <div>
+              <ButtonCheckout
+                priceId={plan.priceId}
+                className="btn btn-primary transition-transform transform hover:scale-105 active:scale-95 shadow-lg rounded-lg"
+              />
+              <p className="text-sm text-center text-base-content/80 font-medium">
+                Pay once. Access forever.
+              </p>
+            </div>
+          ) : (
+            <ButtonSignin extraStyle="btn-primary" text="Buy 21 Habits" />
+          )}
+        </div>
 
         <TestimonialsAvatars priority={true} />
       </div>
