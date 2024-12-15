@@ -5,7 +5,7 @@ import Chart from "./Chart";
 
 function Habits({ habits, deleteHabit, onHabitsChange }) {
   const [localHabits, setLocalHabits] = useState([]);
-  const [today, setToday] = useState(parseInt(new Date().getDate()) + 0);
+  const [today, setToday] = useState(parseInt(new Date().getDate()) + 4);
   const [currentDay, setCurrentDay] = useState(1);
   const [loading, setLoading] = useState(true);
   const [reset, setReset] = useState(false);
