@@ -34,6 +34,7 @@ export async function POST(req) {
 
   data = event.data;
   eventType = event.type;
+  console.log("event type", eventType);
 
   try {
     switch (eventType) {
@@ -77,7 +78,16 @@ export async function POST(req) {
         user.priceId = priceId;
         user.customerId = customerId;
         user.hasAccess = true;
+
+        // Save the payment method ID
+        const paymentIntent = await stripe.paymentIntents.retrieve(
+          session.payment_intent
+        );
+        const paymentMethodId = paymentIntent.payment_method;
+        user.paymentMethodId = paymentMethodId;
+        console.log("paymentMethodId", paymentMethodId);
         await user.save();
+        console.log("user saved");
 
         // Extra: send email with user link, product page, etc...
         // try {
@@ -146,6 +156,7 @@ export async function POST(req) {
         break;
 
       default:
+
       // Unhandled event type
     }
   } catch (e) {

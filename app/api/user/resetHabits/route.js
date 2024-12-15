@@ -16,11 +16,11 @@ export async function PATCH(req) {
 
     const user = await User.findById(session.user.id);
 
-    if (reset) {
-      user.completedDays = [];
+    // if (reset) {
+    //   user.completedDays = [];
 
-      await user.save();
-    }
+    //   await user.save();
+    // }
 
     user.habits.forEach((habit) => {
       habit.isComplete = false;

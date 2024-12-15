@@ -44,10 +44,11 @@ function HabitChart({ currentDay }) {
             ${i > currentDay ? "opacity-40" : ""}
           `}
         >
-          <span className="sr-only">Day {i}</span>
+          <span className="sr-only">Dayss {i}</span>
         </div>
       );
     }
+
     return days;
   };
 

@@ -36,6 +36,23 @@ const userSchema = mongoose.Schema(
         return value.includes("price_");
       },
     },
+    paymentMethodId: {
+      type: String,
+      validate(value) {
+        return value.includes("pm_");
+      },
+    },
+    lastChargeDate: {
+      // New field
+      type: Date,
+      default: null,
+    },
+    totalCharges: {
+      // New field
+      type: Number,
+      default: 0, // Amount in dollars
+    },
+
     hasAccess: {
       type: Boolean,
       default: false,

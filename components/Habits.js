@@ -6,11 +6,13 @@ import Chart from "./Chart";
 function Habits({ habits, deleteHabit, onHabitsChange }) {
   const [localHabits, setLocalHabits] = useState([]);
   const [today, setToday] = useState(parseInt(new Date().getDate()) + 0);
-  // const [today, setToday] = useState(13);
   const [currentDay, setCurrentDay] = useState(1);
   const [loading, setLoading] = useState(true);
   const [reset, setReset] = useState(false);
   const [missedDays, setMissedDays] = useState(0);
+
+  const [lastChargeDate, setLastChargeDate] = useState(null);
+  const [totalCharges, setTotalCharges] = useState(0);
 
   const [confirmModal, setConfirmModal] = useState({
     open: false,
@@ -29,21 +31,32 @@ function Habits({ habits, deleteHabit, onHabitsChange }) {
 
       if (data.habits[0]?.dateAdded) {
         const firstHabitDate = new Date(data.habits[0]?.dateAdded).getDate();
-        calculateDay(data.lastResetDate, parseInt(firstHabitDate));
+        calculateDay(
+          data.lastResetDate,
+          parseInt(firstHabitDate),
+          data.customerId,
+          data.completedDays
+        );
       } else {
-        calculateDay(data.lastResetDate, 1);
+        calculateDay(
+          data.lastResetDate,
+          1,
+          data.customerId,
+          data.completedDays
+        );
       }
     } finally {
       setLoading(false);
     }
   };
 
-  const calculateDay = async (resetDate, firstHabitDay) => {
-    const response = await fetch("/api/user/getDays");
-    if (!response.ok) throw new Error("Failed to fetch completed days");
-    const data = await response.json();
-    const completedDays = data.completedDays || [];
-
+  const calculateDay = async (
+    resetDate,
+    firstHabitDay,
+    customerId,
+    completedDays
+  ) => {
+    // New day
     if (today !== resetDate) {
       const response = await fetch("/api/user/resetHabits", {
         method: "PATCH",
@@ -57,29 +70,26 @@ function Habits({ habits, deleteHabit, onHabitsChange }) {
     }
 
     if (firstHabitDay === 1) {
+      console.log("firstHabitDay", firstHabitDay);
       setCurrentDay(1);
       return;
     }
 
     const currentDay = today - firstHabitDay + 1;
+    console.log("currentDay", currentDay, firstHabitDay);
     setCurrentDay(currentDay);
 
-    const missedDays = currentDay - 1 - completedDays.length;
-    setMissedDays(missedDays);
-
-    if (missedDays > 2) {
-      const resetResponse = await fetch("/api/user/resetHabits", {
-        method: "PATCH",
-        body: JSON.stringify({ reset: true }),
-        headers: {
-          "Content-Type": "application/json",
-        },
+    // Check if yesterday was completed if not then charge user
+    if (!completedDays.includes(currentDay - 1) && currentDay - 1 > 0) {
+      const response = await fetch("/api/user/chargeUser", {
+        method: "POST",
+        body: JSON.stringify({ day: currentDay - 1 }),
       });
-      setCurrentDay(1);
-      setReset(true);
 
-      if (!resetResponse.ok) throw new Error("Failed to reset habits");
-      return;
+      const data = await response.json();
+      if (data.message) {
+        toast.success(data.message);
+      }
     }
   };
 
@@ -112,7 +122,6 @@ function Habits({ habits, deleteHabit, onHabitsChange }) {
   const handleCheckboxClick = (habit) => {
     if (!habit.isComplete) {
       setConfirmModal({ open: true, habit });
-      updateCompletedDays(currentDay);
     }
   };
 
@@ -134,9 +143,21 @@ function Habits({ habits, deleteHabit, onHabitsChange }) {
     }
   };
 
-  const confirmHabitCompletion = () => {
+  const confirmHabitCompletion = async () => {
     const { habit } = confirmModal;
-    updateHabit(habit._id, true);
+    await updateHabit(habit._id, true);
+
+    // Check if all habits are complete
+    const allHabitsComplete = localHabits.every(
+      (h) => h.isComplete || h._id === habit._id
+    );
+    console.log("allHabitsComplete", allHabitsComplete);
+
+    if (allHabitsComplete) {
+      console.log("Updating completed days", currentDay);
+      updateCompletedDays(currentDay);
+    }
+
     setConfirmModal({ open: false, habit: null });
   };
 
@@ -163,7 +184,9 @@ function Habits({ habits, deleteHabit, onHabitsChange }) {
       ) : (
         <>
           <div className="text-center text-white mb-4">
-            <h2 className="text-xl font-bold">Day {currentDay} / 21</h2>
+            <h2 className="text-xl font-bold">
+              Day {currentDay} / 21 date {today}
+            </h2>
           </div>
           {habits.length > 0 ? (
             habits.map((habit) => (
@@ -195,12 +218,11 @@ function Habits({ habits, deleteHabit, onHabitsChange }) {
           ) : (
             <p className="text-gray-400 text-center">No habits found</p>
           )}
-          <Chart
-            habits={habits}
-            currentDay={currentDay}
-            reset={reset}
-            missedDays={missedDays}
-          />
+          <div className="text-center text-white mb-4">
+            <p>Last charge date: {lastChargeDate}</p>
+            <p>Total charges: ${totalCharges}</p>
+          </div>
+          <Chart habits={habits} currentDay={currentDay} reset={reset} />
           {confirmModal.open && (
             <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50">
               <div className="bg-white p-6 rounded-md shadow-lg w-96">

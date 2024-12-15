@@ -18,10 +18,13 @@ export async function GET() {
     if (!user) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
+    console.log("returning customerId", user.customerId);
 
     return NextResponse.json({
       habits: user.habits,
       lastResetDate: user.lastResetDate,
+      customerId: user.customerId,
+      completedDays: user.completedDays,
     });
   } catch (error) {
     console.error(error);

@@ -1,4 +1,5 @@
 import themes from "daisyui/src/theming/themes";
+import Stripe from "stripe";
 
 const config = {
   // REQUIRED
@@ -21,16 +22,16 @@ const config = {
         // REQUIRED — we use this to find the plan in the webhook (for instance if you want to update the user's credits based on the plan)
         priceId:
           process.env.NODE_ENV === "development"
-            ? "price_1QSN6JBCsrkMKvKtyl8cE95c"
+            ? "price_1QVefGBCsrkMKvKtXtQnxLkc"
             : "price_456",
         //  REQUIRED - Name of the plan, displayed on the pricing page
-        name: "Starter",
+        name: "Commitment Plan",
         // A friendly description of the plan, displayed on the pricing page. Tip: explain why this plan and not others
         description: "Perfect for small projects",
         // The price you want to display, the one user will be charged on Stripe.
-        price: 79,
+        price: 20,
         // If you have an anchor price (i.e. $29) that you want to display crossed out, put it here. Otherwise, leave it empty
-        priceAnchor: 99,
+        priceAnchor: 39,
         features: [
           {
             name: "Track unlimited habits",
@@ -38,28 +39,6 @@ const config = {
           { name: "Random reminders" },
           { name: "Basic analytics" },
           { name: "Email support" },
-        ],
-      },
-      {
-        // This plan will look different on the pricing page, it will be highlighted. You can only have one plan with isFeatured: true
-        isFeatured: true,
-        priceId:
-          process.env.NODE_ENV === "development"
-            ? "price_1QSN6UBCsrkMKvKtrGsffdQK"
-            : "price_456",
-        name: "Advanced",
-        description: "You need more power",
-        price: 99,
-        priceAnchor: 149,
-        features: [
-          {
-            name: "NextJS boilerplate",
-          },
-          { name: "User oauth" },
-          { name: "Database" },
-          { name: "Emails" },
-          { name: "1 year of updates" },
-          { name: "24/7 support" },
         ],
       },
     ],
@@ -96,5 +75,10 @@ const config = {
     callbackUrl: "/dashboard",
   },
 };
+
+// Initialize Stripe with your secret key
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+
+// Function to charge user for missed days
 
 export default config;

@@ -28,6 +28,7 @@
     "nextjs-toploader": "^1.6.11",
     "node-cron": "^3.0.3",
     "nodemailer": "^6.9.13",
+    "punycode": "^2.3.1",
     "react": "18.2.0",
     "react-chartjs-2": "^5.2.0",
     "react-dom": "18.2.0",

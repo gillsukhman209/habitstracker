@@ -93,10 +93,11 @@ const Header = () => {
           ))}
         </div>
 
-        {/* CTA on large screens */}
+        {/* User email display and CTA on large screens */}
         <div className="hidden lg:flex lg:justify-end lg:flex-1">
           {session ? (
             <>
+              <span className="mr-4 text-base">{session.user.email}</span>
               <button
                 type="button"
                 className="btn btn-outline btn-primary transition duration-300 ease-in-out hover:bg-primary hover:text-white"
@@ -179,6 +180,7 @@ const Header = () => {
             <div className="flex flex-col">
               {session ? (
                 <>
+                  <span className="mb-4 text-base">{session.user.email}</span>
                   <button
                     type="button"
                     className="btn btn-outline btn-primary transition duration-300 ease-in-out hover:bg-primary hover:text-white"
