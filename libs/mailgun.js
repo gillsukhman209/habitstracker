@@ -1,29 +1,20 @@
-import config from "@/config";
-import FormData from "form-data";
-import Mailgun from "mailgun.js";
-
-// Initialize Mailgun with form-data
-const mailgun = new Mailgun(FormData);
-
-// Create a Mailgun client
-
-const mg = mailgun.client({
-  username: "api",
-  key:
-    process.env.MAILGUN_API_KEY ||
-    "b818e5f759c9a5ca26c6637b7cb08840-0920befd-0b3cb324",
-});
-
-console.log("MAILGUN_API_KEY", process.env.MAILGUN_API_KEY);
+import { Resend } from "resend";
 
 export const sendEmail = async ({ to }) => {
-  await mg.messages
-    .create("mg.21habits.co", {
-      from: config.mailgun.fromAdmin,
-      to: to,
-      subject: "Don't forget to work on your habits today!",
-      text: "This is a friendly reminder to work on your habits today, or else you will be charged",
-    })
-    .then((msg) => console.log(msg)) // logs response data
-    .catch((err) => console.log(err)); // logs any errorch(err => console.log(err)); // logs any error
+  const resend = new Resend("re_gfhxaFEr_PG6yUsxb1Ewp17NcNQZLMFd8");
+
+  try {
+    const response = await resend.emails.send({
+      from: "Acme <onboarding@resend.dev>", // Must be a verified email address in Resend
+      to: "sukhmansingh1603@gmail.com", // Recipient email address
+      subject: "Hello World",
+      html: "<p>Congrats on sending your <strong>first email</strong>!</p>",
+    });
+
+    console.log("Email sent successfully:", response);
+    return response;
+  } catch (error) {
+    console.error("Error sending email:", error);
+    throw error;
+  }
 };

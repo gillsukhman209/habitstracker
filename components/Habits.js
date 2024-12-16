@@ -177,15 +177,13 @@ function Habits({ habits, deleteHabit, onHabitsChange }) {
   };
 
   const handleSendEmail = async () => {
-    try {
-      await sendEmail({
-        to: session.user.email, // Use the current user's email
-      });
-      toast.success("Email sent successfully!");
-    } catch (error) {
-      toast.error("Failed to send email");
-      console.error("Error sending email:", error);
-    }
+    // api call to send email
+    const response = await fetch("/api/resend/", {
+      method: "POST",
+      body: JSON.stringify({ to: session.user.email }),
+    });
+    const data = await response.json();
+    console.log("data", data);
   };
 
   useEffect(() => {
