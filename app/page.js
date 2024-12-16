@@ -31,7 +31,6 @@ export default function Home() {
         if (user.hasAccess) {
           router.push("/dashboard");
         } else {
-          alert("no");
           setLoading(false);
         }
       } else {

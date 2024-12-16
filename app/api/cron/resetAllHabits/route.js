@@ -14,17 +14,28 @@ export async function POST(request) {
     for (const user of users) {
       if (user.habits) {
         const firstHabitDate = user.habits[0].dateAdded.getDate();
-        console.log("firstHabitDate", firstHabitDate);
-        const today = parseInt(new Date().getDate()) + 3;
 
-        console.log("today", today);
+        const today = parseInt(new Date().getDate()) + 5;
 
         const currentDay = today - firstHabitDate;
-        console.log("currentDay in resetAllHabits", currentDay);
+
         // Check if user has compelted all the habits for today if so then add currentDay to winning streak
-        console.log("user completed days", user.completedDays);
+
         if (user.habits.every((habit) => habit.isComplete)) {
           user.completedDays.push(currentDay);
+        } else {
+          // Charge user
+          console.log("charging user in resetAllHabits for day", currentDay);
+          const response = await fetch(
+            "http://localhost:3000/api/user/chargeUser",
+            {
+              method: "POST",
+              body: JSON.stringify({
+                day: currentDay,
+                userId: user._id,
+              }),
+            }
+          );
         }
       }
 

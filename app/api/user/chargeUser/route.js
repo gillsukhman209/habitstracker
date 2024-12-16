@@ -1,29 +1,25 @@
 import { NextResponse } from "next/server";
 import connectMongo from "@/libs/mongoose";
 import User from "@/models/User";
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/libs/next-auth";
+
 import Stripe from "stripe";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY); // Initialize Stripe with your secret key
 
 export async function POST(req) {
   try {
+    console.log("chargeUser route called");
     await connectMongo();
-    const session = await getServerSession(authOptions);
 
-    if (!session || !session.user?.id) {
-      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
-    }
+    const { userId, day } = await req.json();
 
-    const user = await User.findById(session.user.id);
-
-    if (!user) {
+    if (!userId || !day) {
       return NextResponse.json(
         { message: "User not found in chargeUser.js" },
         { status: 404 }
       );
     }
+    const user = await User.findById(userId);
 
     const customerId = user.customerId; // Get the customer's ID from the user object
     const priceId = user.priceId;
@@ -54,22 +50,13 @@ export async function POST(req) {
       );
     }
 
-    const amount = 140000;
+    const amount = 12000;
 
     // Get the day object from the request
-    const { day } = await req.json();
 
-    // Check if the day is in the user's completed days
-    if (user.completedDays.includes(day)) {
-      return NextResponse.json(
-        { message: "User has already completed this day" },
-        { status: 400 }
-      );
-    }
+    console.log("day received in chargeUser", day);
 
-    console.log("charging user");
-
-    const today = "12/15/2024";
+    const today = "12/21/2024";
 
     // Generate an idempotency key based on user ID and current date
     const idempotencyKey = `${user.id}-${today}`;
