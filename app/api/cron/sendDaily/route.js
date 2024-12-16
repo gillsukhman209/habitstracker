@@ -11,7 +11,7 @@ const resend = new Resend(process.env.RESEND_API_KEY);
  * @returns {Response} - The response object with status and message.
  */
 
-export const maxDuration = 1000;
+export const maxDuration = 60;
 export async function GET() {
   try {
     console.log("Connecting to MongoDB...");
