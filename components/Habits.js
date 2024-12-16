@@ -2,17 +2,14 @@ import React, { useState, useEffect } from "react";
 import { toast } from "react-hot-toast";
 import { FaRegTrashAlt } from "react-icons/fa";
 import Chart from "./Chart";
-import { sendEmail } from "@/libs/mailgun"; // Import the sendEmail function
+
 import { useSession } from "next-auth/react";
 function Habits({ habits, deleteHabit, onHabitsChange }) {
   const [localHabits, setLocalHabits] = useState([]);
-  const [today, setToday] = useState(parseInt(new Date().getDate()) + 0);
+  const [today, setToday] = useState(parseInt(new Date().getDate()) + 3);
   const [currentDay, setCurrentDay] = useState(1);
   const [loading, setLoading] = useState(true);
-  const [reset, setReset] = useState(false);
-  const [missedDays, setMissedDays] = useState(0);
 
-  const [lastChargeDate, setLastChargeDate] = useState(null);
   const [totalCharges, setTotalCharges] = useState(0);
   const { data: session } = useSession();
 
@@ -33,71 +30,29 @@ function Habits({ habits, deleteHabit, onHabitsChange }) {
 
       if (data.habits[0]?.dateAdded) {
         const firstHabitDate = new Date(data.habits[0]?.dateAdded).getDate();
-        calculateDay(
-          data.lastResetDate,
-          parseInt(firstHabitDate),
-          data.customerId,
-          data.completedDays
-        );
+        setCurrentDay(today - firstHabitDate + 1);
       } else {
-        calculateDay(
-          data.lastResetDate,
-          1,
-          data.customerId,
-          data.completedDays
-        );
+        alert("no habits found setting current day to 1");
+        setCurrentDay(1);
       }
     } finally {
       setLoading(false);
     }
   };
 
-  const calculateDay = async (
-    resetDate,
-    firstHabitDay,
-    customerId,
-    completedDays
-  ) => {
-    // New day
-    if (today !== resetDate) {
-      const response = await fetch("/api/user/resetHabits", {
-        method: "PATCH",
-        body: JSON.stringify({ reset: false }),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      if (!response.ok) throw new Error("Failed to reset habits in habits.js");
-      setReset(true);
+  const chargeUser = async () => {
+    const response = await fetch("/api/user/chargeUser", {
+      method: "POST",
+      body: JSON.stringify({ day: currentDay - 1 }),
+    });
+    const data = await response.json();
+    if (data.message) {
+      toast.success(data.message);
     }
-
-    if (firstHabitDay === 1) {
-      console.log("firstHabitDay", firstHabitDay);
-      setCurrentDay(1);
-      return;
-    }
-
-    const currentDay = today - firstHabitDay + 1;
-    console.log("currentDay", currentDay, firstHabitDay);
-    setCurrentDay(currentDay);
-
-    // Check if yesterday was completed if not then charge user
-    if (!completedDays.includes(currentDay - 1) && currentDay - 1 > 0) {
-      const response = await fetch("/api/user/chargeUser", {
-        method: "POST",
-        body: JSON.stringify({ day: currentDay - 1 }),
-      });
-
-      const data = await response.json();
-      if (data.message) {
-        toast.success(data.message);
-      }
-      if (data.totalCharges) {
-        setTotalCharges(data.totalCharges);
-      }
+    if (data.totalCharges) {
+      setTotalCharges(data.totalCharges);
     }
   };
-
   const updateHabit = async (habitId, isComplete) => {
     try {
       const response = await fetch("/api/user/updateHabit", {
@@ -152,17 +107,6 @@ function Habits({ habits, deleteHabit, onHabitsChange }) {
     const { habit } = confirmModal;
     await updateHabit(habit._id, true);
 
-    // Check if all habits are complete
-    const allHabitsComplete = localHabits.every(
-      (h) => h.isComplete || h._id === habit._id
-    );
-    console.log("allHabitsComplete", allHabitsComplete);
-
-    if (allHabitsComplete) {
-      console.log("Updating completed days", currentDay);
-      updateCompletedDays(currentDay);
-    }
-
     setConfirmModal({ open: false, habit: null });
   };
 
@@ -182,6 +126,20 @@ function Habits({ habits, deleteHabit, onHabitsChange }) {
       method: "POST",
       body: JSON.stringify({ to: session.user.email }),
     });
+  };
+
+  const handleResetHabits = async () => {
+    try {
+      const response = await fetch("/api/cron/resetAllHabits", {
+        method: "POST",
+      });
+      if (!response.ok) throw new Error("Failed to reset habits");
+      toast.success("Habits reset successfully!");
+      await fetchHabits();
+    } catch (error) {
+      toast.error("Failed to reset habits");
+      console.error("Error resetting habits:", error);
+    }
   };
 
   useEffect(() => {
@@ -206,6 +164,12 @@ function Habits({ habits, deleteHabit, onHabitsChange }) {
             className="mb-4 px-4 py-2 bg-green-500 text-white rounded-md"
           >
             Send Email
+          </button>
+          <button
+            onClick={handleResetHabits}
+            className="mb-4 px-4 py-2 bg-red-500 text-white rounded-md"
+          >
+            Reset All Habits
           </button>
           {habits.length > 0 ? (
             habits.map((habit) => (
@@ -238,10 +202,9 @@ function Habits({ habits, deleteHabit, onHabitsChange }) {
             <p className="text-gray-400 text-center">No habits found</p>
           )}
           <div className="text-center text-white mb-4">
-            <p>Last charge date: {lastChargeDate}</p>
             <p>Total charges: ${totalCharges}</p>
           </div>
-          <Chart habits={habits} currentDay={currentDay} reset={reset} />
+          <Chart habits={habits} currentDay={currentDay} />
           {confirmModal.open && (
             <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50">
               <div className="bg-white p-6 rounded-md shadow-lg w-96">

@@ -1,14 +1,56 @@
-// Reset everyone's habits and update their completed days
-import { Resend } from "resend";
 import connectMongo from "@/libs/mongoose";
 import User from "@/models/User";
 
 export async function POST(request) {
+  console.log("Resetting all habits api");
   try {
+    // Connect to MongoDB
     await connectMongo();
+
+    // Fetch all users
     const users = await User.find({});
+    console.log("users", users.length);
+    // Loop through each user and reset their habits
+    for (const user of users) {
+      if (user.habits) {
+        const firstHabitDate = user.habits[0].dateAdded.getDate();
+        console.log("firstHabitDate", firstHabitDate);
+        const today = parseInt(new Date().getDate()) + 3;
+
+        console.log("today", today);
+
+        const currentDay = today - firstHabitDate;
+        console.log("currentDay in resetAllHabits", currentDay);
+        // Check if user has compelted all the habits for today if so then add currentDay to winning streak
+        console.log("user completed days", user.completedDays);
+        if (user.habits.every((habit) => habit.isComplete)) {
+          user.completedDays.push(currentDay);
+        }
+      }
+
+      user.habits.forEach((habit) => {
+        habit.isComplete = false;
+      });
+
+      // Save the updated user document
+      await user.save();
+    }
+
+    // Send a response back
+    return new Response(
+      JSON.stringify({
+        success: true,
+        message: `Habits reset for ${users.length} users`,
+      }),
+      {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      }
+    );
   } catch (error) {
     console.error("Error resetting habits:", error);
+
+    // Handle errors
     return new Response(JSON.stringify({ error: "Failed to reset habits" }), {
       status: 500,
       headers: { "Content-Type": "application/json" },
