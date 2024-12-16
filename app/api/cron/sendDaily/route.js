@@ -1,7 +1,6 @@
 import { Resend } from "resend";
 import connectMongo from "@/libs/mongoose";
 import User from "@/models/User";
-import pLimit from "p-limit";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -32,17 +31,14 @@ export async function GET() {
     }
 
     console.log(`Found ${users.length} users. Sending emails...`);
-    const limit = pLimit(CONCURRENT_LIMIT);
 
     const emailPromises = users.map((user) =>
-      limit(() =>
-        resend.emails.send({
-          from: "21habits <onboarding@21habits.co>",
-          to: user.email,
-          subject: "21habits Reminder",
-          html: `<p>Don't forget to complete your daily habits!</p>`,
-        })
-      )
+      resend.emails.send({
+        from: "21habits <onboarding@21habits.co>",
+        to: user.email,
+        subject: "21habits Reminder",
+        html: `<p>Don't forget to complete your daily habits!</p>`,
+      })
     );
 
     await Promise.all(emailPromises);
