@@ -178,12 +178,10 @@ function Habits({ habits, deleteHabit, onHabitsChange }) {
 
   const handleSendEmail = async () => {
     // api call to send email
-    const response = await fetch("/api/resend/", {
+    const response = await fetch("/api/cron/sendDaily", {
       method: "POST",
       body: JSON.stringify({ to: session.user.email }),
     });
-    const data = await response.json();
-    console.log("data", data);
   };
 
   useEffect(() => {
