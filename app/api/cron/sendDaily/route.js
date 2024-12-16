@@ -4,8 +4,15 @@ import User from "@/models/User";
 import pLimit from "p-limit";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
-const CONCURRENT_LIMIT = 5;
 
+/**
+ * Handles POST requests to send an email via Resend.
+ *
+ * @param {Request} request - The incoming request object.
+ * @returns {Response} - The response object with status and message.
+ */
+
+export const maxDuration = 1000;
 export async function GET() {
   try {
     console.log("Connecting to MongoDB...");
