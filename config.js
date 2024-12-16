@@ -23,7 +23,7 @@ const config = {
         priceId:
           process.env.NODE_ENV === "development"
             ? "price_1QVefGBCsrkMKvKtXtQnxLkc"
-            : "price_456",
+            : "price_1QVefGBCsrkMKvKtXtQnxLkc",
         //  REQUIRED - Name of the plan, displayed on the pricing page
         name: "Commitment Plan",
         // A friendly description of the plan, displayed on the pricing page. Tip: explain why this plan and not others
