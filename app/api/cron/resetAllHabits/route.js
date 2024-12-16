@@ -15,7 +15,7 @@ export async function POST(request) {
       if (user.habits) {
         const firstHabitDate = user.habits[0].dateAdded.getDate();
 
-        const today = parseInt(new Date().getDate()) + 5;
+        const today = parseInt(new Date().getDate()) + 6;
 
         const currentDay = today - firstHabitDate;
 

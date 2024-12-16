@@ -50,13 +50,13 @@ export async function POST(req) {
       );
     }
 
-    const amount = 12000;
+    const amount = 18000;
 
     // Get the day object from the request
 
     console.log("day received in chargeUser", day);
 
-    const today = "12/21/2024";
+    const today = "12/22/2024";
 
     // Generate an idempotency key based on user ID and current date
     const idempotencyKey = `${user.id}-${today}`;

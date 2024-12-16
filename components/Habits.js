@@ -6,7 +6,7 @@ import Chart from "./Chart";
 import { useSession } from "next-auth/react";
 function Habits({ habits, deleteHabit, onHabitsChange }) {
   const [localHabits, setLocalHabits] = useState([]);
-  const [today, setToday] = useState(parseInt(new Date().getDate()) + 5);
+  const [today, setToday] = useState(parseInt(new Date().getDate()) + 6);
   const [currentDay, setCurrentDay] = useState(1);
   const [loading, setLoading] = useState(true);
 
