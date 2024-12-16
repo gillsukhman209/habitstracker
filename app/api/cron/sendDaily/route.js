@@ -5,15 +5,6 @@ import User from "@/models/User";
 // Initialize Resend with the API key
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-// Utility function to chunk an array into smaller arrays of a specified size
-const chunkArray = (array, size) => {
-  const result = [];
-  for (let i = 0; i < array.length; i += size) {
-    result.push(array.slice(i, i + size));
-  }
-  return result;
-};
-
 export async function GET() {
   try {
     // Establish or reuse existing MongoDB connection
@@ -38,25 +29,20 @@ export async function GET() {
     // Define the concurrency limit based on Resend API rate limits
     const CONCURRENT_LIMIT = 50; // Adjust this value as needed
 
-    // Chunk the users array to control the number of concurrent email sends
-    const userChunks = chunkArray(users, CONCURRENT_LIMIT);
+    // Send emails concurrently without chunking
+    const emailPromises = users.map((user) =>
+      resend.emails.send({
+        from: "21habits <onboarding@21habits.co>",
+        to: user.email,
+        subject: "21habits Reminder",
+        html: `
+          <p>Don't forget to complete your daily habits!</p>
+        `,
+      })
+    );
 
-    // Iterate over each chunk and send emails concurrently within the limit
-    for (const chunk of userChunks) {
-      const emailPromises = chunk.map((user) =>
-        resend.emails.send({
-          from: "21habits <onboarding@21habits.co>",
-          to: user.email,
-          subject: "21habits Reminder",
-          html: `
-            <p>Don't forget to complete your daily habits!</p>
-          `,
-        })
-      );
-
-      // Await all email sends in the current chunk before proceeding
-      await Promise.all(emailPromises);
-    }
+    // Await all email sends concurrently
+    await Promise.all(emailPromises);
 
     // Return a success response after all emails have been sent
     return new Response(
