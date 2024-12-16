@@ -50,13 +50,13 @@ export async function POST(req) {
       );
     }
 
-    const amount = 18000;
+    const amount = 1500;
 
-    // Get the day object from the request
-
-    console.log("day received in chargeUser", day);
-
-    const today = "12/22/2024";
+    const today = new Date().toLocaleDateString("en-US", {
+      month: "2-digit",
+      day: "2-digit",
+      year: "numeric",
+    });
 
     // Generate an idempotency key based on user ID and current date
     const idempotencyKey = `${user.id}-${today}`;
@@ -78,8 +78,6 @@ export async function POST(req) {
       );
 
       // Update the user record with charge details
-
-      user.totalCharges = (user.totalCharges || 0) + amount / 100; // Convert to dollars
 
       await user.save();
 

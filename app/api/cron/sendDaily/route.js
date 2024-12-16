@@ -9,12 +9,11 @@ const resend = new Resend(process.env.RESEND_API_KEY);
  * @param {Request} request - The incoming request object.
  * @returns {Response} - The response object with status and message.
  */
-export async function POST(request) {
+export async function POST() {
   try {
     // Get all users email
     await connectMongo();
     const users = await User.find({});
-    console.log("users", users);
 
     const emailPromises = users.map((user) => {
       return resend.emails.send({

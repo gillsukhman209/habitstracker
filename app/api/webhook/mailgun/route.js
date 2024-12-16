@@ -4,7 +4,7 @@ import config from "@/config";
 import crypto from "crypto";
 
 // This route is used to receive emails from Mailgun and forward them to our customer support email.
-// See more: https://shipfa.st/docs/features/emails
+// See more: https://21habits.co/docs/features/emails
 export async function POST(req) {
   try {
     const formData = await req.formData();

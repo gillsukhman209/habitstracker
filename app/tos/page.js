@@ -12,14 +12,14 @@ import config from "@/config";
 // You are an excellent lawyer.
 
 // I need your help to write a simple Terms & Services for my website. Here is some context:
-// - Website: https://shipfa.st
+// - Website: https://21habits.co
 // - Name: 21 Habits
-// - Contact information: marc@shipfa.st
+// - Contact information: marc@21habits.co
 // - Description: A JavaScript code boilerplate to help entrepreneurs launch their startups faster
 // - Ownership: when buying a package, users can download code to create apps. They own the code but they do not have the right to resell it. They can ask for a full refund within 7 day after the purchase.
 // - User data collected: name, email and payment information
 // - Non-personal data collection: web cookies
-// - Link to privacy-policy: https://shipfa.st/privacy-policy
+// - Link to privacy-policy: https://21habits.co/privacy-policy
 // - Governing Law: France
 // - Updates to the Terms: users will be updated by email
 
@@ -61,7 +61,7 @@ const TOS = () => {
 
 Welcome to 21 Habits!
 
-These Terms of Service ("Terms") govern your use of the 21 Habits website at https://shipfa.st ("Website") and the services provided by 21 Habits. By using our Website and services, you agree to these Terms.
+These Terms of Service ("Terms") govern your use of the 21 Habits website at https://21habits.co ("Website") and the services provided by 21 Habits. By using our Website and services, you agree to these Terms.
 
 1. Description of 21 Habits
 
@@ -73,7 +73,7 @@ When you purchase a package from 21 Habits, you gain the right to download and u
 
 3. User Data and Privacy
 
-We collect and store user data, including name, email, and payment information, as necessary to provide our services. For details on how we handle your data, please refer to our Privacy Policy at https://shipfa.st/privacy-policy.
+We collect and store user data, including name, email, and payment information, as necessary to provide our services. For details on how we handle your data, please refer to our Privacy Policy at https://21habits.co/privacy-policy.
 
 4. Non-Personal Data Collection
 
@@ -87,7 +87,7 @@ These Terms are governed by the laws of France.
 
 We may update these Terms from time to time. Users will be notified of any changes via email.
 
-For any questions or concerns regarding these Terms of Service, please contact us at marc@shipfa.st.
+For any questions or concerns regarding these Terms of Service, please contact us at marc@21habits.co.
 
 Thank you for using 21 Habits!`}
         </pre>

@@ -1,7 +1,7 @@
 import connectMongo from "@/libs/mongoose";
 import User from "@/models/User";
 
-export async function POST(request) {
+export async function POST() {
   console.log("Resetting all habits api");
   try {
     // Connect to MongoDB
@@ -15,7 +15,7 @@ export async function POST(request) {
       if (user.habits) {
         const firstHabitDate = user.habits[0].dateAdded.getDate();
 
-        const today = parseInt(new Date().getDate()) + 6;
+        const today = parseInt(new Date().getDate());
 
         const currentDay = today - firstHabitDate;
 
@@ -27,7 +27,7 @@ export async function POST(request) {
           // Charge user
           console.log("charging user in resetAllHabits for day", currentDay);
           const response = await fetch(
-            "http://localhost:3000/api/user/chargeUser",
+            "http://21habits.co/api/user/chargeUser",
             {
               method: "POST",
               body: JSON.stringify({

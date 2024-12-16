@@ -5,12 +5,10 @@ import Chart from "./Chart";
 
 import { useSession } from "next-auth/react";
 function Habits({ habits, deleteHabit, onHabitsChange }) {
-  const [localHabits, setLocalHabits] = useState([]);
-  const [today, setToday] = useState(parseInt(new Date().getDate()) + 6);
+  const [today] = useState(parseInt(new Date().getDate()));
   const [currentDay, setCurrentDay] = useState(1);
   const [loading, setLoading] = useState(true);
 
-  const [totalCharges, setTotalCharges] = useState(0);
   const { data: session } = useSession();
 
   const [confirmModal, setConfirmModal] = useState({
@@ -25,7 +23,7 @@ function Habits({ habits, deleteHabit, onHabitsChange }) {
       if (!response.ok) throw new Error("Failed to fetch habits");
 
       const data = await response.json();
-      setLocalHabits(data.habits);
+
       onHabitsChange && onHabitsChange();
 
       if (data.habits[0]?.dateAdded) {
@@ -39,19 +37,6 @@ function Habits({ habits, deleteHabit, onHabitsChange }) {
     }
   };
 
-  const chargeUser = async () => {
-    const response = await fetch("/api/user/chargeUser", {
-      method: "POST",
-      body: JSON.stringify({ day: currentDay - 1 }),
-    });
-    const data = await response.json();
-    if (data.message) {
-      toast.success(data.message);
-    }
-    if (data.totalCharges) {
-      setTotalCharges(data.totalCharges);
-    }
-  };
   const updateHabit = async (habitId, isComplete) => {
     try {
       const response = await fetch("/api/user/updateHabit", {
@@ -63,12 +48,6 @@ function Habits({ habits, deleteHabit, onHabitsChange }) {
       });
 
       if (!response.ok) throw new Error("Failed to update habit");
-
-      setLocalHabits((prevHabits) =>
-        prevHabits.map((habit) =>
-          habit._id === habitId ? { ...habit, isComplete } : habit
-        )
-      );
 
       toast.success("Habit updated successfully!");
       await fetchHabits();
@@ -121,7 +100,7 @@ function Habits({ habits, deleteHabit, onHabitsChange }) {
 
   const handleSendEmail = async () => {
     // api call to send email
-    const response = await fetch("/api/cron/sendDaily", {
+    await fetch("/api/cron/sendDaily", {
       method: "POST",
       body: JSON.stringify({ to: session.user.email }),
     });
@@ -200,9 +179,7 @@ function Habits({ habits, deleteHabit, onHabitsChange }) {
           ) : (
             <p className="text-gray-400 text-center">No habits found</p>
           )}
-          <div className="text-center text-white mb-4">
-            <p>Total charges: ${totalCharges}</p>
-          </div>
+
           <Chart habits={habits} currentDay={currentDay} />
           {confirmModal.open && (
             <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50">

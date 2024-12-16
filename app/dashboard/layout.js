@@ -9,7 +9,7 @@ import User from "@/models/User";
 // If not, it will redirect to the login page.
 // It's applied to all subpages of /dashboard in /app/dashboard/*** pages
 // You can also add custom static UI elements like a Navbar, Sidebar, Footer, etc..
-// See https://shipfa.st/docs/tutorials/private-page
+// See https://21habits.co/docs/tutorials/private-page
 export default async function LayoutPrivate({ children }) {
   const session = await getServerSession(authOptions);
 
@@ -21,7 +21,7 @@ export default async function LayoutPrivate({ children }) {
   await connectMongo();
   const user = await User.findById(session.user.id);
   if (!user || !user.hasAccess) {
-    redirect("http://localhost:3000");
+    redirect("http://21habits.co/");
   }
 
   return <>{children}</>;
