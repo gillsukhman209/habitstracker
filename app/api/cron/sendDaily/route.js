@@ -1,16 +1,17 @@
 import { Resend } from "resend";
 import connectMongo from "@/libs/mongoose";
 import User from "@/models/User";
+import pLimit from "p-limit";
 
-// Initialize Resend with the API key
 const resend = new Resend(process.env.RESEND_API_KEY);
+const CONCURRENT_LIMIT = 5;
 
 export async function GET() {
   try {
-    // Establish or reuse existing MongoDB connection
+    console.log("Connecting to MongoDB...");
     await connectMongo();
 
-    // Fetch only the 'email' field from all users to reduce data transfer
+    console.log("Fetching users...");
     const users = await User.find({}, "email").lean();
 
     if (users.length === 0) {
@@ -19,54 +20,39 @@ export async function GET() {
           success: true,
           message: "No users to send emails to.",
         }),
-        {
-          status: 200,
-          headers: { "Content-Type": "application/json" },
-        }
+        { status: 200, headers: { "Content-Type": "application/json" } }
       );
     }
 
-    // Define the concurrency limit based on Resend API rate limits
-    const CONCURRENT_LIMIT = 50; // Adjust this value as needed
+    console.log(`Found ${users.length} users. Sending emails...`);
+    const limit = pLimit(CONCURRENT_LIMIT);
 
-    // Send emails concurrently without chunking
     const emailPromises = users.map((user) =>
-      resend.emails.send({
-        from: "21habits <onboarding@21habits.co>",
-        to: user.email,
-        subject: "21habits Reminder",
-        html: `
-          <p>Don't forget to complete your daily habits!</p>
-        `,
-      })
+      limit(() =>
+        resend.emails.send({
+          from: "21habits <onboarding@21habits.co>",
+          to: user.email,
+          subject: "21habits Reminder",
+          html: `<p>Don't forget to complete your daily habits!</p>`,
+        })
+      )
     );
 
-    // Await all email sends concurrently
     await Promise.all(emailPromises);
 
-    // Return a success response after all emails have been sent
+    console.log("All emails sent successfully!");
     return new Response(
       JSON.stringify({
         success: true,
         message: `Emails sent to ${users.length} users`,
       }),
-      {
-        status: 200,
-        headers: { "Content-Type": "application/json" },
-      }
+      { status: 200, headers: { "Content-Type": "application/json" } }
     );
   } catch (error) {
-    console.error("Error sending email:", error);
-
-    // Return an error response in case of failure
-    return new Response(
-      JSON.stringify({
-        error: "Failed to send email",
-      }),
-      {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-      }
-    );
+    console.error("Error sending emails:", error);
+    return new Response(JSON.stringify({ error: "Failed to send emails" }), {
+      status: 500,
+      headers: { "Content-Type": "application/json" },
+    });
   }
 }
