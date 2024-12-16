@@ -5,7 +5,7 @@
       "schedule": "58 23 * * *"
     },
     {
-      "path": "/api/cron/sendDaily.background",
+      "path": "/api/cron/sendDaily",
       "schedule": "30 18 * * *"
     }
   ]
