@@ -1,8 +1,12 @@
 {
   "crons": [
     {
-      "path": "/api/send-daily-email",
-      "schedule": "0 8 * * *"
+      "path": "/api/cron/resetAllHabits",
+      "schedule": "58 23 * * *" // 11:58 PM UTC
+    },
+    {
+      "path": "/api/cron/sendDaily",
+      "schedule": "30 18 * * *" // 6:30 PM UTC
     }
   ]
 }
