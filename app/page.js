@@ -8,8 +8,8 @@ import Problem from "@/components/Problem";
 import FeaturesAccordion from "@/components/FeaturesAccordion";
 import Pricing from "@/components/Pricing";
 import FAQ from "@/components/FAQ";
+import WithWithout from "@/components/WithWithout";
 import { renderSchemaTags } from "@/libs/seo";
-
 import Footer from "@/components/Footer";
 
 export default function Home() {
@@ -61,6 +61,7 @@ export default function Home() {
         <FeaturesAccordion />
         <Pricing />
         <FAQ />
+        <WithWithout />
         {/* <CTA /> */}
       </main>
       <Footer />
