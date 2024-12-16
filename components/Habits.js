@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import { toast } from "react-hot-toast";
 import { FaRegTrashAlt } from "react-icons/fa";
 import Chart from "./Chart";
-
+import { sendEmail } from "@/libs/mailgun"; // Import the sendEmail function
+import { useSession } from "next-auth/react";
 function Habits({ habits, deleteHabit, onHabitsChange }) {
   const [localHabits, setLocalHabits] = useState([]);
   const [today, setToday] = useState(parseInt(new Date().getDate()) + 0);
@@ -13,6 +14,7 @@ function Habits({ habits, deleteHabit, onHabitsChange }) {
 
   const [lastChargeDate, setLastChargeDate] = useState(null);
   const [totalCharges, setTotalCharges] = useState(0);
+  const { data: session } = useSession();
 
   const [confirmModal, setConfirmModal] = useState({
     open: false,
@@ -174,6 +176,18 @@ function Habits({ habits, deleteHabit, onHabitsChange }) {
     }
   };
 
+  const handleSendEmail = async () => {
+    try {
+      await sendEmail({
+        to: session.user.email, // Use the current user's email
+      });
+      toast.success("Email sent successfully!");
+    } catch (error) {
+      toast.error("Failed to send email");
+      console.error("Error sending email:", error);
+    }
+  };
+
   useEffect(() => {
     fetchHabits();
   }, []);
@@ -191,6 +205,12 @@ function Habits({ habits, deleteHabit, onHabitsChange }) {
               Day {currentDay} / 21 date {today}
             </h2>
           </div>
+          <button
+            onClick={handleSendEmail}
+            className="mb-4 px-4 py-2 bg-green-500 text-white rounded-md"
+          >
+            Send Email
+          </button>
           {habits.length > 0 ? (
             habits.map((habit) => (
               <div

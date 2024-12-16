@@ -1,44 +1,29 @@
 import config from "@/config";
-const formData = require("form-data");
-const Mailgun = require("mailgun.js");
-const mailgun = new Mailgun(formData);
+import FormData from "form-data";
+import Mailgun from "mailgun.js";
+
+// Initialize Mailgun with form-data
+const mailgun = new Mailgun(FormData);
+
+// Create a Mailgun client
 
 const mg = mailgun.client({
   username: "api",
-  key: process.env.MAILGUN_API_KEY || "dummy",
+  key:
+    process.env.MAILGUN_API_KEY ||
+    "b818e5f759c9a5ca26c6637b7cb08840-0920befd-0b3cb324",
 });
 
-if (!process.env.MAILGUN_API_KEY && process.env.NODE_ENV === "development") {
-  console.group("⚠️ MAILGUN_API_KEY missing from .env");
-  console.error("It's not mandatory but it's required to send emails.");
-  console.error("If you don't need it, remove the code from /libs/mailgun.js");
-  console.groupEnd();
-}
+console.log("MAILGUN_API_KEY", process.env.MAILGUN_API_KEY);
 
-/**
- * Sends an email using the provided parameters.
- *
- * @async
- * @param {string} to - The recipient's email address.
- * @param {string} subject - The subject of the email.
- * @param {string} text - The plain text content of the email.
- * @param {string} html - The HTML content of the email.
- * @param {string} replyTo - The email address to set as the "Reply-To" address.
- * @returns {Promise} A Promise that resolves when the email is sent.
- */
-export const sendEmail = async ({ to, subject, text, html, replyTo }) => {
-  const data = {
-    from: config.mailgun.fromAdmin,
-    to: [to],
-    subject,
-    text,
-    html,
-    ...(replyTo && { "h:Reply-To": replyTo }),
-  };
-
-  await mg.messages.create(
-    (config.mailgun.subdomain ? `${config.mailgun.subdomain}.` : "") +
-      config.domainName,
-    data
-  );
+export const sendEmail = async ({ to }) => {
+  await mg.messages
+    .create("mg.21habits.co", {
+      from: config.mailgun.fromAdmin,
+      to: to,
+      subject: "Don't forget to work on your habits today!",
+      text: "This is a friendly reminder to work on your habits today, or else you will be charged",
+    })
+    .then((msg) => console.log(msg)) // logs response data
+    .catch((err) => console.log(err)); // logs any errorch(err => console.log(err)); // logs any error
 };
