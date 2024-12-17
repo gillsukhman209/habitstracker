@@ -4,9 +4,11 @@ import User from "@/models/User";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-export const maxDuration = 60;
 export async function GET() {
   try {
+    // Add headers to prevent caching
+    const headers = { "Cache-Control": "no-store, no-cache, must-revalidate" };
+
     console.log("Connecting to MongoDB...");
     await connectMongo();
 
@@ -14,12 +16,13 @@ export async function GET() {
     const users = await User.find({}, "email").lean();
 
     if (users.length === 0) {
+      console.log("No users to send emails to.");
       return new Response(
         JSON.stringify({
           success: true,
           message: "No users to send emails to.",
         }),
-        { status: 200, headers: { "Content-Type": "application/json" } }
+        { status: 200, headers }
       );
     }
 
@@ -30,22 +33,23 @@ export async function GET() {
         from: "21habits <onboarding@21habits.co>",
         to: user.email,
         subject: "21habits Reminder",
-        html: `<p>Don't forget to complete your daily habits!</p>`,
+        html: `<p>Don't forget to complete your daily habits today!</p>`,
       })
     );
 
     await Promise.all(emailPromises);
 
+    console.log("Emails sent successfully.");
     return new Response(
       JSON.stringify({
         success: true,
-        message: `Emails sent to ${users.length} users what the hell brother`,
+        message: `Emails sent to ${users.length} users.`,
       }),
-      { status: 200, headers: { "Content-Type": "application/json" } }
+      { status: 200, headers }
     );
   } catch (error) {
     console.error("Error sending emails:", error);
-    return new Response(JSON.stringify({ error: "Failed to send emails" }), {
+    return new Response(JSON.stringify({ error: "Failed to send emails." }), {
       status: 500,
       headers: { "Content-Type": "application/json" },
     });
