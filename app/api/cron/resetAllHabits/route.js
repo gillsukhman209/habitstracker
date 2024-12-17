@@ -9,7 +9,7 @@ export async function GET() {
 
     // Fetch all users
     const users = await User.find({});
-    console.log("users", users.length);
+
     // Loop through each user and reset their habits
     for (const user of users) {
       if (user.habits) {
@@ -25,7 +25,7 @@ export async function GET() {
           user.completedDays.push(currentDay);
         } else {
           // Charge user
-          console.log("charging user in resetAllHabits for day", currentDay);
+
           const response = await fetch(
             "http://21habits.co/api/user/chargeUser",
             {
