@@ -36,11 +36,10 @@ export async function GET() {
 
     await Promise.all(emailPromises);
 
-    console.log("All emails sent successfully!");
     return new Response(
       JSON.stringify({
         success: true,
-        message: `Emails sent to ${users.length} users`,
+        message: `Emails sent to ${users.length} users what the hell brother`,
       }),
       { status: 200, headers: { "Content-Type": "application/json" } }
     );
