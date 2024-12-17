@@ -4,13 +4,6 @@ import User from "@/models/User";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-/**
- * Handles POST requests to send an email via Resend.
- *
- * @param {Request} request - The incoming request object.
- * @returns {Response} - The response object with status and message.
- */
-
 export const maxDuration = 60;
 export async function GET() {
   try {
