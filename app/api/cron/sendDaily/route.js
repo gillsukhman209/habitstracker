@@ -37,16 +37,16 @@ export async function GET() {
       })
     );
 
-    await Promise.all(emailPromises).then(() => {
-      console.log("Emails sent successfully.");
-      return new Response(
-        JSON.stringify({
-          success: true,
-          message: `Emails sent to ${users.length} users.`,
-        }),
-        { status: 200, headers }
-      );
-    });
+    await Promise.all(emailPromises);
+
+    console.log("Emails sent successfully.");
+    return new Response(
+      JSON.stringify({
+        success: true,
+        message: `Emails sent to ${users.length} users.`,
+      }),
+      { status: 200, headers }
+    );
   } catch (error) {
     console.error("Error sending emails:", error);
     return new Response(JSON.stringify({ error: "Failed to send emails." }), {
