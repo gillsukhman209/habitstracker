@@ -6,7 +6,7 @@
     },
     {
       "path": "/api/cron/sendDaily",
-      "schedule": "20 21 * * *"
+      "schedule": "0 0 * * *"
     }
   ]
 }
