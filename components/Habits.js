@@ -49,7 +49,7 @@ function Habits({ habits, deleteHabit, onHabitsChange }) {
 
       if (!response.ok) throw new Error("Failed to update habit");
 
-      toast.success("Habit updated successfully!");
+      // toast.success("Habit updated successfully!");
       await fetchHabits();
     } catch (error) {
       toast.error("Failed to update habit");
