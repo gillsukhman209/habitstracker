@@ -102,7 +102,6 @@ function Habits({ habits, deleteHabit, onHabitsChange }) {
     // api call to send email
     await fetch("/api/cron/sendDaily", {
       method: "POST",
-      body: JSON.stringify({ to: session.user.email }),
     });
   };
 

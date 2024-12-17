@@ -5,7 +5,7 @@ import User from "@/models/User";
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 export const maxDuration = 60;
-export async function GET() {
+export async function POST() {
   try {
     console.log("Connecting to MongoDB...");
     await connectMongo();
