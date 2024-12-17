@@ -100,7 +100,8 @@ function Habits({ habits, deleteHabit, onHabitsChange }) {
 
   const handleSendEmail = async () => {
     // api call to send email
-    await fetch("/api/cron/sendDaily")
+    await fetch("/api/cron/sendDaily");
+  };
 
   const handleResetHabits = async () => {
     try {
