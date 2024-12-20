@@ -13,7 +13,7 @@ export async function GET() {
     await connectMongo();
 
     console.log("Fetching users...");
-    const users = await User.find({}, "email").lean();
+    const users = await User.find({}, "email");
 
     if (users.length === 0) {
       console.log("No users to send emails to.");
