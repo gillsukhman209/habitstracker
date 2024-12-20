@@ -7,7 +7,6 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 export async function POST() {
   try {
     // Add headers to prevent caching
-    const headers = { "Cache-Control": "no-store, no-cache, must-revalidate" };
 
     console.log("Connecting to MongoDB...");
     await connectMongo();
@@ -22,7 +21,7 @@ export async function POST() {
           success: true,
           message: "No users to send emails to.",
         }),
-        { status: 200, headers }
+        { status: 200 }
       );
     }
 
@@ -45,7 +44,7 @@ export async function POST() {
         success: true,
         message: `Emails sent to ${users.length} users.`,
       }),
-      { status: 200, headers }
+      { status: 200 }
     );
   } catch (error) {
     console.error("Error sending emails:", error);

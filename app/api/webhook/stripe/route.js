@@ -130,6 +130,7 @@ export async function POST(req) {
       case "invoice.paid": {
         // Customer just paid an invoice (for instance, a recurring payment for a subscription)
         // ✅ Grant access to the product
+        console.log("invoice paid");
         const priceId = data.object.lines.data[0].price.id;
         const customerId = data.object.customer;
 
@@ -146,6 +147,7 @@ export async function POST(req) {
       }
 
       case "invoice.payment_failed":
+        console.log("invoice payment failed");
         // A payment failed (for instance the customer does not have a valid payment method)
         // ❌ Revoke access to the product
         // ⏳ OR wait for the customer to pay (more friendly):
