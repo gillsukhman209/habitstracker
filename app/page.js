@@ -16,6 +16,7 @@ export default function Home() {
   const { data: status } = useSession();
   const router = useRouter();
   const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
     const checkAccess = async () => {
@@ -27,7 +28,7 @@ export default function Home() {
       if (status === "authenticated") {
         const response = await fetch("/api/user");
         const user = await response.json();
-
+        setUser(user);
         if (user.hasAccess) {
           router.push("/dashboard");
         } else {
@@ -53,6 +54,20 @@ export default function Home() {
     <>
       {renderSchemaTags()}
       <Suspense>
+        {/* Show user has access or not */}
+        {status === "authenticated" ? (
+          user.hasAccess ? (
+            <div className="flex items-center justify-center h-screen">
+              <span className="text-lg">Welcome to the app!</span>
+            </div>
+          ) : (
+            <div className="flex items-center justify-center h-screen">
+              <span className="text-lg">
+                You do not have access to this app.
+              </span>
+            </div>
+          )
+        ) : null}
         <Header />
       </Suspense>
       <main>
