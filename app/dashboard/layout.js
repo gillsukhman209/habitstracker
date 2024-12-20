@@ -14,16 +14,19 @@ export default async function LayoutPrivate({ children }) {
   const session = await getServerSession(authOptions);
 
   if (!session) {
-    alert("no session redirecting to login");
+    console.log("no session redirecting to login");
     redirect(config.auth.loginUrl);
   }
 
   // Check if the user has access
   await connectMongo();
   const user = await User.findById(session.user.id);
-  alert("user found in dashboard layout", user);
+  console.log("user found in dashboard layout", user);
   if (!user || !user.hasAccess) {
-    alert("user does not have access redirecting to home", user.hasAccess);
+    console.log(
+      "user does not have access redirecting to home",
+      user.hasAccess
+    );
     redirect("http://21habits.co/");
   }
 
