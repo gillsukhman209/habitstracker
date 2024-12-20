@@ -27,7 +27,7 @@ export async function POST() {
           // Charge user
 
           const response = await fetch(
-            "http://21habits.co/api/user/chargeUser",
+            "http://localhost:3000/api/user/chargeUser",
             {
               method: "POST",
               body: JSON.stringify({

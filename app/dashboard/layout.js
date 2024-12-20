@@ -27,7 +27,7 @@ export default async function LayoutPrivate({ children }) {
       "user does not have access redirecting to home",
       user.hasAccess
     );
-    redirect("http://21habits.co/");
+    redirect("http://localhost:3000/");
   }
 
   return <>{children}</>;
