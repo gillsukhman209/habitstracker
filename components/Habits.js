@@ -101,7 +101,7 @@ function Habits({ habits, deleteHabit, onHabitsChange }) {
   const handleSendEmail = async () => {
     // api call to send email
     await fetch("/api/cron/sendDaily", {
-      method: "GET",
+      method: "POST",
     });
   };
 
