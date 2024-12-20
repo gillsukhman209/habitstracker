@@ -18,7 +18,7 @@ export async function GET() {
         });
       });
 
-    console.log("Cron job run successfully");
+    return new Response("Default response", { status: 200 });
   } catch (error) {
     console.error("Error connecting to MongoDB:", error);
     return new Response("Error running cron job", { status: 400 });
