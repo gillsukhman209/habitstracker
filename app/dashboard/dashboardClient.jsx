@@ -5,17 +5,12 @@ import ButtonAccount from "@/components/ButtonAccount";
 import ButtonGradient from "@/components/ButtonGradient";
 import { toast } from "react-hot-toast";
 import Habits from "@/components/Habits";
-import schedule from "node-schedule";
 
 export default function Dashboard() {
   const [showPopup, setShowPopup] = useState(false); // State for showing/hiding the popup
   const [habitInputs, setHabitInputs] = useState([{ title: "", duration: "" }]); // State for habit inputs
   const [habits, setHabits] = useState([]); // State for habits
   const [canAddHabits, setCanAddHabits] = useState(true); // State to control adding habits
-
-  schedule.scheduleJob("29 19 * * *", () => {
-    console.log("Task executed at 7:30 AM!");
-  });
 
   useEffect(() => {
     fetchHabits();
