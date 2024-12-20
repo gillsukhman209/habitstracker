@@ -31,7 +31,7 @@ const cta = <ButtonSignin extraStyle="btn-primary" />;
 const Header = () => {
   const searchParams = useSearchParams();
   const [isOpen, setIsOpen] = useState(false);
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
 
   // setIsOpen(false) when the route changes (i.e: when the user clicks on a link on mobile)
   useEffect(() => {
@@ -184,7 +184,7 @@ const Header = () => {
                     className="btn btn-outline btn-primary transition duration-300 ease-in-out hover:bg-primary hover:text-white"
                     onClick={() => signOut()}
                   >
-                    Logout
+                    Logout {session.user.email}
                   </button>
                 </>
               ) : (
