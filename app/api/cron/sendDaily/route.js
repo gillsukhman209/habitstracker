@@ -4,7 +4,7 @@ import User from "@/models/User";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-export async function GET() {
+export async function POST() {
   try {
     // Add headers to prevent caching
 
