@@ -100,7 +100,7 @@ function Habits({ habits, deleteHabit, onHabitsChange }) {
 
   const handleSendEmail = async () => {
     // api call to send email
-    await fetch("/api/cron/runCron");
+    await fetch("https://21habits.co/api/cron/runCron");
   };
 
   const handleResetHabits = async () => {
