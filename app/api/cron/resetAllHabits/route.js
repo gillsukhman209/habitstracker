@@ -1,7 +1,7 @@
 import connectMongo from "@/libs/mongoose";
 import User from "@/models/User";
 
-export async function GET() {
+export async function POST() {
   console.log("Resetting all habits api");
   try {
     // Connect to MongoDB
