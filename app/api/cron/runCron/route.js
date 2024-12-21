@@ -3,12 +3,14 @@ import { cors } from "@/libs/cors";
 export const GET = cors(async (req) => {
   try {
     console.log("Running cron job");
-    // Make post request to sendDaily
-    const res = await fetch("https://www.21habits.co/api/cron/sendDaily", {
+    // Server-side POST request to sendDaily
+    const res = await fetch("/api/cron/sendDaily", {
       method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
     });
 
-    // Optionally, handle the response from sendDaily
     if (!res.ok) {
       throw new Error("Failed to execute sendDaily cron job");
     }

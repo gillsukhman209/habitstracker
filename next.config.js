@@ -10,6 +10,21 @@ const nextConfig = {
       "www.imore.com",
     ],
   },
+  async redirects() {
+    return [
+      {
+        source: "/:path*",
+        has: [
+          {
+            type: "host",
+            value: "21habits.co",
+          },
+        ],
+        destination: "https://www.21habits.co/:path*",
+        permanent: true,
+      },
+    ];
+  },
 };
 
 module.exports = nextConfig;

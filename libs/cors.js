@@ -3,12 +3,12 @@ export const cors = (handler) => {
     // Handle OPTIONS requests for CORS preflight
     if (req.method === "OPTIONS") {
       return new Response(null, {
-        status: 200, // 200 OK for preflight requests
+        status: 200,
         headers: {
-          "Access-Control-Allow-Origin": "*", // Allow all domains
-          "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS", // Allowed methods
-          "Access-Control-Allow-Headers": "Content-Type, Authorization", // Allowed headers
-          "Access-Control-Max-Age": "86400", // Cache preflight response for 1 day
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+          "Access-Control-Allow-Headers": "Content-Type, Authorization",
+          "Access-Control-Max-Age": "86400",
         },
       });
     }
@@ -18,7 +18,7 @@ export const cors = (handler) => {
 
     // Ensure CORS headers are added to all responses
     const newHeaders = new Headers(response.headers);
-    newHeaders.set("Access-Control-Allow-Origin", "*"); // Allow all domains
+    newHeaders.set("Access-Control-Allow-Origin", "*");
 
     return new Response(response.body, {
       status: response.status,
