@@ -1,6 +1,6 @@
 import { cors } from "@/libs/cors";
 
-export const GET = cors(async (req) => {
+export async function GET() {
   try {
     console.log("Running cron job");
     // Make post request to sendDaily
@@ -13,4 +13,6 @@ export const GET = cors(async (req) => {
     console.error("Error connecting to MongoDB:", error);
     return new Response("Error running cron job", { status: 400 });
   }
-});
+}
+
+export const handler = cors(GET);
