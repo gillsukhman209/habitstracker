@@ -51,7 +51,16 @@ const Problem = () => {
         </p>
 
         <div className="flex flex-col md:flex-row justify-center items-center md:items-start gap-6">
-          <Step emoji="📆" text="Random reminders to keep you on track" />
+          <Step
+            emoji="🔥"
+            text="Add Habits that you want to build for the next 21 days"
+          />
+
+          <Arrow extraStyle="md:-scale-x-100 md:-rotate-90" />
+          <Step
+            emoji="💸"
+            text="Everyday you don't complete your habits, you get charged an amount you set"
+          />
 
           <Arrow extraStyle="max-md:-scale-x-100 md:-rotate-90" />
 

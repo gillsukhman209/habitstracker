@@ -28,12 +28,13 @@ const Hero = () => {
           </svg> */}
         </a>
 
-        <h1 className="font-extrabold text-4xl lg:text-6xl tracking-tight md:-mb-4">
-          Build Better Habits, One Step at a Time
+        <h1 className="font-extrabold text-4xl lg:text-6xl tracking-wide md:-mb-4 ">
+          Hold Yourself Accountable and Build Lasting Habits
         </h1>
         <p className="text-lg opacity-80 leading-relaxed">
-          Stay motivated with random reminders, track your growth, and make
-          habit-building an exciting part of your daily life
+          Stay disciplined by adding habits you need to follow for the next 21
+          days. If you don’t complete them, you’ll be charged an amount you set.
+          Stay on track and build lasting habits.
         </p>
         <div className="flex flex-col items-center space-y-2">
           {session ? (

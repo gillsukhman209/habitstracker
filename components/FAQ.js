@@ -10,10 +10,10 @@ const faqList = [
     question: "What do I get exactly?",
     answer: (
       <div className="space-y-2 leading-relaxed">
-        Our service provides you with personalized habit tracking and insights
-        to help you achieve your goals effectively. You will receive tailored
-        recommendations, progress tracking, and access to a supportive
-        community.
+        Our service helps you stay disciplined with personalized habit tracking,
+        reminders, and progress monitoring. You will get tailored
+        recommendations and enjoy a fun, interactive approach to building
+        habits, all while being part of a supportive community.
       </div>
     ),
   },

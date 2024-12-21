@@ -3,26 +3,24 @@
 // Try to match the lines from left to right, so the user can easily compare the two columns
 const WithWithout = () => {
   return (
-    <section className="bg-base-100">
+    <section className="bg-base-100 text-xl">
       <div className="max-w-5xl mx-auto px-8 py-16 md:py-32 ">
         <h2 className="text-center font-extrabold text-3xl md:text-5xl tracking-tight mb-12 md:mb-20">
-          Tired of managing Stripe invoices?
+          Tired of building habits and never following through?
         </h2>
 
         <div className="flex flex-col md:flex-row justify-center items-center md:items-start gap-8 md:gap-12">
-          <div className="bg-error/20 text-error p-8 md:p-12 rounded-lg w-full ">
+          <div className="bg-error/20 text-error p-8 md:p-12 rounded-lg w-full h-full flex flex-col">
             <h3 className="font-bold text-lg mb-4">
-              Stripe invoices without ZenVoice
+              Building habits without 21Habits
             </h3>
 
-            <ul className="list-disc list-inside space-y-1.5 ">
+            <ul className="list-disc list-inside space-y-1.5 flex-1">
               {/* Pains the user is experiencing by not using your product */}
               {[
-                "Manually create invoices",
-                "Or pay up to $2 per invoice",
-                "Waste hours in customer support",
-                "Can’t update details once sent (VAT, Tax ID)",
-                "Can't make invoices for previous purchases",
+                "No consequences for missing habits",
+                "No reminders to stay consistent",
+                "Struggle to stay motivated/disciplined",
               ].map((item, index) => (
                 <li key={index} className="flex gap-2 items-center">
                   <svg
@@ -39,19 +37,15 @@ const WithWithout = () => {
             </ul>
           </div>
 
-          <div className="bg-success/20 text-success p-8 md:p-12 rounded-lg w-full">
-            <h3 className="font-bold text-lg mb-4">
-              Stripe invoices + ZenVoice
-            </h3>
+          <div className="bg-success/20 text-success p-8 md:p-12 rounded-lg w-full h-full flex flex-col">
+            <h3 className="font-bold text-lg mb-4">After using 21Habits</h3>
 
-            <ul className="list-disc list-inside space-y-1.5 ">
-              {/* Features of your product fixing the pain (try to match each with/withot lines) */}
+            <ul className="list-disc list-inside space-y-1.5 flex-1">
+              {/* Features of your product fixing the pain (try to match each with/without lines) */}
               {[
-                "Self-serve invoices",
-                `One-time payment for unlimited invoices`,
-                "No more customer support",
-                "Editable invoices to stay compliant",
-                "Invoices for any payment, even past ones",
+                "Get charged if you don’t complete your habits",
+                `Get reminders to stay on track`,
+                "Visualize your progress and stay motivated",
               ].map((item, index) => (
                 <li key={index} className="flex gap-2 items-center">
                   <svg

@@ -12,8 +12,8 @@ import Image from "next/image";
 // - alt: The alt text of the image (if type is 'image')
 const features = [
   {
-    title: "Randomized Reminders",
-    description: "Stay motivated with timely nudges throughout the day.",
+    title: "Add Habits",
+    description: "Add habits you want to build for the next 21 days",
     type: "video",
     path: "https://d3m8mk7e1mf7xn.cloudfront.net/app/newsletter.webm",
     format: "video/webm",
@@ -34,8 +34,8 @@ const features = [
     ),
   },
   {
-    title: "Progress Tracking",
-    description: "Visualize your consistency and celebrate milestones.",
+    title: "Visualize Your Progress",
+    description: "Visualize your progress and build momentum",
     type: "image",
     path: "https://images.unsplash.com/photo-1571171637578-41bc2dd41cd2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=3540&q=80",
     alt: "A computer",
@@ -57,8 +57,8 @@ const features = [
     ),
   },
   {
-    title: "Fun & Gamified Experience",
-    description: "Earn rewards and badges as you crush your goals.",
+    title: "Get Charged",
+    description: "Get charged if you don't complete your habits",
     svg: (
       <svg
         xmlns="http://www.w3.org/2000/svg"

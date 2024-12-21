@@ -25,20 +25,20 @@ const config = {
             ? "price_1QVefGBCsrkMKvKtXtQnxLkc"
             : "price_1QVefGBCsrkMKvKtXtQnxLkc",
         //  REQUIRED - Name of the plan, displayed on the pricing page
-        name: "Commitment Plan",
+        name: "21 Habits",
         // A friendly description of the plan, displayed on the pricing page. Tip: explain why this plan and not others
-        description: "Perfect for small projects",
+        description: "Build habits that will last",
         // The price you want to display, the one user will be charged on Stripe.
-        price: 20,
+        price: 30,
         // If you have an anchor price (i.e. $29) that you want to display crossed out, put it here. Otherwise, leave it empty
-        priceAnchor: 39,
+        priceAnchor: 69,
         features: [
           {
-            name: "Track unlimited habits",
+            name: "Add unlimited habits",
           },
-          { name: "Random reminders" },
-          { name: "Basic analytics" },
-          { name: "Email support" },
+          { name: "Get charged if you don't complete your habits" },
+          { name: "Visualize your progress and build momentum" },
+          { name: "Make habit-building fun and rewarding" },
         ],
       },
     ],

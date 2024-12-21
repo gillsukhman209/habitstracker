@@ -9,15 +9,15 @@ import ButtonSignin from "./ButtonSignin";
 
 const Pricing = () => {
   const { data: session } = useSession();
-  const plan = config.stripe.plans[0]; // Assuming there's only one plan
+  const plan = config.stripe.plans[0]; // Only one plan available
 
   return (
     <section className="bg-base-200 overflow-hidden" id="pricing">
       <div className="py-24 px-8 max-w-5xl mx-auto">
         <div className="flex flex-col text-center w-full mb-20">
-          <p className="font-medium text-primary mb-8">Pricing</p>
+          <p className="font-medium text-primary text-2xl mb-8">Pricing</p>
           <h2 className="font-bold text-3xl lg:text-5xl tracking-tight">
-            Choose the Plan That Fits Your Habit Goals!
+            Stop procrastinating and start building habits that will last
           </h2>
         </div>
 
