@@ -2,11 +2,11 @@
   "crons": [
     {
       "path": "/api/cron/resetAllHabits",
-      "schedule": "58 23 * * *"
+      "schedule": "* * * * *"
     },
     {
       "path": "/api/cron/sendDaily",
-      "schedule": "28 21 * * *"
+      "schedule": "* * * * *"
     }
   ]
 }
