@@ -10,8 +10,27 @@ export const POST = cors(async (req) => {
     const { API_SECRET_TOKEN } = process.env;
     const authHeader = req.headers.get("Authorization");
 
-    // Verify the Authorization header
-    if (!authHeader || authHeader !== `Bearer ${API_SECRET_TOKEN}`) {
+    // // Verify the Authorization header
+    // if (!authHeader || authHeader !== `Bearer ${API_SECRET_TOKEN}`) {
+    //   return new Response(JSON.stringify({ error: "Unauthorized" }), {
+    //     status: 401,
+    //     headers: { "Content-Type": "application/json" },
+    //   });
+    // }
+
+    if (!API_SECRET_TOKEN) {
+      return new Response(JSON.stringify({ error: "No API_SECRET_TOKEN" }), {
+        status: 401,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+    if (!authHeader) {
+      return new Response(JSON.stringify({ error: "No auth header" }), {
+        status: 401,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+    if (authHeader !== `Bearer ${API_SECRET_TOKEN}`) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
         status: 401,
         headers: { "Content-Type": "application/json" },
