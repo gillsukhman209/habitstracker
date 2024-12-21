@@ -11,25 +11,26 @@ import FAQ from "@/components/FAQ";
 import WithWithout from "@/components/WithWithout";
 import { renderSchemaTags } from "@/libs/seo";
 import Footer from "@/components/Footer";
-
+import { toast } from "react-hot-toast";
 export default function Home() {
   const { data: status } = useSession();
   const router = useRouter();
   const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState(null);
+  const [hasAccess, setHasAccess] = useState(false);
 
   useEffect(() => {
     const checkAccess = async () => {
       if (status === "loading") {
-        // Wait until the session status is determined
         return;
       }
 
       if (status === "authenticated") {
+        console.log("status is authenticated");
         const response = await fetch("/api/user");
+        console.log("response", response);
         const user = await response.json();
-        setUser(user);
         if (user.hasAccess) {
+          setHasAccess(user.hasAccess);
           router.push("/dashboard");
         } else {
           setLoading(false);
@@ -41,6 +42,19 @@ export default function Home() {
 
     checkAccess();
   }, [router, status]);
+
+  useEffect(() => {
+    if (!loading) {
+      // Dismiss any existing toasts
+      toast.dismiss();
+
+      if (hasAccess) {
+        toast.success("You have access", { id: "access-toast" });
+      } else {
+        toast.error("You do not have access", { id: "access-toast" });
+      }
+    }
+  }, [hasAccess, loading]);
 
   if (loading) {
     return (
@@ -54,20 +68,6 @@ export default function Home() {
     <>
       {renderSchemaTags()}
       <Suspense>
-        {/* Show user has access or not */}
-        {status === "authenticated" ? (
-          user.hasAccess ? (
-            <div className="flex items-center justify-center h-screen">
-              <span className="text-lg">Welcome to the app!</span>
-            </div>
-          ) : (
-            <div className="flex items-center justify-center h-screen">
-              <span className="text-lg">
-                You do not have access to this app.
-              </span>
-            </div>
-          )
-        ) : null}
         <Header />
       </Suspense>
       <main>

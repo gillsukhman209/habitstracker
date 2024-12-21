@@ -102,7 +102,7 @@ const Header = () => {
                 className="btn btn-outline btn-primary transition duration-300 ease-in-out hover:bg-primary hover:text-white"
                 onClick={() => signOut()}
               >
-                Logout
+                Logout {session.user.email}
               </button>
             </>
           ) : (
