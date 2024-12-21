@@ -98,30 +98,6 @@ function Habits({ habits, deleteHabit, onHabitsChange }) {
     }
   };
 
-  const handleSendEmail = async () => {
-    // api call to send email
-    await fetch("/api/cron/sendEmail", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-  };
-
-  const handleResetHabits = async () => {
-    try {
-      const response = await fetch("/api/cron/resetAllHabits", {
-        method: "POST",
-      });
-      if (!response.ok) throw new Error("Failed to reset habits");
-      toast.success("Habits reset successfully!");
-      await fetchHabits();
-    } catch (error) {
-      toast.error("Failed to reset habits");
-      console.error("Error resetting habits:", error);
-    }
-  };
-
   useEffect(() => {
     fetchHabits();
   }, []);
@@ -137,18 +113,6 @@ function Habits({ habits, deleteHabit, onHabitsChange }) {
           <div className="text-center text-white mb-4">
             <h2 className="text-xl font-bold">Day {currentDay} / 21</h2>
           </div>
-          <button
-            onClick={handleSendEmail}
-            className="mb-4 px-4 py-2 bg-green-500 text-white rounded-md"
-          >
-            Send Email
-          </button>
-          <button
-            onClick={handleResetHabits}
-            className="mb-4 px-4 py-2 bg-red-500 text-white rounded-md"
-          >
-            Reset All Habits
-          </button>
           {habits.length > 0 ? (
             habits.map((habit) => (
               <div
