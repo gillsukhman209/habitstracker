@@ -45,6 +45,6 @@ export const authOptions = {
   theme: {
     brandColor: config.colors.main,
     // Use the URL path to the logo instead of importing
-    logo: "/appLogo.png",
+    logo: "/21Habits/logo.png",
   },
 };

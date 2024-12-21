@@ -100,7 +100,7 @@ function Habits({ habits, deleteHabit, onHabitsChange }) {
   }, []);
 
   return (
-    <div className="w-full flex flex-col gap-4 bg-gray-800 p-4 rounded-lg">
+    <div className="w-full flex flex-col gap-4  p-4 rounded-lg text-black">
       {loading ? (
         <div className="text-center text-white">
           <h2 className="text-xl">Loading...</h2>

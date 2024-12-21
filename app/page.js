@@ -43,19 +43,6 @@ export default function Home() {
     checkAccess();
   }, [router, status]);
 
-  useEffect(() => {
-    if (!loading) {
-      // Dismiss any existing toasts
-      toast.dismiss();
-
-      if (hasAccess) {
-        toast.success("You have access", { id: "access-toast" });
-      } else {
-        toast.error("You do not have access", { id: "access-toast" });
-      }
-    }
-  }, [hasAccess, loading]);
-
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen">

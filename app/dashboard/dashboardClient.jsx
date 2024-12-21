@@ -118,13 +118,11 @@ export default function Dashboard() {
               <ButtonAccount />
             </div>
             <div className="flex-1 text-center">
-              <h1 className="text-3xl md:text-4xl font-extrabold">
-                Habit Tracker
-              </h1>
+              <h1 className="text-3xl md:text-4xl font-extrabold">21 Habits</h1>
             </div>
             <div className="flex-1 flex flex-row gap-5 justify-end">
               <ButtonGradient
-                title="Add Habit"
+                title="Add Habits"
                 onClick={() => setShowPopup(true)}
                 disabled={!canAddHabits}
               />

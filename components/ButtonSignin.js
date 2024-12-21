@@ -48,7 +48,7 @@ const ButtonSignin = ({ text = "Login / Signup", extraStyle }) => {
 
   return (
     <button
-      className={`btn ${extraStyle ? extraStyle : ""}`}
+      className={`btn   rounded-xl ${extraStyle ? extraStyle : ""}`}
       onClick={handleClick}
     >
       {text}

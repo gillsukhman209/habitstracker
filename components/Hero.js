@@ -29,7 +29,7 @@ const Hero = () => {
         </a>
 
         <h1 className="font-extrabold text-4xl lg:text-6xl tracking-wide md:-mb-4 ">
-          Hold Yourself Accountable and Build Lasting Habits
+          Break the Cycle of Failed Resolutions
         </h1>
         <p className="text-lg opacity-80 leading-relaxed">
           Stay disciplined by adding habits you need to follow for the next 21
@@ -48,20 +48,22 @@ const Hero = () => {
               </p>
             </div>
           ) : (
-            <ButtonSignin extraStyle="btn-primary" text="Buy 21 Habits" />
+            <ButtonSignin
+              extraStyle="btn-primary animate-wiggle"
+              text="💪🏻 Buy 21 Habits"
+            />
           )}
         </div>
 
         <TestimonialsAvatars priority={true} />
       </div>
-      <div className="lg:w-full">
+      <div className="lg:w-full lg:flex hidden ">
         <Image
-          src="https://www.imore.com/sites/imore.com/files/styles/larger/public/field/image/2019/12/done-simple-habit-tracker-app-screens-01.png"
-          alt="Product Demo"
-          className="w-full"
+          src="/hero.png"
+          alt="Hero Image"
           priority={true}
-          width={500}
-          height={500}
+          width={1600} // Increased width for a bigger image
+          height={1000} // Increased height for a bigger image
         />
       </div>
     </section>

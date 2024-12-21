@@ -12,7 +12,7 @@ const Pricing = () => {
   const plan = config.stripe.plans[0]; // Only one plan available
 
   return (
-    <section className="bg-base-200 overflow-hidden" id="pricing">
+    <section className="bg-base-200 overflow-hidden " id="pricing">
       <div className="py-24 px-8 max-w-5xl mx-auto">
         <div className="flex flex-col text-center w-full mb-20">
           <p className="font-medium text-primary text-2xl mb-8">Pricing</p>
@@ -21,26 +21,25 @@ const Pricing = () => {
           </h2>
         </div>
 
-        <div className="relative flex justify-center flex-col items-center gap-8">
-          <div key={plan.priceId} className="relative w-full max-w-lg">
-            {plan.isFeatured && (
+        <div className="relative flex justify-center flex-col items-center gap-8 ">
+          <div
+            key={plan.priceId}
+            className="relative w-full max-w-lg shadow-2xl rounded-lg border border-primary"
+          >
+            {!plan.isFeatured && (
               <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20">
                 <span
                   className={`badge text-xs text-primary-content font-semibold border-0 bg-primary`}
                 >
-                  POPULAR
+                  LIMITED TIME OFFER
                 </span>
               </div>
             )}
-            {plan.isFeatured && (
-              <div
-                className={`absolute -inset-[1px] rounded-[9px] bg-primary z-10`}
-              ></div>
-            )}
+
             <div className="relative flex flex-col h-full gap-5 lg:gap-8 z-10 bg-base-100 p-8 rounded-lg">
               <div className="flex justify-between items-center gap-4">
                 <div>
-                  <p className="text-lg lg:text-xl font-bold">{plan.name}</p>
+                  <p className="text-lg lg:text-xl font-bold ">21 Habits</p>
                   {plan.description && (
                     <p className="text-base-content/80 mt-2">
                       {plan.description}
@@ -102,8 +101,8 @@ const Pricing = () => {
                   </div>
                 ) : (
                   <ButtonSignin
-                    extraStyle="btn-primary"
-                    text="Login / Signup"
+                    extraStyle="btn-primary animate-wiggle"
+                    text="💪🏻 Buy 21 Habits"
                   />
                 )}
               </div>

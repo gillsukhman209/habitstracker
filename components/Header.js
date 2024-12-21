@@ -5,24 +5,9 @@ import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import ButtonSignin from "./ButtonSignin";
-import logo from "@/app/icon.png";
+import logo from "@/public/21Habits/logo_transparent.png";
 import config from "@/config";
 import { useSession, signOut } from "next-auth/react";
-
-const links = [
-  {
-    href: "/#pricing",
-    label: "Pricing",
-  },
-  {
-    href: "/#testimonials",
-    label: "Reviews",
-  },
-  {
-    href: "/#faq",
-    label: "FAQ",
-  },
-];
 
 const cta = <ButtonSignin extraStyle="btn-primary" />;
 
@@ -80,18 +65,6 @@ const Header = () => {
         </div>
 
         {/* Your links on large screens */}
-        <div className="hidden lg:flex lg:justify-center lg:gap-12 lg:items-center">
-          {links.map((link) => (
-            <Link
-              href={link.href}
-              key={link.href}
-              className="link link-hover"
-              title={link.label}
-            >
-              {link.label}
-            </Link>
-          ))}
-        </div>
 
         {/* User email display and CTA on large screens */}
         <div className="hidden lg:flex lg:justify-end lg:flex-1">
@@ -159,20 +132,6 @@ const Header = () => {
 
           {/* Your links on small screens */}
           <div className="flow-root mt-6">
-            <div className="py-4">
-              <div className="flex flex-col gap-y-4 items-start">
-                {links.map((link) => (
-                  <Link
-                    href={link.href}
-                    key={link.href}
-                    className="link link-hover"
-                    title={link.label}
-                  >
-                    {link.label}
-                  </Link>
-                ))}
-              </div>
-            </div>
             <div className="divider"></div>
 
             {/* Your CTA on small screens */}

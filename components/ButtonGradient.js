@@ -5,7 +5,7 @@ const ButtonGradient = ({
 }) => {
   return (
     <button
-      className={`btn btn-gradient animate-shimmer ${
+      className={`btn btn-gradient animate-shimmber ${
         disabled ? "opacity-50 cursor-not-allowed" : ""
       }`}
       onClick={disabled ? undefined : onClick}
