@@ -104,7 +104,6 @@ function Habits({ habits, deleteHabit, onHabitsChange }) {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "https://www.21habits.co/", // Change to your frontend domain
       },
     });
   };

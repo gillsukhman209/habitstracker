@@ -5,7 +5,7 @@ import { cors } from "@/libs/cors";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-export async function POST(request) {
+export const POST = cors(async (req) => {
   try {
     console.log("Connecting to MongoDB...");
     await connectMongo();
@@ -49,9 +49,6 @@ export async function POST(request) {
     console.error("Error sending emails:", error);
     return new Response(JSON.stringify({ error: "Failed to send emails." }), {
       status: 500,
-      headers: { "Content-Type": "application/json" },
     });
   }
-}
-
-export const handler = cors(POST);
+});
