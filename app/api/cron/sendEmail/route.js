@@ -23,13 +23,6 @@ export const GET = cors(async (req) => {
         headers: { "Content-Type": "application/json" },
       });
     }
-    // Verify the Authorization header
-    // if (!authHeader || authHeader !== `Bearer ${API_SECRET_TOKEN}`) {
-    //   return new Response(JSON.stringify({ error: "Unauthorized" }), {
-    //     status: 401,
-    //     headers: { "Content-Type": "application/json" },
-    //   });
-    // }
 
     const protocol = req.headers.get("x-forwarded-proto") || "http";
     const host = req.headers.get("host");
@@ -40,6 +33,7 @@ export const GET = cors(async (req) => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${API_SECRET_TOKEN}`, // Sending the authorization secret
       },
     });
 
@@ -56,9 +50,12 @@ export const GET = cors(async (req) => {
     );
   } catch (error) {
     console.error("Error running cron job:", error);
-    return new Response(JSON.stringify({ error: "Error running cron job" }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" },
-    });
+    return new Response(
+      JSON.stringify({ error: "Error running cron job", err: error }),
+      {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
+      }
+    );
   }
 });
