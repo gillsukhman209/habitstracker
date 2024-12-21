@@ -1,11 +1,7 @@
 {
   "crons": [
     {
-      "path": "/api/cron/resetAllHabits",
-      "schedule": "* * * * *"
-    },
-    {
-      "path": "/api/cron/sendDaily",
+      "path": "/api/cron/runCron",
       "schedule": "* * * * *"
     }
   ]
