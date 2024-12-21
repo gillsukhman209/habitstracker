@@ -26,16 +26,13 @@ export async function POST() {
         } else {
           // Charge user
 
-          const response = await fetch(
-            "http://21habits.co/api/user/chargeUser",
-            {
-              method: "POST",
-              body: JSON.stringify({
-                day: currentDay,
-                userId: user._id,
-              }),
-            }
-          );
+          await fetch("http://21habits.co/api/user/chargeUser", {
+            method: "POST",
+            body: JSON.stringify({
+              day: currentDay,
+              userId: user._id,
+            }),
+          });
         }
       }
 
