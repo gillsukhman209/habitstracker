@@ -24,7 +24,7 @@ export default function Home() {
         return;
       }
 
-      if (session.user) {
+      if (session && session.user) {
         const response = await (await fetch("/api/user")).json();
 
         const user = response.user;
