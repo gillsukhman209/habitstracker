@@ -2,7 +2,6 @@ import connectMongo from "@/libs/mongoose";
 import User from "@/models/User";
 
 export async function POST() {
-  console.log("Resetting all habits api");
   try {
     // Connect to MongoDB
     await connectMongo();
