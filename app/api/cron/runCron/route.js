@@ -3,8 +3,13 @@ import { cors } from "@/libs/cors";
 export const GET = cors(async (req) => {
   try {
     console.log("Running cron job");
-    // Server-side POST request to sendDaily
-    const res = await fetch("/api/cron/sendDaily", {
+
+    // Construct absolute URL using request headers
+    const protocol = req.headers.get("x-forwarded-proto") || "http";
+    const host = req.headers.get("host");
+    const url = `${protocol}://${host}/api/cron/sendDaily`;
+
+    const res = await fetch(url, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
