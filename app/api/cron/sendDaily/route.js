@@ -1,13 +1,12 @@
 import { Resend } from "resend";
 import connectMongo from "@/libs/mongoose";
 import User from "@/models/User";
+import { cors } from "@/libs/cors";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-export async function POST() {
+export async function POST(request) {
   try {
-    // Add headers to prevent caching
-
     console.log("Connecting to MongoDB...");
     await connectMongo();
 
@@ -54,3 +53,5 @@ export async function POST() {
     });
   }
 }
+
+export const handler = cors(POST);
