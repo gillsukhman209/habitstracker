@@ -1,8 +1,19 @@
 import connectMongo from "@/libs/mongoose";
 import User from "@/models/User";
 
-export async function POST() {
+export async function POST(req) {
   try {
+    const { API_SECRET_TOKEN } = process.env;
+    const authHeader = req.headers.get("Authorization");
+
+    // Verify the Authorization header
+    if (!authHeader || authHeader !== `Bearer ${API_SECRET_TOKEN}`) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
     // Connect to MongoDB
     await connectMongo();
 
@@ -18,14 +29,12 @@ export async function POST() {
 
         const currentDay = today - firstHabitDate;
 
-        // Check if user has compelted all the habits for today if so then add currentDay to winning streak
-
+        // Check if user has completed all the habits for today if so then add currentDay to winning streak
         if (user.habits.every((habit) => habit.isComplete)) {
           user.completedDays.push(currentDay);
         } else {
           // Charge user
-
-          await fetch("http://21habits.co/api/user/chargeUser", {
+          await fetch("http://localhost:3000/api/user/chargeUser", {
             method: "POST",
             body: JSON.stringify({
               day: currentDay,

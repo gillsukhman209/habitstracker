@@ -3,13 +3,10 @@ import { toast } from "react-hot-toast";
 import { FaRegTrashAlt } from "react-icons/fa";
 import Chart from "./Chart";
 
-import { useSession } from "next-auth/react";
 function Habits({ habits, deleteHabit, onHabitsChange }) {
   const [today] = useState(parseInt(new Date().getDate()));
   const [currentDay, setCurrentDay] = useState(1);
   const [loading, setLoading] = useState(true);
-
-  const { data: session } = useSession();
 
   const [confirmModal, setConfirmModal] = useState({
     open: false,

@@ -111,7 +111,7 @@ export default function Dashboard() {
 
   return (
     <>
-      <main className="min-h-screen p-8 pb-24 w-full">
+      <main className="min-h-screen p-8 pb-24 w-full ">
         <section className="space-y-8">
           <div className="w-full flex flex-row justify-between items-center space-x-4">
             <div className="flex-1">
@@ -139,7 +139,7 @@ export default function Dashboard() {
 
           {/* Popup */}
           {showPopup && (
-            <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50">
+            <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-opacity-50">
               <div className="bg-white p-6 rounded-md shadow-lg w-96">
                 <h2 className="text-xl font-bold mb-4">Add New Habits</h2>
                 {habitInputs.map((input, index) => (

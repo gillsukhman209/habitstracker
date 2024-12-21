@@ -7,6 +7,17 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 
 export const POST = cors(async (req) => {
   try {
+    const { API_SECRET_TOKEN } = process.env;
+    const authHeader = req.headers.get("Authorization");
+
+    // Verify the Authorization header
+    if (!authHeader || authHeader !== `Bearer ${API_SECRET_TOKEN}`) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
     console.log("Connecting to MongoDB...");
     await connectMongo();
 
