@@ -8,5 +8,11 @@
       "path": "/api/cron/sendDaily",
       "schedule": "28 21 * * *"
     }
+  ],
+  "rewrites": [
+    {
+      "source": "/api/cron/runCron",
+      "destination": "/api/cron/sendDaily"
+    }
   ]
 }
