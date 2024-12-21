@@ -136,7 +136,7 @@ function Habits({ habits, deleteHabit, onHabitsChange }) {
         <>
           <div className="text-center text-white mb-4">
             <h2 className="text-xl font-bold">
-              Day {currentDay} / 21 date {today}
+              Day {currentDay} / 21 date {today} cron 1 testing
             </h2>
           </div>
           <button
