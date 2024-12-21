@@ -20,7 +20,7 @@ const WithWithout = () => {
               {[
                 "No consequences for missing habits",
                 "No reminders to stay consistent",
-                "Struggle to stay motivated/disciplined",
+                "No accountability for missed habits",
               ].map((item, index) => (
                 <li key={index} className="flex gap-2 items-center">
                   <svg
@@ -43,7 +43,7 @@ const WithWithout = () => {
             <ul className="list-disc list-inside space-y-1.5 flex-1">
               {/* Features of your product fixing the pain (try to match each with/without lines) */}
               {[
-                "Get charged if you don’t complete your habits",
+                "Laziness is punished with a charge ",
                 `Get reminders to stay on track`,
                 "Visualize your progress and stay motivated",
               ].map((item, index) => (
