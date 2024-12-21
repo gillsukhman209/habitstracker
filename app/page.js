@@ -13,7 +13,7 @@ import { renderSchemaTags } from "@/libs/seo";
 import Footer from "@/components/Footer";
 import { toast } from "react-hot-toast";
 export default function Home() {
-  const { data: status } = useSession();
+  const { data: session, status } = useSession();
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [hasAccess, setHasAccess] = useState(false);
@@ -24,11 +24,11 @@ export default function Home() {
         return;
       }
 
-      if (status === "authenticated") {
-        console.log("status is authenticated");
-        const response = await fetch("/api/user");
-        console.log("response", response);
-        const user = await response.json();
+      if (session.user) {
+        const response = await (await fetch("/api/user")).json();
+
+        const user = response.user;
+
         if (user.hasAccess) {
           setHasAccess(user.hasAccess);
           router.push("/dashboard");
