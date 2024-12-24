@@ -2,6 +2,7 @@ import connectMongo from "@/libs/mongoose";
 import User from "@/models/User";
 
 export async function POST(req) {
+  console.log("resetAllHabits route called");
   try {
     const { API_SECRET_TOKEN } = process.env;
     const authHeader = req.headers.get("Authorization");
@@ -39,17 +40,24 @@ export async function POST(req) {
         const today = parseInt(new Date().getDate() + 0);
 
         const currentDay = today - firstHabitDate;
+        console.log("currentDay", currentDay);
 
         // Check if user has completed all the habits for today if so then add currentDay to winning streak
         if (user.habits.every((habit) => habit.isComplete)) {
-          user.completedDays.push(currentDay);
+          user.completedDays.push(currentDay + 1);
+          console.log("User has completed all habits for today");
+          await user.save();
         } else {
+          console.log(
+            "User has not completed all habits for today, charging user"
+          );
           // Charge user
           await fetch("http://localhost:3000/api/user/chargeUser", {
             method: "POST",
             body: JSON.stringify({
               day: currentDay,
               userId: user._id,
+              penaltyAmount: user.penaltyAmount,
             }),
           });
         }

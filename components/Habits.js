@@ -4,7 +4,7 @@ import { FaRegTrashAlt } from "react-icons/fa";
 import Chart from "./Chart";
 
 function Habits({ habits, deleteHabit, onHabitsChange }) {
-  const [today] = useState(parseInt(new Date().getDate()));
+  const [today] = useState(parseInt(new Date().getDate() + 0));
   const [currentDay, setCurrentDay] = useState(1);
   const [loading, setLoading] = useState(true);
 
@@ -60,24 +60,6 @@ function Habits({ habits, deleteHabit, onHabitsChange }) {
     }
   };
 
-  const updateCompletedDays = async (day) => {
-    try {
-      const response = await fetch("/api/user/updateCompletedDays", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ day }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to update completed days");
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
   const confirmHabitCompletion = async () => {
     const { habit } = confirmModal;
     await updateHabit(habit._id, true);
@@ -100,7 +82,7 @@ function Habits({ habits, deleteHabit, onHabitsChange }) {
   }, []);
 
   return (
-    <div className="w-full flex flex-col gap-4  p-4 rounded-lg text-black">
+    <div className="w-full flex flex-col gap-4  p-4 rounded-lg text-white">
       {loading ? (
         <div className="text-center text-white">
           <h2 className="text-xl">Loading...</h2>
@@ -138,7 +120,9 @@ function Habits({ habits, deleteHabit, onHabitsChange }) {
               </div>
             ))
           ) : (
-            <p className="text-gray-400 text-center">No habits found</p>
+            <p className="text-gray-400 text-center">
+              Add habits to get started
+            </p>
           )}
 
           <Chart habits={habits} currentDay={currentDay} />

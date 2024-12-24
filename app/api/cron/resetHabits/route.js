@@ -1,6 +1,7 @@
 import { cors } from "@/libs/cors";
 
 export const GET = cors(async (req) => {
+  console.log("resetHabits route called");
   try {
     const { API_SECRET_TOKEN } = process.env;
     const authHeader = req.headers.get("Authorization");

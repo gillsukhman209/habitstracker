@@ -25,14 +25,18 @@ export default function Home() {
       }
 
       if (session && session.user) {
-        const response = await (await fetch("/api/user")).json();
+        try {
+          const response = await (await fetch("/api/user")).json();
+          const user = response.user;
 
-        const user = response.user;
-
-        if (user.hasAccess) {
-          setHasAccess(user.hasAccess);
-          router.push("/dashboard");
-        } else {
+          if (user.hasAccess) {
+            setHasAccess(user.hasAccess);
+            router.push("/dashboard");
+          } else {
+            setLoading(false);
+          }
+        } catch (error) {
+          console.error("Error fetching user data:", error);
           setLoading(false);
         }
       } else {

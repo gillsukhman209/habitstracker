@@ -119,7 +119,7 @@ const ButtonPopover = ({ deleteHabit }) => {
                   ))}
                   {habits.length === 0 && (
                     <p className="text-gray-500 text-center">
-                      No habits found.
+                      Add habits to get started
                     </p>
                   )}
                 </div>

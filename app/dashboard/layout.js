@@ -16,7 +16,7 @@ export default async function LayoutPrivate({ children }) {
   // Check if the user has access
   await connectMongo();
   const user = await User.findById(session.user.id);
-  console.log("user found in dashboard layout", user);
+
   if (!user || !user.hasAccess) {
     console.log("user does not have access redirecting to home");
     redirect("http://localhost:3000/");

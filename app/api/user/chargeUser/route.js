@@ -24,6 +24,8 @@ export async function POST(req) {
     const customerId = user.customerId; // Get the customer's ID from the user object
     const priceId = user.priceId;
     const paymentMethodId = user.paymentMethodId;
+    const penaltyAmount = user.penaltyAmount;
+    const amount = penaltyAmount * 100;
 
     // Check for missing data
     if (!priceId) {
@@ -50,13 +52,12 @@ export async function POST(req) {
       );
     }
 
-    const amount = 15000;
-
-    const today = new Date().toLocaleDateString("en-US", {
-      month: "2-digit",
-      day: "2-digit",
-      year: "numeric",
-    });
+    // const today = new Date().toLocaleDateString("en-US", {
+    //   month: "2-digit",
+    //   day: "2-digit",
+    //   year: "numeric",
+    // });
+    const today = "2024-12-24";
 
     // Generate an idempotency key based on user ID and current date
     const idempotencyKey = `${user.id}-${today}`;

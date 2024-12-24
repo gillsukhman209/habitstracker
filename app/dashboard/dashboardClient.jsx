@@ -9,6 +9,7 @@ import Habits from "@/components/Habits";
 export default function Dashboard() {
   const [showPopup, setShowPopup] = useState(false); // State for showing/hiding the popup
   const [habitInputs, setHabitInputs] = useState([{ title: "", duration: "" }]); // State for habit inputs
+  const [penaltyAmount, setPenaltyAmount] = useState(""); // State for penalty amount
   const [habits, setHabits] = useState([]); // State for habits
   const [canAddHabits, setCanAddHabits] = useState(true); // State to control adding habits
 
@@ -58,6 +59,11 @@ export default function Dashboard() {
       return;
     }
 
+    if (parseFloat(penaltyAmount) < 5) {
+      toast.error("Penalty amount must be at least $5.");
+      return;
+    }
+
     try {
       for (const input of validInputs) {
         const response = await fetch("/api/user/addHabit", {
@@ -68,6 +74,7 @@ export default function Dashboard() {
           body: JSON.stringify({
             habitTitle: input.title,
             habitDuration: input.duration,
+            penaltyAmount: parseFloat(penaltyAmount), // Include penalty amount
           }),
         });
 
@@ -86,6 +93,7 @@ export default function Dashboard() {
       toast.success("Habits added successfully!");
       setShowPopup(false); // Close the popup
       setHabitInputs([{ title: "", duration: "" }]); // Reset the habit inputs
+      setPenaltyAmount(""); // Reset penalty amount
       await fetchHabits(); // Fetch updated habits
       setCanAddHabits(false); // Disable adding more habits
     } catch (error) {
@@ -118,7 +126,9 @@ export default function Dashboard() {
               <ButtonAccount />
             </div>
             <div className="flex-1 text-center">
-              <h1 className="text-3xl md:text-4xl font-extrabold">21 Habits</h1>
+              <h1 className="text-3xl md:text-4xl font-extrabold text-white">
+                21 Habits
+              </h1>
             </div>
             <div className="flex-1 flex flex-row gap-5 justify-end">
               <ButtonGradient
@@ -137,9 +147,11 @@ export default function Dashboard() {
 
           {/* Popup */}
           {showPopup && (
-            <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-opacity-50">
+            <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-opacity-50 text-black">
               <div className="bg-white p-6 rounded-md shadow-lg w-96">
-                <h2 className="text-xl font-bold mb-4">Add New Habits</h2>
+                <h2 className="text-xl font-bold mb-4 text-black">
+                  Add New Habits
+                </h2>
                 {habitInputs.map((input, index) => (
                   <div key={index} className="mb-4">
                     <input
@@ -164,9 +176,20 @@ export default function Dashboard() {
                     />
                   </div>
                 ))}
+                <div className="mb-4">
+                  <input
+                    type="number"
+                    placeholder="Penalty Amount ($)"
+                    value={penaltyAmount}
+                    onChange={(e) => setPenaltyAmount(e.target.value)}
+                    className="input input-bordered input-info w-full max-w-xs"
+                    min="5"
+                    step="0.01"
+                  />
+                </div>
                 <div className="flex justify-between mt-4">
                   <button
-                    className="px-4 py-2 bg-gray-300 text-black rounded-md"
+                    className="px-4 py-2 bg-gray-300 text-gray-800 rounded-md"
                     onClick={addMoreHabitFields}
                     disabled={!canAddHabits} // Disable button if habits exist
                   >
@@ -182,7 +205,7 @@ export default function Dashboard() {
                 </div>
                 <div className="flex justify-end space-x-4 mt-4">
                   <button
-                    className="px-4 py-2 bg-gray-300 text-black rounded-md"
+                    className="px-4 py-2 bg-gray-300 text-gray-800 rounded-md"
                     onClick={() => setShowPopup(false)}
                   >
                     Cancel

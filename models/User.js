@@ -52,6 +52,10 @@ const userSchema = mongoose.Schema(
       type: Number,
       default: 0, // Amount in dollars
     },
+    penaltyAmount: {
+      type: Number,
+      default: 5, // Amount in dollars
+    },
 
     hasAccess: {
       type: Boolean,

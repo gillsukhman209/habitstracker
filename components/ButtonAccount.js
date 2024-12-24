@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Popover, Transition } from "@headlessui/react";
 import { useSession, signOut } from "next-auth/react";
 import apiClient from "@/libs/api";
-
+import Image from "next/image";
 // A button to show user some account actions
 //  1. Billing: open a Stripe Customer Portal to manage their billing (cancel subscription, update payment method, etc.).
 //     You have to manually activate the Customer Portal in your Stripe Dashboard (https://dashboard.stripe.com/test/settings/billing/portal)
@@ -43,7 +43,7 @@ const ButtonAccount = () => {
         <>
           <Popover.Button className="btn">
             {session?.user?.image ? (
-              <img
+              <Image
                 src={session?.user?.image}
                 alt={session?.user?.name || "Account"}
                 className="w-6 h-6 rounded-full shrink-0"

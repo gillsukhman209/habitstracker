@@ -53,17 +53,17 @@ function HabitChart({ currentDay }) {
   };
 
   return (
-    <div className="w-full h-[500px] rounded-xl  p-10 shadow-lg text-black ">
+    <div className="w-full h-[500px] rounded-xl  p-10 shadow-lg text-white ">
       <div className="mb-8 flex items-center justify-between">
-        <h3 className="text-xl font-semibold text-black">21 Days Progress</h3>
-        <span className="text-3xl font-bold text-black">
+        <h3 className="text-xl font-semibold text-white">21 Days Progress</h3>
+        <span className="text-3xl font-bold text-white">
           {calculateProgress()}%
         </span>
       </div>
       <div className="grid grid-cols-7 gap-4 place-items-center">
         {renderDays()}
       </div>
-      <div className="mt-6 flex justify-center gap-6 text-sm text-black">
+      <div className="mt-6 flex justify-center gap-6 text-sm text-white">
         <div className="flex items-center gap-2">
           <div className="h-4 w-4 rounded-full bg-emerald-500"></div>
           <span>Completed</span>

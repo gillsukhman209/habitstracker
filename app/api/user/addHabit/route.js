@@ -9,7 +9,8 @@ export async function POST(req) {
     await connectMongo();
     const session = await getServerSession(authOptions);
     const body = await req.json();
-    const { habitTitle, habitDuration } = body;
+    const { habitTitle, habitDuration, penaltyAmount } = body; // Include penaltyAmount
+    console.log("penaltyAmount", penaltyAmount);
 
     if (!habitTitle) {
       return NextResponse.json(
@@ -27,9 +28,11 @@ export async function POST(req) {
     user.habits.push({
       title: habitTitle,
       duration: habitDuration,
+
       createdAt: new Date(),
     });
-    user.lastResetDay = new Date().toISOString().split("T")[0];
+    user.penaltyAmount = penaltyAmount;
+
     await user.save();
 
     return NextResponse.json({ success: true, habit: habitTitle });
