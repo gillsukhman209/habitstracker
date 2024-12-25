@@ -74,10 +74,6 @@ function HabitChart({ currentDay }) {
           <div className="h-4 w-4 rounded-full bg-red-500/50"></div>
           <span>Missed</span>
         </div>
-        <div className="flex items-center gap-2">
-          <div className="h-4 w-4 rounded-full bg-gray-700"></div>
-          <span>Upcoming</span>
-        </div>
       </div>
     </div>
   );
