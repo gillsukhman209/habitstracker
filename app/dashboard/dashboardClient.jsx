@@ -119,17 +119,13 @@ export default function Dashboard() {
 
   return (
     <>
-      <main className="min-h-screen p-8 pb-24 w-full ">
-        <section className="space-y-8">
-          <div className="w-full flex flex-row justify-between items-center space-x-4">
+      <main className="min-h-screen  pb-24 w-full ">
+        <section className="space-y-8  ">
+          <div className="w-full flex flex-row justify-between items-center space-x-4  p-8">
             <div className="flex-1">
               <ButtonAccount />
             </div>
-            <div className="flex-1 text-center">
-              <h1 className="text-3xl md:text-4xl font-extrabold text-white">
-                21 Habits
-              </h1>
-            </div>
+
             <div className="flex-1 flex flex-row gap-5 justify-end">
               <ButtonGradient
                 title="Add Habits"
@@ -147,7 +143,7 @@ export default function Dashboard() {
 
           {/* Popup */}
           {showPopup && (
-            <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-opacity-50 text-black">
+            <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-opacity-50 text-white">
               <div className="bg-white p-6 rounded-md shadow-lg w-96">
                 <h2 className="text-xl font-bold mb-4 text-black">
                   Add New Habits

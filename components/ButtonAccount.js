@@ -58,7 +58,9 @@ const ButtonAccount = () => {
               </span>
             )}
 
-            {session?.user?.name || "Account"}
+            <span className="hidden md:inline">
+              {session?.user?.name || "Account"}
+            </span>
 
             {isLoading ? (
               <span className="loading loading-spinner loading-xs"></span>

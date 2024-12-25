@@ -82,21 +82,21 @@ function Habits({ habits, deleteHabit, onHabitsChange }) {
   }, []);
 
   return (
-    <div className="w-full flex flex-col gap-4  p-4 rounded-lg text-white">
+    <div className="w-full  flex flex-col gap-4  p-4 rounded-lg text-white ">
       {loading ? (
         <div className="text-center text-white">
           <h2 className="text-xl">Loading...</h2>
         </div>
       ) : (
-        <>
-          <div className="text-center text-white mb-4">
+        <div className="flex flex-col gap-4">
+          <div className="text-center text-white mb-4 w-full ">
             <h2 className="text-xl font-bold">Day {currentDay} / 21</h2>
           </div>
           {habits.length > 0 ? (
             habits.map((habit) => (
               <div
                 key={habit._id}
-                className="flex items-center justify-between bg-gray-700 text-white p-2 rounded-lg"
+                className="flex items-center  max-w-[400px] border-white border-[0.5px] justify-between  text-white p-2 rounded-lg"
               >
                 <div className="flex items-center">
                   <input
@@ -127,7 +127,7 @@ function Habits({ habits, deleteHabit, onHabitsChange }) {
 
           <Chart habits={habits} currentDay={currentDay} />
           {confirmModal.open && (
-            <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50">
+            <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black text-black bg-opacity-50">
               <div className="bg-white p-6 rounded-md shadow-lg w-96">
                 <h2 className="text-xl font-bold mb-4">Confirm Completion</h2>
                 <p>Are you sure you want to mark this habit as complete?</p>
@@ -150,7 +150,7 @@ function Habits({ habits, deleteHabit, onHabitsChange }) {
               </div>
             </div>
           )}
-        </>
+        </div>
       )}
     </div>
   );

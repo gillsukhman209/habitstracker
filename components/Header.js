@@ -36,7 +36,7 @@ const Header = () => {
             href="/"
             title={`${config.appName} hompage`}
           >
-            <span className="font-extrabold text-lg">{config.appName}</span>
+            {/* <span className="font-extrabold text-lg">{config.appName}</span> */}
           </Link>
         </div>
         {/* Burger button to open menu on mobile */}
