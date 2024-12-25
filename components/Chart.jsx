@@ -28,51 +28,69 @@ function HabitChart({ currentDay, penaltyAmount }) {
       const isCompleted = completedDays.includes(i);
       const isCurrent = i === currentDay;
       const isPast = i < currentDay;
+      const isMissed = !isCompleted && isPast;
 
       days.push(
         <div
           key={i}
           className={`
-            w-10 h-10 rounded-full transition-all duration-500 transform hover:scale-110
-            ${isCompleted ? "bg-emerald-500" : "bg-gray-700"}
+            w-16 h-16 rounded-full transition-all duration-300 transform hover:scale-110 cursor-pointer
+            ${
+              isCompleted
+                ? "bg-gradient-to-r from-green-800 to-green-400"
+                : isMissed
+                ? "bg-gradient-to-r from-red-800 to-red-400"
+                : "bg-gray-700"
+            }
             ${
               isCurrent
-                ? "ring-2 ring-blue-400 ring-offset-2 ring-offset-gray-900"
+                ? "ring-4 ring-blue-400 ring-offset-2 ring-offset-gray-900"
                 : ""
             }
-            ${!isCompleted && isPast ? "bg-red-500/50" : ""}
-            ${i > currentDay ? "opacity-40" : ""}
+            ${i > currentDay ? "opacity-50" : ""}
+            relative flex justify-center items-center shadow-lg hover:shadow-xl
           `}
+          title={
+            isCompleted ? "Completed" : isMissed ? "Missed" : "Not Completed"
+          }
         >
-          <span className="sr-only">Days {i}</span>
+          {isCompleted && (
+            <span className="text-white text-xl font-bold">✔</span>
+          )}
+          {isMissed && <span className="text-white text-xl font-bold">✘</span>}
+          <div
+            className={`absolute bottom-0 w-full h-1 rounded-t-full ${
+              isCompleted ? "bg-green-300" : isMissed ? "bg-red-300" : ""
+            }`}
+            style={{ height: "4px" }}
+          ></div>
         </div>
       );
     }
-
     return days;
   };
 
   return (
-    <div className="w-full h-[500px] mt-10 rounded-xl p-10 shadow-lg text-white border border-white/10 ">
+    <div className="w-full lg:h-[600px] h-[500px]    mt-10 rounded-xl p-10 shadow-xl text-white border border-white/10 ">
       <div className="mb-8 flex items-center justify-between">
-        <span className="text-3xl font-bold text-white">
+        <span className="text-4xl font-bold text-white">
           {calculateProgress()}%
         </span>
 
-        <div className="text-xl font-bold text-white ">
+        <div className={`text-xl font-bold text-white`}>
           Penalty: ${penaltyAmount}
         </div>
       </div>
-      <div className="grid grid-cols-4 sm:grid-cols-5 gap-x-1 gap-y-4 place-items-center ">
+      <div className="grid grid-cols-4 sm:grid-cols-5 gap-x-3 gap-y-4 place-items-center">
         {renderDays()}
       </div>
-      <div className="mt-6 flex justify-center gap-6 text-sm text-white">
+      <div className="mt-6 flex justify-center gap-6 text-lg text-white">
         <div className="flex items-center gap-2">
-          <div className="h-4 w-4 rounded-full bg-emerald-500"></div>
+          <div className="h-4 w-4 rounded-full bg-green-500"></div>
           <span>Completed</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="h-4 w-4 rounded-full bg-red-500/50"></div>
+          <div className="h-4 w-4 rounded-full bg-red-500"></div>
           <span>Missed</span>
         </div>
       </div>

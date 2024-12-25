@@ -4,7 +4,7 @@ import { FaRegTrashAlt } from "react-icons/fa";
 import Chart from "./Chart";
 
 function Habits({ habits, deleteHabit, onHabitsChange }) {
-  const [today] = useState(parseInt(new Date().getDate() + 0));
+  const [today] = useState(parseInt(new Date().getDate() + 2));
   const [currentDay, setCurrentDay] = useState(1);
   const [loading, setLoading] = useState(true);
   const [penaltyAmount, setPenaltyAmount] = useState(0);

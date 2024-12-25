@@ -7,11 +7,11 @@ import { toast } from "react-hot-toast";
 import Habits from "@/components/Habits";
 
 export default function Dashboard() {
-  const [showPopup, setShowPopup] = useState(false); // State for showing/hiding the popup
-  const [habitInputs, setHabitInputs] = useState([{ title: "", duration: "" }]); // State for habit inputs
-  const [penaltyAmount, setPenaltyAmount] = useState(""); // State for penalty amount
-  const [habits, setHabits] = useState([]); // State for habits
-  const [canAddHabits, setCanAddHabits] = useState(true); // State to control adding habits
+  const [showPopup, setShowPopup] = useState(false);
+  const [habitInputs, setHabitInputs] = useState([{ title: "", duration: "" }]);
+  const [penaltyAmount, setPenaltyAmount] = useState("");
+  const [habits, setHabits] = useState([]);
+  const [canAddHabits, setCanAddHabits] = useState(true);
 
   useEffect(() => {
     fetchHabits();
@@ -23,7 +23,7 @@ export default function Dashboard() {
       const data = await response.json();
       setHabits(data.habits);
 
-      setCanAddHabits(data.habits.length === 0); // Unlock adding habits if none exist, lock if any exist
+      setCanAddHabits(data.habits.length === 0);
     } catch (error) {
       toast.error("Failed to fetch habits");
     }
@@ -74,28 +74,26 @@ export default function Dashboard() {
           body: JSON.stringify({
             habitTitle: input.title,
             habitDuration: input.duration,
-            penaltyAmount: parseFloat(penaltyAmount), // Include penalty amount
+            penaltyAmount: parseFloat(penaltyAmount),
           }),
         });
 
         if (!response.ok) {
           throw new Error("Failed to add habit");
-        } else {
-          console.log("Added habitsssss in dash client.jsx");
-          // Immediately update the habits state with the new habit
-          setHabits((prevHabits) => [
-            ...prevHabits,
-            { title: input.title, duration: input.duration, isComplete: false },
-          ]);
         }
+
+        setHabits((prevHabits) => [
+          ...prevHabits,
+          { title: input.title, duration: input.duration, isComplete: false },
+        ]);
       }
 
       toast.success("Habits added successfully!");
-      setShowPopup(false); // Close the popup
-      setHabitInputs([{ title: "", duration: "" }]); // Reset the habit inputs
-      setPenaltyAmount(""); // Reset penalty amount
-      await fetchHabits(); // Fetch updated habits
-      setCanAddHabits(false); // Disable adding more habits
+      setShowPopup(false);
+      setHabitInputs([{ title: "", duration: "" }]);
+      setPenaltyAmount("");
+      await fetchHabits();
+      setCanAddHabits(false);
     } catch (error) {
       toast.error(error.message);
     }
@@ -119,9 +117,9 @@ export default function Dashboard() {
 
   return (
     <>
-      <main className="min-h-screen  pb-24 w-full ">
-        <section className="space-y-8  ">
-          <div className="w-full flex flex-row justify-between items-center space-x-4  p-8">
+      <main className="min-h-screen pb-24 w-full">
+        <section className="space-y-8">
+          <div className="w-full flex flex-row justify-between items-center space-x-4 p-8">
             <div className="flex-1">
               <ButtonAccount />
             </div>
@@ -131,6 +129,7 @@ export default function Dashboard() {
                 title="Add Habits"
                 onClick={() => setShowPopup(true)}
                 disabled={!canAddHabits}
+                className="bg-gradient-to-r from-blue-500 to-teal-500 text-white font-bold py-2 px-6 rounded-lg hover:bg-gradient-to-l"
               />
             </div>
           </div>
@@ -144,7 +143,7 @@ export default function Dashboard() {
           {/* Popup */}
           {showPopup && (
             <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-opacity-50 text-white">
-              <div className="bg-white p-6 rounded-md shadow-lg w-96">
+              <div className="bg-white p-6 rounded-md shadow-lg w-96 transform scale-105 transition-all duration-300">
                 <h2 className="text-xl font-bold mb-4 text-black">
                   Add New Habits
                 </h2>
@@ -157,7 +156,7 @@ export default function Dashboard() {
                       onChange={(e) =>
                         handleInputChange(index, "title", e.target.value)
                       }
-                      className="input input-bordered input-info w-full max-w-xs mb-2"
+                      className="input input-bordered input-info w-full max-w-xs mb-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                       onKeyPress={handleKeyPress}
                     />
                     <input
@@ -167,7 +166,7 @@ export default function Dashboard() {
                       onChange={(e) =>
                         handleInputChange(index, "duration", e.target.value)
                       }
-                      className="input input-bordered input-info w-full max-w-xs"
+                      className="input input-bordered input-info w-full max-w-xs mb-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                       onKeyPress={handleKeyPress}
                     />
                   </div>
@@ -175,7 +174,7 @@ export default function Dashboard() {
                 <div className="mb-4">
                   <input
                     type="number"
-                    placeholder="Penalty Amount Mininmum $5"
+                    placeholder="Penalty Amount Minimum $5"
                     value={penaltyAmount}
                     onChange={(e) => setPenaltyAmount(e.target.value)}
                     className="input input-bordered input-info w-full max-w-xs"
@@ -187,14 +186,14 @@ export default function Dashboard() {
                   <button
                     className="px-4 py-2 bg-gray-300 text-gray-800 rounded-md"
                     onClick={addMoreHabitFields}
-                    disabled={!canAddHabits} // Disable button if habits exist
+                    disabled={!canAddHabits}
                   >
                     Add More Habits
                   </button>
                   <button
                     className="px-4 py-2 bg-blue-500 text-white rounded-md"
                     onClick={addHabits}
-                    disabled={!canAddHabits} // Disable button if habits exist
+                    disabled={!canAddHabits}
                   >
                     Save
                   </button>
