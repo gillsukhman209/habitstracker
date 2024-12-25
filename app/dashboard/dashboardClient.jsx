@@ -162,7 +162,7 @@ export default function Dashboard() {
                     />
                     <input
                       type="text"
-                      placeholder="Duration (e.g., 45 minutes)"
+                      placeholder="Duration in minutes"
                       value={input.duration}
                       onChange={(e) =>
                         handleInputChange(index, "duration", e.target.value)
@@ -175,7 +175,7 @@ export default function Dashboard() {
                 <div className="mb-4">
                   <input
                     type="number"
-                    placeholder="Penalty Amount ($)"
+                    placeholder="Penalty Amount Mininmum $5"
                     value={penaltyAmount}
                     onChange={(e) => setPenaltyAmount(e.target.value)}
                     className="input input-bordered input-info w-full max-w-xs"

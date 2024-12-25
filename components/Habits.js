@@ -7,6 +7,7 @@ function Habits({ habits, deleteHabit, onHabitsChange }) {
   const [today] = useState(parseInt(new Date().getDate() + 0));
   const [currentDay, setCurrentDay] = useState(1);
   const [loading, setLoading] = useState(true);
+  const [penaltyAmount, setPenaltyAmount] = useState(0);
 
   const [confirmModal, setConfirmModal] = useState({
     open: false,
@@ -22,6 +23,7 @@ function Habits({ habits, deleteHabit, onHabitsChange }) {
       const data = await response.json();
 
       onHabitsChange && onHabitsChange();
+      setPenaltyAmount(data.penaltyAmount);
 
       if (data.habits[0]?.dateAdded) {
         const firstHabitDate = new Date(data.habits[0]?.dateAdded).getDate();
@@ -92,11 +94,12 @@ function Habits({ habits, deleteHabit, onHabitsChange }) {
           <div className="text-center text-white mb-4 w-full ">
             <h2 className="text-xl font-bold">Day {currentDay} / 21</h2>
           </div>
+
           {habits.length > 0 ? (
             habits.map((habit) => (
               <div
                 key={habit._id}
-                className="flex items-center    max-w-[400px]  justify-between  text-white p-2 rounded-lg"
+                className="flex items-center min-w-[200px]  max-w-[600px] justify-between  text-white p-2 rounded-lg"
               >
                 <div className="flex items-center">
                   <input
@@ -125,7 +128,11 @@ function Habits({ habits, deleteHabit, onHabitsChange }) {
             </p>
           )}
 
-          <Chart habits={habits} currentDay={currentDay} />
+          <Chart
+            habits={habits}
+            currentDay={currentDay}
+            penaltyAmount={penaltyAmount}
+          />
           {confirmModal.open && (
             <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black text-black bg-opacity-50">
               <div className="bg-white p-6 rounded-md shadow-lg w-96">

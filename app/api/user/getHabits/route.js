@@ -24,6 +24,7 @@ export async function GET() {
       lastResetDate: user.lastResetDate,
       customerId: user.customerId,
       completedDays: user.completedDays,
+      penaltyAmount: user.penaltyAmount,
     });
   } catch (error) {
     console.error(error);

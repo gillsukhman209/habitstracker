@@ -57,7 +57,7 @@ export async function POST(req) {
     //   day: "2-digit",
     //   year: "numeric",
     // });
-    const today = "2024-12-24";
+    const today = "2024-12-25";
 
     // Generate an idempotency key based on user ID and current date
     const idempotencyKey = `${user.id}-${today}`;

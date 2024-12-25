@@ -10,7 +10,6 @@ export async function POST(req) {
     const session = await getServerSession(authOptions);
     const body = await req.json();
     const { habitTitle, habitDuration, penaltyAmount } = body; // Include penaltyAmount
-    console.log("penaltyAmount", penaltyAmount);
 
     if (!habitTitle) {
       return NextResponse.json(
