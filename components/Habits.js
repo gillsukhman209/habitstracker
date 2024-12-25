@@ -82,13 +82,13 @@ function Habits({ habits, deleteHabit, onHabitsChange }) {
   }, []);
 
   return (
-    <div className="w-full  flex flex-col gap-4  p-4 rounded-lg text-white ">
+    <div className="w-full  flex flex-col gap-4   p-4 rounded-lg text-white ">
       {loading ? (
         <div className="text-center text-white">
           <h2 className="text-xl">Loading...</h2>
         </div>
       ) : (
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-4 ">
           <div className="text-center text-white mb-4 w-full ">
             <h2 className="text-xl font-bold">Day {currentDay} / 21</h2>
           </div>
@@ -96,7 +96,7 @@ function Habits({ habits, deleteHabit, onHabitsChange }) {
             habits.map((habit) => (
               <div
                 key={habit._id}
-                className="flex items-center  max-w-[400px] border-white border-[0.5px] justify-between  text-white p-2 rounded-lg"
+                className="flex items-center    max-w-[400px]  justify-between  text-white p-2 rounded-lg"
               >
                 <div className="flex items-center">
                   <input
