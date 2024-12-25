@@ -9,7 +9,7 @@ export default async function Dashboard() {
 
   return (
     <>
-      <main className="min-h-screen  w-full  ">
+      <main className="bg-gray-900 min-h-screen  w-full  ">
         <DashBoardClient />
       </main>
     </>

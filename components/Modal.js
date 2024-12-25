@@ -32,7 +32,7 @@ const Modal = ({ isModalOpen, onClose, children }) => {
             >
               <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-lg bg-white p-6 shadow-xl transition-all">
                 <div className="flex justify-between items-center mb-4">
-                  <Dialog.Title as="h3" className="text-lg font-medium">
+                  <Dialog.Title as="h3" className="text-lg font-bold">
                     Confirmation
                   </Dialog.Title>
                   <button

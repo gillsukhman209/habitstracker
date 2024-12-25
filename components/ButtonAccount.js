@@ -5,15 +5,13 @@ import { Popover, Transition } from "@headlessui/react";
 import { useSession, signOut } from "next-auth/react";
 import apiClient from "@/libs/api";
 import Image from "next/image";
-// A button to show user some account actions
-//  1. Billing: open a Stripe Customer Portal to manage their billing (cancel subscription, update payment method, etc.).
-//     You have to manually activate the Customer Portal in your Stripe Dashboard (https://dashboard.stripe.com/test/settings/billing/portal)
-//     This is only available if the customer has a customerId (they made a purchase previously)
-//  2. Logout: sign out and go back to homepage
-// See more at https://21habits.co/docs/components/buttonAccount
+import { toast } from "react-hot-toast";
+import Modal from "./Modal";
+
 const ButtonAccount = () => {
   const { data: session, status } = useSession();
   const [isLoading, setIsLoading] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleSignOut = () => {
     signOut({ callbackUrl: "/" });
@@ -34,6 +32,27 @@ const ButtonAccount = () => {
     setIsLoading(false);
   };
 
+  const handleResetProgress = async () => {
+    setIsModalOpen(true);
+  };
+
+  const confirmResetProgress = async () => {
+    setIsModalOpen(false);
+    try {
+      const response = await fetch("/api/user/resetProgress", {
+        method: "POST",
+        body: JSON.stringify({ userId: session?.user?.id }),
+      });
+
+      if (response.ok) {
+        toast.success("Progress reset successfully");
+      } else {
+        toast.error("Failed to reset progress");
+      }
+    } catch (error) {
+      toast.error("An error occurred while resetting progress");
+    }
+  };
   // Don't show anything if not authenticated (we don't have any info about the user)
   if (status === "unauthenticated") return null;
 
@@ -41,7 +60,7 @@ const ButtonAccount = () => {
     <Popover className="relative z-10">
       {({ open }) => (
         <>
-          <Popover.Button className="btn">
+          <Popover.Button className="btn bg-gray-800">
             {session?.user?.image ? (
               <Image
                 src={session?.user?.image}
@@ -89,7 +108,7 @@ const ButtonAccount = () => {
             leaveFrom="transform scale-100 opacity-100"
             leaveTo="transform scale-95 opacity-0"
           >
-            <Popover.Panel className="absolute left-0 z-10 mt-3 w-screen max-w-[16rem] transform">
+            <Popover.Panel className="absolute left-0 z-10 mt-3 w-screen max-w-[16rem] transform ">
               <div className="overflow-hidden rounded-xl shadow-xl ring-1 ring-base-content ring-opacity-5 bg-base-100 p-1">
                 <div className="space-y-0.5 text-sm">
                   <button
@@ -109,6 +128,24 @@ const ButtonAccount = () => {
                       />
                     </svg>
                     Billing
+                  </button>
+                  <button
+                    className="flex items-center gap-2 hover:bg-error/20 hover:text-error duration-200 py-1.5 px-4 w-full rounded-lg font-medium"
+                    onClick={handleResetProgress}
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                      className="w-5 h-5"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M10 10.586l4.293 4.293a1 1 0 001.414-1.414L11.414 9.172l4.293-4.293A1 1 0 0014.293 2.293L10 6.586 5.707 2.293A1 1 0 004.293 3.707L8.586 8l-4.293 4.293A1 1 0 005.707 14.293L10 10.586z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                    Reset Progress
                   </button>
                   <button
                     className="flex items-center gap-2 hover:bg-error/20 hover:text-error duration-200 py-1.5 px-4 w-full rounded-lg font-medium"
@@ -137,6 +174,29 @@ const ButtonAccount = () => {
               </div>
             </Popover.Panel>
           </Transition>
+          <Modal
+            isModalOpen={isModalOpen}
+            onClose={() => setIsModalOpen(false)}
+          >
+            <p>
+              This action is irreversible. Are you sure you want to reset your
+              progress?
+            </p>
+            <div className="flex justify-end space-x-4 mt-4">
+              <button
+                className="px-4 py-2 bg-gray-300 text-black rounded-md"
+                onClick={() => setIsModalOpen(false)}
+              >
+                Cancel
+              </button>
+              <button
+                className="px-4 py-2 bg-red-500 text-white rounded-md"
+                onClick={confirmResetProgress}
+              >
+                Confirm
+              </button>
+            </div>
+          </Modal>
         </>
       )}
     </Popover>

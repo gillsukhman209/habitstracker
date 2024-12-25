@@ -48,7 +48,6 @@ function Habits({ habits, deleteHabit, onHabitsChange }) {
 
       if (!response.ok) throw new Error("Failed to update habit");
 
-      // toast.success("Habit updated successfully!");
       await fetchHabits();
     } catch (error) {
       toast.error("Failed to update habit");
@@ -84,41 +83,47 @@ function Habits({ habits, deleteHabit, onHabitsChange }) {
   }, []);
 
   return (
-    <div className="w-full  flex flex-col gap-4   p-4 rounded-lg text-white ">
+    <div className="w-full flex flex-col gap-8 p-8 bg-gray-900 rounded-lg shadow-xl text-white">
       {loading ? (
         <div className="text-center text-white">
           <h2 className="text-xl">Loading...</h2>
         </div>
       ) : (
-        <div className="flex flex-col gap-4 ">
-          <div className="text-center text-white mb-4 w-full ">
-            <h2 className="text-xl font-bold">Day {currentDay} / 21</h2>
+        <div className="flex flex-col gap-6">
+          <div className="text-center text-white mb-6 w-full">
+            <h2 className="text-2xl font-semibold">Day {currentDay} / 21</h2>
           </div>
 
           {habits.length > 0 ? (
             habits.map((habit) => (
               <div
                 key={habit._id}
-                className="flex items-center min-w-[200px]  max-w-[600px] justify-between  text-white p-2 rounded-lg"
+                className="flex items-center justify-between p-6 bg-gray-800 rounded-lg shadow-md transition-all transform "
               >
                 <div className="flex items-center">
                   <input
                     type="checkbox"
                     checked={habit.isComplete}
                     onChange={() => handleCheckboxClick(habit)}
-                    className="form-checkbox h-5 w-5 text-blue-600"
+                    className="form-checkbox h-6 w-6 text-indigo-500 transition-all duration-300"
                     disabled={habit.isComplete}
                   />
                   <span
-                    className={`ml-3 text-sm ${
-                      habit.isComplete ? "line-through text-gray-400" : ""
+                    className={`ml-4 text-lg font-medium transition-all duration-300 ${
+                      habit.isComplete
+                        ? "line-through text-gray-500"
+                        : "text-white"
                     }`}
                   >
                     {habit.title} - {habit.duration} minutes
                   </span>
                 </div>
-                <button onClick={() => handleDeleteHabit(habit._id)}>
-                  <FaRegTrashAlt className="h-5 w-5 text-red-500" />
+
+                <button
+                  onClick={() => handleDeleteHabit(habit._id)}
+                  className="text-red-500 hover:text-red-700 transition-colors duration-200"
+                >
+                  <FaRegTrashAlt className="h-6 w-6" />
                 </button>
               </div>
             ))
@@ -133,8 +138,9 @@ function Habits({ habits, deleteHabit, onHabitsChange }) {
             currentDay={currentDay}
             penaltyAmount={penaltyAmount}
           />
+
           {confirmModal.open && (
-            <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black text-black bg-opacity-50">
+            <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50 text-black">
               <div className="bg-white p-6 rounded-md shadow-lg w-96">
                 <h2 className="text-xl font-bold mb-4">Confirm Completion</h2>
                 <p>Are you sure you want to mark this habit as complete?</p>
@@ -148,7 +154,7 @@ function Habits({ habits, deleteHabit, onHabitsChange }) {
                     Cancel
                   </button>
                   <button
-                    className="px-4 py-2 bg-blue-500 text-white rounded-md"
+                    className="px-4 py-2 bg-indigo-500 text-white rounded-md"
                     onClick={confirmHabitCompletion}
                   >
                     Confirm

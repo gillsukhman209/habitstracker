@@ -129,7 +129,6 @@ export default function Dashboard() {
                 title="Add Habits"
                 onClick={() => setShowPopup(true)}
                 disabled={!canAddHabits}
-                className="bg-gradient-to-r from-blue-500 to-teal-500 text-white font-bold py-2 px-6 rounded-lg hover:bg-gradient-to-l"
               />
             </div>
           </div>

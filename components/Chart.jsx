@@ -58,12 +58,6 @@ function HabitChart({ currentDay, penaltyAmount }) {
             <span className="text-white text-xl font-bold">✔</span>
           )}
           {isMissed && <span className="text-white text-xl font-bold">✘</span>}
-          <div
-            className={`absolute bottom-0 w-full h-1 rounded-t-full ${
-              isCompleted ? "bg-green-300" : isMissed ? "bg-red-300" : ""
-            }`}
-            style={{ height: "4px" }}
-          ></div>
         </div>
       );
     }
