@@ -5,6 +5,7 @@ import ButtonAccount from "@/components/ButtonAccount";
 import ButtonGradient from "@/components/ButtonGradient";
 import { toast } from "react-hot-toast";
 import Habits from "@/components/Habits";
+import { useSession } from "next-auth/react";
 
 export default function Dashboard() {
   const [showPopup, setShowPopup] = useState(false);
@@ -12,7 +13,7 @@ export default function Dashboard() {
   const [penaltyAmount, setPenaltyAmount] = useState("");
   const [habits, setHabits] = useState([]);
   const [canAddHabits, setCanAddHabits] = useState(true);
-
+  const { data: session } = useSession();
   useEffect(() => {
     fetchHabits();
   }, []);
@@ -30,6 +31,19 @@ export default function Dashboard() {
   };
 
   const deleteHabit = async (habitId) => {
+    if (!habitId) {
+      return;
+    }
+    if (habits.length === 1) {
+      console.log("resetting progress");
+      await fetch("/api/user/resetProgress", {
+        method: "POST",
+        body: JSON.stringify({ userId: session.user.id }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+    }
     try {
       const response = await fetch("/api/user/deleteHabit", {
         method: "DELETE",
