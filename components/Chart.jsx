@@ -1,11 +1,9 @@
 "use client";
 
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 
 function HabitChart({ currentDay, penaltyAmount }) {
   const [completedDays, setCompletedDays] = useState([]);
-  const [visibleDays, setVisibleDays] = useState(10); // State to manage visible days
-  const chartRef = useRef(null);
 
   const fetchCompletedDays = async () => {
     const response = await fetch("/api/user/getDays");
@@ -63,24 +61,11 @@ function HabitChart({ currentDay, penaltyAmount }) {
         </div>
       );
     }
-    return days.slice(0, visibleDays); // Show only the visible days
-  };
-
-  const handleScroll = () => {
-    if (chartRef.current) {
-      const { scrollTop, scrollHeight, clientHeight } = chartRef.current;
-      if (scrollTop + clientHeight >= scrollHeight) {
-        setVisibleDays((prev) => Math.min(prev + 10, 21)); // Load more days, up to 21
-      }
-    }
+    return days; // Show all days
   };
 
   return (
-    <div
-      ref={chartRef}
-      onScroll={handleScroll}
-      className="w-full lg:h-[600px] h-[500px] mt-10 rounded-xl p-10 shadow-xl text-white border border-white/10 overflow-auto"
-    >
+    <div className="w-full lg:h-[600px] md:h-[500px] xs:h-screen mt-10 rounded-xl p-10 shadow-xl text-white border border-white/10">
       <div className="mb-8 flex items-center justify-between">
         <span className="text-4xl font-bold text-white">
           {calculateProgress()}%
@@ -93,12 +78,12 @@ function HabitChart({ currentDay, penaltyAmount }) {
       <div className="grid xs:grid-cols-3 sm:grid-cols-5 md:grid-cols-7 gap-x-3 gap-y-4 place-items-center">
         {renderDays()}
       </div>
-      <div className="absolute bottom-0 left-0 right-0 mt-6 flex justify-center gap-6 text-lg text-white ">
-        <div className="flex items-center gap-2 xs:bg-green-400  sm:bg-red-400 md:bg-blue-400 lg:bg-green-400 xl:bg-yellow-400">
+      <div className="flex justify-center gap-6 text-lg text-white mt-6 xs:order-1 lg:order-2">
+        <div className="flex items-center gap-2 xs:mb-4 lg:mb-0">
           <div className="h-4 w-4 rounded-full bg-green-500"></div>
           <span>Completed</span>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 xs:mb-4 lg:mb-0">
           <div className="h-4 w-4 rounded-full bg-red-500"></div>
           <span>Missed</span>
         </div>
