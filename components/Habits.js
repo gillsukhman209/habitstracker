@@ -99,7 +99,7 @@ function Habits({ habits, deleteHabit, onHabitsChange }) {
             habits.map((habit) => (
               <div
                 key={habit._id}
-                className="flex items-center justify-between p-6 bg-gray-800 rounded-lg shadow-md transition-all transform "
+                className="flex items-center justify-between p-6 bg-gray-800 rounded-lg shadow-2xl transition-all transform "
               >
                 <div className="flex items-center">
                   <input

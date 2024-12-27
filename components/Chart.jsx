@@ -65,7 +65,7 @@ function HabitChart({ currentDay, penaltyAmount }) {
   };
 
   return (
-    <div className="w-full lg:h-[600px] md:h-[500px] xs:h-screen mt-10 rounded-xl p-10 shadow-xl text-white border border-white/10">
+    <div className="w-full lg:h-[600px] md:h-[500px] xs:h-screen  rounded-xl p-10 shadow-xl text-white border border-white/10">
       <div className="mb-8 flex items-center justify-between">
         <span className="text-4xl font-bold text-white">
           {calculateProgress()}%
@@ -75,7 +75,7 @@ function HabitChart({ currentDay, penaltyAmount }) {
           Penalty: ${penaltyAmount}
         </div>
       </div>
-      <div className="grid xs:grid-cols-3 sm:grid-cols-5 md:grid-cols-7 gap-x-3 gap-y-4 place-items-center">
+      <div className="grid xs:grid-cols-3 sm:grid-cols-5 md:grid-cols-5 gap-x-3 gap-y-4 place-items-center">
         {renderDays()}
       </div>
       <div className="flex justify-center gap-6 text-lg text-white mt-6 xs:order-1 lg:order-2">
