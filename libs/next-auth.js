@@ -44,7 +44,5 @@ export const authOptions = {
   },
   theme: {
     brandColor: config.colors.main,
-    // Use the URL path to the logo instead of importing
-    logo: "/21Habits/logo.png",
   },
 };
