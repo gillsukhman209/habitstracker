@@ -75,7 +75,10 @@ function HabitChart({ currentDay, penaltyAmount }) {
           Penalty: ${penaltyAmount}
         </div>
       </div>
-      <div className="grid xs:grid-cols-3 sm:grid-cols-5 md:grid-cols-5 gap-x-3 gap-y-4 place-items-center">
+      <div className="text-sm text-white mb-4 text-center">
+        Updates every day at 12 AM
+      </div>
+      <div className="mt-8 grid xs:grid-cols-3 sm:grid-cols-5 md:grid-cols-5 gap-x-3 gap-y-4 place-items-center">
         {renderDays()}
       </div>
       <div className="flex justify-center gap-6 text-lg text-white mt-6 xs:order-1 lg:order-2">
