@@ -40,11 +40,13 @@ export async function POST(req) {
           "http://localhost:3000/api/user/fetchQuote"
         );
         const quoteData = await quoteResponse.json();
+        console.log("quoteData", quoteData);
 
         // get user and set quote to quoteData
 
         user.quote = quoteData;
         await user.save();
+        console.log("afer saving users quote");
 
         const firstHabitDate = user.habits[0].dateAdded.getDate();
 
