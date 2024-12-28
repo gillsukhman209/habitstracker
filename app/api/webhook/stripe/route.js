@@ -11,8 +11,8 @@ const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 console.log("webhookSecret", webhookSecret);
 
 export async function POST(req) {
-  alert("stripe webhook received");
   await connectMongo();
+  console.log("stripe webhook received");
 
   const body = await req.text();
 
