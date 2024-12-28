@@ -12,6 +12,7 @@ export async function POST(req) {
     await connectMongo();
 
     const { userId, day } = await req.json();
+    console.log("user id and day", userId, day);
 
     if (!userId || !day) {
       return NextResponse.json(
@@ -64,7 +65,7 @@ export async function POST(req) {
 
     // Charge the user
     try {
-      const paymentIntent = await stripe.paymentIntents.create(
+      await stripe.paymentIntents.create(
         {
           amount, // Amount in cents
           currency: price.currency, // Use the currency from the price object
