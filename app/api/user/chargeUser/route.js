@@ -12,7 +12,6 @@ export async function POST(req) {
     await connectMongo();
 
     const { userId } = await req.json();
-    console.log("user id and day", userId);
 
     if (!userId) {
       return NextResponse.json(
