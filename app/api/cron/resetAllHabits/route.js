@@ -37,7 +37,7 @@ export async function POST(req) {
       if (user.habits.length > 0) {
         console.log("user.habits.length", user.habits.length);
         const quoteResponse = await fetch(
-          "http://localhost:3000/api/user/fetchQuote"
+          "https://www.21habits.co/api/user/fetchQuote"
         );
         const quoteData = await quoteResponse.json();
         console.log("quoteData", quoteData);
@@ -63,15 +63,15 @@ export async function POST(req) {
           console.log(
             "User has not completed all habits for today, charging user"
           );
-          // Charge user
-          await fetch("http://localhost:3000/api/user/chargeUser", {
-            method: "POST",
-            body: JSON.stringify({
-              day: currentDay,
-              userId: user._id,
-              penaltyAmount: user.penaltyAmount,
-            }),
-          });
+          // // Charge user
+          // await fetch("http://localhost:3000/api/user/chargeUser", {
+          //   method: "POST",
+          //   body: JSON.stringify({
+          //     day: currentDay,
+          //     userId: user._id,
+          //     penaltyAmount: user.penaltyAmount,
+          //   }),
+          // });
         }
       }
 
