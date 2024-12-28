@@ -44,9 +44,12 @@ export const GET = cors(async (req) => {
 
     return new Response("Habits reset successfully.", { status: 200 });
   } catch (error) {
-    console.error("Error running resetAllHabits job: in resetHabits", error);
-    return new Response("Error running resetAllHabits job in resetHabits", {
-      status: 500,
-    });
+    console.error("Error runnsing resetAllHabits job: in resetHabits", error);
+    return new Response(
+      `Error running resetAllHsabits job in resetHabits: ${error.message}`,
+      {
+        status: 500,
+      }
+    );
   }
 });
