@@ -63,15 +63,15 @@ export async function POST(req) {
           console.log(
             "User has not completed all habits for today, charging user"
           );
-          // // Charge user
-          // await fetch("http://localhost:3000/api/user/chargeUser", {
-          //   method: "POST",
-          //   body: JSON.stringify({
-          //     day: currentDay,
-          //     userId: user._id,
-          //     penaltyAmount: user.penaltyAmount,
-          //   }),
-          // });
+          // Charge user
+          await fetch("http://localhost:3000/api/user/chargeUser", {
+            method: "POST",
+            body: JSON.stringify({
+              day: currentDay,
+              userId: user._id,
+              penaltyAmount: user.penaltyAmount,
+            }),
+          });
         }
       }
 
