@@ -11,16 +11,17 @@ export async function POST(req) {
     console.log("chargeUser route called");
     await connectMongo();
 
-    const { userId, day } = await req.json();
-    console.log("user id and day", userId, day);
+    const { userId } = await req.json();
+    console.log("user id and day", userId);
 
-    if (!userId || !day) {
+    if (!userId) {
       return NextResponse.json(
         { message: "User not found in chargeUser.js" },
         { status: 404 }
       );
     }
     const user = await User.findById(userId);
+    console.log("found user", user);
 
     const customerId = user.customerId; // Get the customer's ID from the user object
     const priceId = user.priceId;
