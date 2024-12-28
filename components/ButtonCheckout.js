@@ -18,7 +18,7 @@ const ButtonCheckout = ({ priceId, mode = "payment" }) => {
       const res = await apiClient.post("/stripe/create-checkout", {
         priceId,
         mode,
-        successUrl: "https://21habits.co/dashboard",
+        successUrl: "http://localhost:3000/dashboard",
         cancelUrl: window.location.href,
       });
 
