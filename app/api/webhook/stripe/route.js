@@ -32,7 +32,7 @@ export async function POST(req) {
 
   data = event.data;
   eventType = event.type;
-  console.log("eventType", eventType);
+  console.log("eventType isss", eventType);
 
   try {
     switch (eventType) {
