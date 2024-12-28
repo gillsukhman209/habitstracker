@@ -52,12 +52,12 @@ export async function POST(req) {
       );
     }
 
-    // const today = new Date().toLocaleDateString("en-US", {
-    //   month: "2-digit",
-    //   day: "2-digit",
-    //   year: "numeric",
-    // });
-    const today = "2024-12-27";
+    const today = new Date().toLocaleDateString("en-US", {
+      month: "2-digit",
+      day: "2-digit",
+      year: "numeric",
+    });
+    // const today = "2024-12-27";
 
     // Generate an idempotency key based on user ID and current date
     const idempotencyKey = `${user.id}-${today}`;
