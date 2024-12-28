@@ -5,7 +5,10 @@ export const GET = async () => {
   if (shuffledQuotes.length === 0) {
     try {
       const response = await fetch(
-        `https://zenquotes.io/api/quotes?timestamp=${Date.now()}`
+        `https://zenquotes.io/api/quotes?timestamp=${Date.now()}`,
+        {
+          cache: "no-store", // Ensure no caching
+        }
       );
       const data = await response.json();
       shuffledQuotes = data.sort(() => Math.random() - 0.5); // Shuffle quotes
