@@ -19,7 +19,7 @@ export default async function LayoutPrivate({ children }) {
 
   if (!user || !user.hasAccess) {
     console.log("user does not have access redirecting to home");
-    redirect("https://21habits.co/");
+    redirect("http://localhost:3000/");
   }
 
   return <>{children}</>;

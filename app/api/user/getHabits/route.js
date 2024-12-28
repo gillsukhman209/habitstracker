@@ -25,6 +25,7 @@ export async function GET() {
       customerId: user.customerId,
       completedDays: user.completedDays,
       penaltyAmount: user.penaltyAmount,
+      quote: user.quote,
     });
   } catch (error) {
     console.error(error);

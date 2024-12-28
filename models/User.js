@@ -56,6 +56,10 @@ const userSchema = mongoose.Schema(
       type: Number,
       default: 5, // Amount in dollars
     },
+    quote: {
+      type: String,
+      default: "",
+    },
 
     hasAccess: {
       type: Boolean,

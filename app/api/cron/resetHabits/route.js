@@ -23,6 +23,8 @@ export const GET = cors(async (req) => {
         headers: { "Content-Type": "application/json" },
       });
     }
+
+    console.log("past auth");
     const protocol = req.headers.get("x-forwarded-proto") || "http";
     const host = req.headers.get("host");
     const resetAllHabitsUrl = `${protocol}://${host}/api/cron/resetAllHabits`;

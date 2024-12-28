@@ -34,13 +34,23 @@ export async function POST(req) {
 
     // Loop through each user and reset their habits
     for (const user of users) {
-      if (user.habits) {
+      if (user.habits.length > 0) {
+        console.log("user.habits.length", user.habits.length);
+        const quoteResponse = await fetch(
+          "http://localhost:3000/api/user/fetchQuote"
+        );
+        const quoteData = await quoteResponse.json();
+
+        // get user and set quote to quoteData
+
+        user.quote = quoteData;
+        await user.save();
+
         const firstHabitDate = user.habits[0].dateAdded.getDate();
 
         const today = parseInt(new Date().getDate() + 0);
 
         const currentDay = today - firstHabitDate;
-        console.log("currentDay", currentDay);
 
         // Check if user has completed all the habits for today if so then add currentDay to winning streak
         if (user.habits.every((habit) => habit.isComplete)) {
@@ -52,7 +62,7 @@ export async function POST(req) {
             "User has not completed all habits for today, charging user"
           );
           // Charge user
-          await fetch("https://21habits.co/api/user/chargeUser", {
+          await fetch("http://localhost:3000/api/user/chargeUser", {
             method: "POST",
             body: JSON.stringify({
               day: currentDay,

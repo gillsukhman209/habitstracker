@@ -8,7 +8,7 @@ function Habits({ habits, deleteHabit, onHabitsChange }) {
   const [currentDay, setCurrentDay] = useState(1);
   const [loading, setLoading] = useState(true);
   const [penaltyAmount, setPenaltyAmount] = useState(0);
-  const [dailyQuote, setDailyQuote] = useState("");
+  const [quote, setQuote] = useState("");
 
   const [confirmModal, setConfirmModal] = useState({
     open: false,
@@ -22,9 +22,11 @@ function Habits({ habits, deleteHabit, onHabitsChange }) {
       if (!response.ok) throw new Error("Failed to fetch habits");
 
       const data = await response.json();
+      console.log("data.quote", data.quote);
 
       onHabitsChange && onHabitsChange();
       setPenaltyAmount(data.penaltyAmount);
+      setQuote(data.quote);
 
       if (data.habits[0]?.dateAdded) {
         const firstHabitDate = new Date(data.habits[0]?.dateAdded).getDate();
@@ -34,19 +36,6 @@ function Habits({ habits, deleteHabit, onHabitsChange }) {
       }
     } finally {
       setLoading(false);
-    }
-  };
-
-  const fetchQuote = async () => {
-    try {
-      const response = await fetch("/api/user/fetchQuote");
-      if (!response.ok) throw new Error("Failed to fetch quote");
-
-      const quote = await response.json();
-      setDailyQuote(quote);
-    } catch (error) {
-      toast.error("Failed to fetch quote");
-      console.error("Error fetching quote:", error);
     }
   };
 
@@ -109,18 +98,11 @@ function Habits({ habits, deleteHabit, onHabitsChange }) {
             <h2 className="text-2xl font-semibold">Day {currentDay} / 21</h2>
           </div>
 
-          <button
-            onClick={fetchQuote}
-            className="mb-4 px-4 py-2 bg-indigo-500 text-white rounded-md"
-          >
-            Get Daily Quote
-          </button>
-          {dailyQuote && (
+          {quote && (
             <div className="text-center text-white mb-4">
-              <p className="text-lg">{dailyQuote}</p>
+              <p className="text-lg italic">&quot;{quote}&quot;</p>
             </div>
           )}
-
           {habits.length > 0 ? (
             habits.map((habit) => (
               <div
@@ -159,13 +141,11 @@ function Habits({ habits, deleteHabit, onHabitsChange }) {
               Add habits to get started
             </p>
           )}
-
           <Chart
             habits={habits}
             currentDay={currentDay}
             penaltyAmount={penaltyAmount}
           />
-
           {confirmModal.open && (
             <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50 text-black">
               <div className="bg-white p-6 rounded-md shadow-lg w-96">
