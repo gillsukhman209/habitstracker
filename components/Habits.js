@@ -85,21 +85,20 @@ function Habits({ habits, deleteHabit, onHabitsChange }) {
   useEffect(() => {
     fetchHabits();
   }, []);
-
   return (
-    <div className="w-full flex flex-col gap-8 p-8 bg-gray-900 rounded-lg shadow-xl text-white">
+    <div className="w-full flex flex-col gap-8 p-8 rounded-lg shadow-xl text-base-content">
       {loading ? (
-        <div className="text-center text-white">
+        <div className="text-center text-base-content">
           <h2 className="text-xl">Loading...</h2>
         </div>
       ) : (
         <div className="flex flex-col gap-6">
-          <div className="text-center text-white mb-6 w-full">
+          <div className="text-center text-base-content mb-6 w-full">
             <h2 className="text-2xl font-semibold">Day {currentDay} / 21</h2>
           </div>
 
           {quote && (
-            <div className="text-center text-white mb-4">
+            <div className="text-center text-base-content mb-4">
               <p className="text-lg italic">&quot;{quote}&quot;</p>
             </div>
           )}
@@ -107,7 +106,7 @@ function Habits({ habits, deleteHabit, onHabitsChange }) {
             habits.map((habit) => (
               <div
                 key={habit._id}
-                className="flex items-center justify-between p-6 bg-gray-800 rounded-lg shadow-2xl transition-all transform "
+                className="flex items-center justify-between p-6 rounded-lg shadow-2xl transition-all transform"
               >
                 <div className="flex items-center">
                   <input
@@ -121,7 +120,7 @@ function Habits({ habits, deleteHabit, onHabitsChange }) {
                     className={`ml-4 text-lg font-medium transition-all duration-300 ${
                       habit.isComplete
                         ? "line-through text-gray-500"
-                        : "text-white"
+                        : "text-base-content"
                     }`}
                   >
                     {habit.title} - {habit.duration} minutes
@@ -161,7 +160,7 @@ function Habits({ habits, deleteHabit, onHabitsChange }) {
                     Cancel
                   </button>
                   <button
-                    className="px-4 py-2 bg-indigo-500 text-white rounded-md"
+                    className="px-4 py-2 bg-indigo-500 text-base-content rounded-md"
                     onClick={confirmHabitCompletion}
                   >
                     Confirm

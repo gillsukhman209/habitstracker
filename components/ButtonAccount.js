@@ -60,7 +60,7 @@ const ButtonAccount = () => {
     <Popover className="relative z-10">
       {({ open }) => (
         <>
-          <Popover.Button className="flex items-center gap-2 px-4 py-2 rounded-md bg-gray-800 text-green-400 hover:bg-gray-700 hover:text-green-300 dark:bg-yellow-200 dark:text-gray-900 dark:hover:bg-yellow-300">
+          <Popover.Button className="flex items-center gap-2 px-4 py-2 rounded-md  text-base-content  hover:text-base-content  dark:text-base-content ">
             {session?.user?.image ? (
               <Image
                 src={session?.user?.image}
@@ -111,7 +111,7 @@ const ButtonAccount = () => {
               <div className="overflow-hidden rounded-xl shadow-xl ring-1 ring-gray-300 dark:ring-gray-600 bg-base-100 dark:bg-gray-800 p-1">
                 <div className="space-y-1 text-sm">
                   <button
-                    className="flex items-center gap-2 hover:bg-error/20 hover:text-error duration-200 py-1.5 px-4 w-full rounded-lg font-medium"
+                    className="flex items-center gap-2 hover:bg-error/20 hover:text-error duration-200 py-1.5 px-4 w-full rounded-lg font-medium text-base-content"
                     onClick={handleResetProgress}
                   >
                     <svg
@@ -129,7 +129,7 @@ const ButtonAccount = () => {
                     Reset Progress
                   </button>
                   <button
-                    className="flex items-center gap-2 hover:bg-error/20 hover:text-error duration-200 py-1.5 px-4 w-full rounded-lg font-medium"
+                    className="flex items-center gap-2 hover:bg-error/20 hover:text-error duration-200 py-1.5 px-4 w-full rounded-lg font-medium text-base-content"
                     onClick={handleSignOut}
                   >
                     <svg
@@ -161,13 +161,13 @@ const ButtonAccount = () => {
             isModalOpen={isModalOpen}
             onClose={() => setIsModalOpen(false)}
           >
-            <p className="text-black dark:text-white">
+            <p className="text-base-content dark:text-white">
               This action is irreversible. Are you sure you want to reset your
               progress?
             </p>
             <div className="flex justify-end space-x-4 mt-4">
               <button
-                className="px-4 py-2 bg-gray-300 text-black dark:bg-gray-700 dark:text-white rounded-md"
+                className="px-4 py-2 bg-gray-300 text-base-content dark:bg-gray-700 dark:text-white rounded-md"
                 onClick={() => setIsModalOpen(false)}
               >
                 Cancel

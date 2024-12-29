@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import ThemeToggle from "./ThemeToggle";
+
 function HabitChart({ currentDay, penaltyAmount }) {
   const [completedDays, setCompletedDays] = useState([]);
 
@@ -34,20 +35,19 @@ function HabitChart({ currentDay, penaltyAmount }) {
         <div
           key={i}
           className={`
-            w-16 h-16 rounded-full transition-all duration-300 transform hover:scale-110 cursor-pointer
+            w-16 h-16 rounded-full border-2 transition-all duration-300 transform hover:scale-110 cursor-pointer
             ${
               isCompleted
-                ? "bg-gradient-to-r from-green-800 to-green-400"
+                ? "bg-green-500 text-white border-green-500"
                 : isMissed
-                ? "bg-gradient-to-r from-red-800 to-red-400"
-                : "bg-gray-700"
+                ? "bg-red-500 text-white border-red-500"
+                : "bg-gray-100 dark:bg-gray-800 border-gray-300 dark:border-gray-700"
             }
             ${
               isCurrent
-                ? "ring-4 ring-blue-400 ring-offset-2 ring-offset-gray-900"
+                ? "ring-4 ring-blue-500 ring-offset-2 ring-offset-base-100"
                 : ""
             }
-            ${i > currentDay ? "opacity-50" : ""}
             relative flex justify-center items-center shadow-lg hover:shadow-xl
           `}
           title={
@@ -61,27 +61,21 @@ function HabitChart({ currentDay, penaltyAmount }) {
         </div>
       );
     }
-    return days; // Show all days
+    return days;
   };
 
   return (
-    <div className="w-full lg:h-[600px] md:h-[500px] xs:h-screen  rounded-xl p-10 shadow-xl text-white border border-white/10">
+    <div className="w-full lg:h-[600px] md:h-[500px] xs:h-screen rounded-xl p-10 shadow-xl border border-gray-200 dark:border-gray-700 bg-base-100 text-base-content">
       <div className="mb-8 flex items-center justify-between">
-        <span className="text-4xl font-bold text-white">
-          {calculateProgress()}%
-        </span>
+        <span className="text-4xl font-bold">{calculateProgress()}%</span>
 
-        <div className={`text-xl font-bold text-white`}>
-          Penalty: ${penaltyAmount}
-        </div>
+        <div className="text-xl font-bold">Penalty: ${penaltyAmount}</div>
       </div>
-      <div className="text-sm text-white mb-4 text-center">
-        Updates every day at 12 AM
-      </div>
+      <div className="text-sm mb-4 text-center">Updates every day at 12 AM</div>
       <div className="mt-8 grid xs:grid-cols-3 sm:grid-cols-5 md:grid-cols-5 gap-x-3 gap-y-4 place-items-center">
         {renderDays()}
       </div>
-      <div className="flex justify-center gap-6 text-lg text-white  xs:order-1 lg:order-2">
+      <div className="flex justify-center gap-6 text-lg xs:order-1 lg:order-2">
         <div className="flex items-center gap-2 xs:mb-4 lg:mb-0">
           <div className="h-4 w-4 rounded-full bg-green-500"></div>
           <span>Completed</span>

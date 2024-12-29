@@ -8,7 +8,7 @@ export default async function Dashboard() {
 
   return (
     <>
-      <main className=" min-h-screen w-full">
+      <main className=" min-h-screen w-full ">
         <DashBoardClient />
       </main>
     </>
