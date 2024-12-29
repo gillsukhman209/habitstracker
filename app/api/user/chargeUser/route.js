@@ -58,6 +58,7 @@ export async function POST(req) {
       day: "2-digit",
       year: "numeric",
     });
+    console.log("today in chargeUser.js", today);
     // const today = "2024-12-27";
 
     // Generate an idempotency key based on user ID and current date

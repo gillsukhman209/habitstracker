@@ -11,7 +11,8 @@ import FAQ from "@/components/FAQ";
 import WithWithout from "@/components/WithWithout";
 import { renderSchemaTags } from "@/libs/seo";
 import Footer from "@/components/Footer";
-import { toast } from "react-hot-toast";
+import ThemeToggle from "@/components/ThemeToggle";
+
 export default function Home() {
   const { data: session, status } = useSession();
   const router = useRouter();
@@ -57,6 +58,7 @@ export default function Home() {
 
   return (
     <>
+      <ThemeToggle />
       {renderSchemaTags()}
       <Suspense>
         <Header />
@@ -64,12 +66,9 @@ export default function Home() {
       <main>
         <Hero />
         <Problem />
-
         <WithWithout />
         <Pricing />
         <FAQ />
-
-        {/* <CTA /> */}
       </main>
       <Footer />
     </>

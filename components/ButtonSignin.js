@@ -25,7 +25,7 @@ const ButtonSignin = ({ text = "Login", extraStyle }) => {
     return (
       <Link
         href={config.auth.callbackUrl}
-        className={`btn ${extraStyle ? extraStyle : ""}`}
+        className={`btn  ${extraStyle ? extraStyle : ""}`}
       >
         {session.user?.image ? (
           <img

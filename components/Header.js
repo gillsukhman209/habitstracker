@@ -39,6 +39,7 @@ const Header = () => {
             <span className="font-extrabold text-lg">{config.appName}</span>
           </Link>
         </div>
+
         {/* Burger button to open menu on mobile */}
         <div className="flex lg:hidden">
           <button

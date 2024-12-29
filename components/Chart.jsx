@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-
+import ThemeToggle from "./ThemeToggle";
 function HabitChart({ currentDay, penaltyAmount }) {
   const [completedDays, setCompletedDays] = useState([]);
 
@@ -91,6 +91,7 @@ function HabitChart({ currentDay, penaltyAmount }) {
           <span>Missed</span>
         </div>
       </div>
+      <ThemeToggle />
     </div>
   );
 }
