@@ -75,7 +75,7 @@ function HabitChart({ currentDay, penaltyAmount }) {
       <div className="mt-8 grid xs:grid-cols-3 sm:grid-cols-5 md:grid-cols-5 gap-x-3 gap-y-4 place-items-center">
         {renderDays()}
       </div>
-      <div className="flex justify-center gap-6 text-lg xs:order-1 lg:order-2">
+      <div className="flex justify-center gap-6 text-lg xs:order-1 lg:order-2 mt-4 lg:mt-0">
         <div className="flex items-center gap-2 xs:mb-4 lg:mb-0">
           <div className="h-4 w-4 rounded-full bg-green-500"></div>
           <span>Completed</span>
