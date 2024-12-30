@@ -60,10 +60,6 @@ const userSchema = mongoose.Schema(
       type: String,
       default: "",
     },
-    theme: {
-      type: String,
-      default: "dark",
-    },
 
     hasAccess: {
       type: Boolean,

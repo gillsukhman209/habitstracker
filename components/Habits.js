@@ -4,7 +4,7 @@ import { FaRegTrashAlt } from "react-icons/fa";
 import Chart from "./Chart";
 
 function Habits({ habits, deleteHabit, onHabitsChange }) {
-  const [today] = useState(parseInt(new Date().getDate() + 0));
+  const [today] = useState(parseInt(new Date().getDate() + 21));
   const [currentDay, setCurrentDay] = useState(1);
   const [loading, setLoading] = useState(true);
   const [penaltyAmount, setPenaltyAmount] = useState(0);
@@ -22,7 +22,6 @@ function Habits({ habits, deleteHabit, onHabitsChange }) {
       if (!response.ok) throw new Error("Failed to fetch habits");
 
       const data = await response.json();
-      console.log("data.quote", data.quote);
 
       onHabitsChange && onHabitsChange();
       setPenaltyAmount(data.penaltyAmount);

@@ -8,7 +8,6 @@ export async function POST(req) {
     await connectMongo();
     const { userId } = await req.json();
     const user = await User.findById(userId);
-    console.log("user id received", userId);
 
     if (!user) {
       return new Response(JSON.stringify({ error: "User not found" }), {

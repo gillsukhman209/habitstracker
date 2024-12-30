@@ -9,7 +9,6 @@ export default async function LayoutPrivate({ children }) {
   const session = await getServerSession(authOptions);
 
   if (!session) {
-    console.log("no session redirecting to login");
     redirect(config.auth.loginUrl);
   }
 
@@ -18,7 +17,6 @@ export default async function LayoutPrivate({ children }) {
   const user = await User.findById(session.user.id);
 
   if (!user || !user.hasAccess) {
-    console.log("user does not have access redirecting to home");
     redirect("https://www.21habits.co/");
   }
 

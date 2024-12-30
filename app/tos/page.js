@@ -2,29 +2,6 @@ import Link from "next/link";
 import { getSEOTags } from "@/libs/seo";
 import config from "@/config";
 
-// CHATGPT PROMPT TO GENERATE YOUR TERMS & SERVICES — replace with your own data 👇
-
-// 1. Go to https://chat.openai.com/
-// 2. Copy paste bellow
-// 3. Replace the data with your own (if needed)
-// 4. Paste the answer from ChatGPT directly in the <pre> tag below
-
-// You are an excellent lawyer.
-
-// I need your help to write a simple Terms & Services for my website. Here is some context:
-// - Website: https://21habits.co
-// - Name: 21 Habits
-// - Contact information: marc@21habits.co
-// - Description: A JavaScript code boilerplate to help entrepreneurs launch their startups faster
-// - Ownership: when buying a package, users can download code to create apps. They own the code but they do not have the right to resell it. They can ask for a full refund within 7 day after the purchase.
-// - User data collected: name, email and payment information
-// - Non-personal data collection: web cookies
-// - Link to privacy-policy: https://21habits.co/privacy-policy
-// - Governing Law: France
-// - Updates to the Terms: users will be updated by email
-
-// Please write a simple Terms & Services for my site. Add the current date. Do not add or explain your reasoning. Answer:
-
 export const metadata = getSEOTags({
   title: `Terms and Conditions | ${config.appName}`,
   canonicalUrlRelative: "/tos",
@@ -57,7 +34,7 @@ const TOS = () => {
           className="leading-relaxed whitespace-pre-wrap"
           style={{ fontFamily: "sans-serif" }}
         >
-          {`Last Updated: September 26, 2023
+          {`Last Updated: December 28, 2024
 
 Welcome to 21 Habits!
 
@@ -65,29 +42,42 @@ These Terms of Service ("Terms") govern your use of the 21 Habits website at htt
 
 1. Description of 21 Habits
 
-21 Habits is a platform that offers a JavaScript code boilerplate to assist entrepreneurs in launching their startups more efficiently.
+21 Habits is a platform designed to help users build habits over a 21-day period by tracking progress, setting penalties for missed habits, and providing motivational content.
 
 2. Ownership and Usage Rights
 
-When you purchase a package from 21 Habits, you gain the right to download and use the code provided for creating applications. You own the code you create but do not have the right to resell it. We offer a full refund within 7 days of purchase, as specified in our refund policy.
+All rights to the Website and services are owned by 21 Habits. Users may access and use the services for personal habit-building purposes only. Commercial use or resale of the services is prohibited.
 
 3. User Data and Privacy
 
-We collect and store user data, including name, email, and payment information, as necessary to provide our services. For details on how we handle your data, please refer to our Privacy Policy at https://21habits.co/privacy-policy.
+We collect and store user data, including:
+- Name
+- Email
+- Payment information (e.g., penalty processing via Stripe)
+
+For more information, please see our Privacy Policy at https://21habits.co/privacy-policy.
 
 4. Non-Personal Data Collection
 
-We use web cookies to collect non-personal data for the purpose of improving our services and user experience.
+We use cookies to enhance your experience and gather analytical data. For more information, refer to our Cookie Policy.
 
-5. Governing Law
+5. Penalty System
 
-These Terms are governed by the laws of France.
+By using 21 Habits, you agree to set a penalty amount for missed habits. Penalty charges will be processed automatically via Stripe. Refunds for penalties are not available.
 
-6. Updates to the Terms
+6. Refund Policy
 
-We may update these Terms from time to time. Users will be notified of any changes via email.
+If you believe a penalty charge was made in error, contact us within 7 days at support@21habits.co.
 
-For any questions or concerns regarding these Terms of Service, please contact us at marc@21habits.co.
+7. Governing Law
+
+These Terms are governed by the laws of the United States, under California jurisdiction.
+
+8. Updates to the Terms
+
+We may update these Terms from time to time. Users will be notified of any changes via email or a prominent notice on our Website.
+
+For any questions or concerns regarding these Terms of Service, please contact us at support@21habits.co.
 
 Thank you for using 21 Habits!`}
         </pre>

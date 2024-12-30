@@ -8,7 +8,6 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY); // Initialize Stripe w
 
 export async function POST(req) {
   try {
-    console.log("chargeUser route called");
     await connectMongo();
 
     const { userId } = await req.json();
@@ -20,7 +19,6 @@ export async function POST(req) {
       );
     }
     const user = await User.findById(userId);
-    console.log("found user", user);
 
     const customerId = user.customerId; // Get the customer's ID from the user object
     const priceId = user.priceId;
@@ -58,8 +56,6 @@ export async function POST(req) {
       day: "2-digit",
       year: "numeric",
     });
-    console.log("today in chargeUser.js", today);
-    // const today = "2024-12-27";
 
     // Generate an idempotency key based on user ID and current date
     const idempotencyKey = `${user.id}-${today}`;
@@ -92,17 +88,13 @@ export async function POST(req) {
       });
     } catch (error) {
       if (error.type === "StripeCardError") {
-        console.error("Card declined:", error.message);
         return NextResponse.json(
           { message: "Payment failed: Card was declined" },
           { status: 402 }
         );
-      } else {
-        console.log("error", error);
       }
     }
   } catch (error) {
-    console.error("Error charging user:", error);
     return NextResponse.json(
       { message: "Failed to charge user due to server error" },
       { status: 500 }

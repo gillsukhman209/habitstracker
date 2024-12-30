@@ -6,7 +6,6 @@ import { authOptions } from "@/libs/next-auth";
 
 export async function DELETE(req) {
   try {
-    console.log("inside delete request");
     await connectMongo();
     const session = await getServerSession(authOptions);
 

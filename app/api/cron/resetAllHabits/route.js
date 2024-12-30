@@ -2,7 +2,6 @@ import connectMongo from "@/libs/mongoose";
 import User from "@/models/User";
 
 export async function POST(req) {
-  console.log("resetAllHabits route called");
   try {
     const { API_SECRET_TOKEN } = process.env;
     const authHeader = req.headers.get("Authorization");
@@ -35,18 +34,15 @@ export async function POST(req) {
     // Loop through each user and reset their habits
     for (const user of users) {
       if (user.habits.length > 0) {
-        console.log("user.habits.length", user.habits.length);
         const quoteResponse = await fetch(
           "https://www.21habits.co/api/user/fetchQuote"
         );
         const quoteData = await quoteResponse.json();
-        console.log("quoteData", quoteData);
 
         // get user and set quote to quoteData
 
         user.quote = quoteData;
         await user.save();
-        console.log("afer saving users quote");
 
         const firstHabitDate = user.habits[0].dateAdded.getDate();
 
@@ -57,12 +53,9 @@ export async function POST(req) {
         // Check if user has completed all the habits for today if so then add currentDay to winning streak
         if (user.habits.every((habit) => habit.isComplete)) {
           user.completedDays.push(currentDay + 1);
-          console.log("User has completed all habits for today");
+
           await user.save();
         } else {
-          console.log(
-            "User has not completed all habits for today, charging user"
-          );
           // Charge user
           await fetch("https://www.21habits.co/api/user/chargeUser", {
             method: "POST",

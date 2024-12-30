@@ -34,7 +34,6 @@ export default function Dashboard() {
     if (!habitId) return;
 
     if (habits.length === 1) {
-      console.log("resetting progress");
       await fetch("/api/user/resetProgress", {
         method: "POST",
         body: JSON.stringify({ userId: session.user.id }),

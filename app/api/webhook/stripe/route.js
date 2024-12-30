@@ -8,11 +8,9 @@ import { findCheckoutSession } from "@/libs/stripe";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
-console.log("webhookSecret", webhookSecret);
 
 export async function POST(req) {
   await connectMongo();
-  console.log("stripe webhook received");
 
   const body = await req.text();
 
@@ -26,21 +24,15 @@ export async function POST(req) {
   try {
     event = stripe.webhooks.constructEvent(body, signature, webhookSecret);
   } catch (err) {
-    console.error(`Webhook signature verification failed. ${err.message}`);
     return NextResponse.json({ error: err.message }, { status: 400 });
   }
 
   data = event.data;
   eventType = event.type;
-  console.log("eventType isss", eventType);
 
   try {
     switch (eventType) {
       case "checkout.session.completed": {
-        console.log("checkout session was completed");
-        // First payment is successful and a subscription is created (if mode was set to "subscription" in ButtonCheckout)
-        // ✅ Grant access to the product
-
         const session = await findCheckoutSession(data.object.id);
 
         const customerId = session?.customer;
@@ -83,16 +75,7 @@ export async function POST(req) {
         );
         const paymentMethodId = paymentIntent.payment_method;
         user.paymentMethodId = paymentMethodId;
-        console.log("paymentMethodId", paymentMethodId);
         await user.save();
-        console.log("user saved");
-
-        // Extra: send email with user link, product page, etc...
-        // try {
-        //   await sendEmail({to: ...});
-        // } catch (e) {
-        //   console.error("Email issue:" + e?.message);
-        // }
 
         break;
       }
@@ -128,8 +111,6 @@ export async function POST(req) {
 
       case "invoice.paid": {
         // Customer just paid an invoice (for instance, a recurring payment for a subscription)
-        // ✅ Grant access to the product
-        console.log("invoice paid");
         const priceId = data.object.lines.data[0].price.id;
         const customerId = data.object.customer;
 
@@ -146,7 +127,6 @@ export async function POST(req) {
       }
 
       case "invoice.payment_failed":
-        console.log("invoice payment failed");
         // A payment failed (for instance the customer does not have a valid payment method)
         // ❌ Revoke access to the product
         // ⏳ OR wait for the customer to pay (more friendly):
@@ -160,7 +140,7 @@ export async function POST(req) {
       // Unhandled event type
     }
   } catch (e) {
-    console.error("stripe error: " + e.message + " | EVENT TYPE: " + eventType);
+    // Handle error
   }
 
   return NextResponse.json({});

@@ -64,7 +64,7 @@ const TestimonialsAvatars = ({ priority = false }) => {
 
         <div className="text-base text-base-content/80">
           <span className="font-semibold text-base-content">320 </span>
-          are consistent with their habits
+          people are consistent with their habits
         </div>
       </div>
     </div>

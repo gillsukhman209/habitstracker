@@ -1,7 +1,6 @@
 import { cors } from "@/libs/cors";
 
 export const GET = cors(async (req) => {
-  console.log("resetHabits route called");
   try {
     const { API_SECRET_TOKEN } = process.env;
     const authHeader = req.headers.get("Authorization");
@@ -24,7 +23,6 @@ export const GET = cors(async (req) => {
       });
     }
 
-    console.log("past auth");
     const protocol = req.headers.get("x-forwarded-proto") || "http";
     const host = req.headers.get("host");
     const resetAllHabitsUrl = `${protocol}://${host}/api/cron/resetAllHabits`;

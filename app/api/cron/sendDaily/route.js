@@ -29,14 +29,11 @@ export const POST = cors(async (req) => {
       });
     }
 
-    console.log("Connecting to MongoDB...");
     await connectMongo();
 
-    console.log("Fetching users...");
     const users = await User.find({}, "email");
 
     if (users.length === 0) {
-      console.log("No users to send emails to.");
       return new Response(
         JSON.stringify({
           success: true,
@@ -46,20 +43,29 @@ export const POST = cors(async (req) => {
       );
     }
 
-    console.log(`Found ${users.length} users. Sending emails...`);
-
     const emailPromises = users.map((user) =>
       resend.emails.send({
-        from: "21habits <onboarding@21habits.co>",
+        from: "21 Habits <onboarding@21habits.co>",
         to: user.email,
-        subject: "21habits Reminder",
-        html: `<p>Don't forget to complete your daily habits today!</p>`,
+        subject: "Daily Reminder from 21 Habits",
+        html: `
+          <div style="font-family: Arial, sans-serif; color: #333; line-height: 1.6; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eaeaea; border-radius: 8px;">
+            <h1 style="color: #2c3e50; font-size: 24px; margin-bottom: 16px;">Hi there,</h1>
+            <p style="font-size: 16px; margin-bottom: 16px;">
+              This is your friendly reminder to complete your daily habits for today! 
+            </p>
+            <p style="font-size: 16px; margin-bottom: 16px;">
+              Remember: Consistency is the key to building lasting habits.
+            </p>
+            <a href="https://21habits.co/dashboard" style="display: inline-block; padding: 10px 20px; color: #fff; background-color: #007BFF; text-decoration: none; border-radius: 4px; font-size: 16px;">Go to Dashboard</a>
+           
+          </div>
+        `,
       })
     );
 
     await Promise.all(emailPromises);
 
-    console.log("Emails sent successfully.");
     return new Response(
       JSON.stringify({
         success: true,
@@ -68,7 +74,6 @@ export const POST = cors(async (req) => {
       { status: 200 }
     );
   } catch (error) {
-    console.error("Error sending emails:", error);
     return new Response(JSON.stringify({ error: "Failed to send emails." }), {
       status: 500,
     });
