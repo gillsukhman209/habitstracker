@@ -28,31 +28,31 @@ export const getSEOTags = ({
         : `https://${config.domainName}/`
     ),
 
-    openGraph: {
-      title: openGraph?.title || config.appName,
-      description: openGraph?.description || config.appDescription,
-      url: openGraph?.url || `https://${config.domainName}/`,
-      siteName: openGraph?.title || config.appName,
-      // If you add an opengraph-image.(jpg|jpeg|png|gif) image to the /app folder, you don't need the code below
-      // images: [
-      //   {
-      //     url: `https://${config.domainName}/share.png`,
-      //     width: 1200,
-      //     height: 660,
-      //   },
-      // ],
-      locale: "en_US",
-      type: "website",
-    },
+    // openGraph: {
+    //   title: openGraph?.title || config.appName,
+    //   description: openGraph?.description || config.appDescription,
+    //   url: openGraph?.url || `https://${config.domainName}/`,
+    //   siteName: openGraph?.title || config.appName,
+    //   // If you add an opengraph-image.(jpg|jpeg|png|gif) image to the /app folder, you don't need the code below
+    //   // images: [
+    //   //   {
+    //   //     url: `https://${config.domainName}/share.png`,
+    //   //     width: 1200,
+    //   //     height: 660,
+    //   //   },
+    //   // ],
+    //   locale: "en_US",
+    //   type: "website",
+    // },
 
-    twitter: {
-      title: openGraph?.title || config.appName,
-      description: openGraph?.description || config.appDescription,
-      // If you add an twitter-image.(jpg|jpeg|png|gif) image to the /app folder, you don't need the code below
-      // images: [openGraph?.image || defaults.og.image],
-      card: "summary_large_image",
-      creator: "@marc_louvion",
-    },
+    // twitter: {
+    //   title: openGraph?.title || config.appName,
+    //   description: openGraph?.description || config.appDescription,
+    //   // If you add an twitter-image.(jpg|jpeg|png|gif) image to the /app folder, you don't need the code below
+    //   // images: [openGraph?.image || defaults.og.image],
+    //   card: "summary_large_image",
+    //   creator: "@singh_codes209",
+    // },
 
     // If a canonical URL is given, we add it. The metadataBase will turn the relative URL into a fully qualified URL
     ...(canonicalUrlRelative && {
