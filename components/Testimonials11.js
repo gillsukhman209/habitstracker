@@ -51,7 +51,7 @@ const list = [
     // Optional, use for social media like Twitter. Does not link anywhere but cool to display
     username: "marclou",
     // REQUIRED
-    name: "Marc Lou",
+    name: "Sukhmanpreet Singh",
     // REQUIRED
     text: "Really easy to use. The tutorials are really useful and explains how everything works. Hope to ship my next project really fast!",
     // REQUIRED — use refTypes.other if you don't want to display an icon
@@ -102,7 +102,7 @@ const list = [
     type: refTypes.other,
   },
   {
-    name: "Marc Lou",
+    name: "Sukhmanpreet Singh",
     text: "The tool is exactly what I didn't even know I needed.",
     videoPoster: "https://d1wkquwg5s1b04.cloudfront.net/demo/marcPoster.jpg",
     videoSrc: "https://d1wkquwg5s1b04.cloudfront.net/demo/marcVideo.mp4",
