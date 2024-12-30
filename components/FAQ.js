@@ -10,10 +10,10 @@ const faqList = [
     question: "What do I get exactly?",
     answer: (
       <div className="space-y-2 leading-relaxed">
-        Our service helps you stay disciplined with personalized habit tracking,
-        reminders, and progress monitoring. You will get tailored
-        recommendations and enjoy a fun, interactive approach to building
-        habits, all while being part of a supportive community.
+        <p>
+          Challenge yourself to be consistent for the next 21 days. You will get
+          charged if you do not complete your habits.
+        </p>
       </div>
     ),
   },
@@ -21,7 +21,7 @@ const faqList = [
     question: "Can I get a refund?",
     answer: (
       <p>
-        Yes! You can request a refund within 7 days of your purchase. Reach out
+        Yes! You can request a refund within 2 days of your purchase. Reach out
         by email.
       </p>
     ),
