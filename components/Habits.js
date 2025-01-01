@@ -15,8 +15,6 @@ function Habits({ habits, deleteHabit, onHabitsChange }) {
     habit: null,
   });
 
-  const [gitNumber, setGitNumber] = useState(0);
-
   const fetchHabits = async () => {
     setLoading(true);
     try {
