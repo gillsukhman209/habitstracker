@@ -13,7 +13,6 @@ const ButtonGradient = ({
         }
       `}
       onClick={disabled ? undefined : onClick}
-      disabled={disabled}
     >
       {title}
     </button>

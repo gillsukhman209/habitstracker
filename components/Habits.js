@@ -9,6 +9,7 @@ function Habits({ habits, deleteHabit, onHabitsChange }) {
   const [loading, setLoading] = useState(true);
   const [penaltyAmount, setPenaltyAmount] = useState(0);
   const [quote, setQuote] = useState("");
+  const [showMore, setShowMore] = useState(false);
 
   const [confirmModal, setConfirmModal] = useState({
     open: false,
@@ -84,6 +85,7 @@ function Habits({ habits, deleteHabit, onHabitsChange }) {
   useEffect(() => {
     fetchHabits();
   }, []);
+
   return (
     <div className="w-full flex flex-col gap-8 p-8 rounded-lg shadow-xl text-base-content">
       {loading ? (
@@ -102,38 +104,51 @@ function Habits({ habits, deleteHabit, onHabitsChange }) {
             </div>
           )}
           {habits.length > 0 ? (
-            habits.map((habit) => (
-              <div
-                key={habit._id}
-                className="flex items-center justify-between p-6 rounded-lg shadow-2xl transition-all transform border-[0.1px] border-base-content"
-              >
-                <div className="flex items-center">
-                  <input
-                    type="checkbox"
-                    checked={habit.isComplete}
-                    onChange={() => handleCheckboxClick(habit)}
-                    className="form-checkbox h-6 w-6 text-indigo-500 transition-all duration-300"
-                    disabled={habit.isComplete}
-                  />
-                  <span
-                    className={`ml-4 text-lg font-medium transition-all duration-300 ${
-                      habit.isComplete
-                        ? "line-through text-gray-500"
-                        : "text-base-content"
-                    }`}
-                  >
-                    {habit.title} - {habit.duration} minutes
-                  </span>
-                </div>
-
-                <button
-                  onClick={() => handleDeleteHabit(habit._id)}
-                  className="text-red-500 hover:text-red-700 transition-colors duration-200"
+            <>
+              {habits.slice(0, showMore ? habits.length : 5).map((habit) => (
+                <div
+                  key={habit._id}
+                  className="flex items-center justify-between p-6 rounded-lg shadow-2xl transition-all transform border-[0.1px] border-base-content"
                 >
-                  <FaRegTrashAlt className="h-6 w-6" />
+                  <div className="flex items-center">
+                    <input
+                      type="checkbox"
+                      checked={habit.isComplete}
+                      onChange={() => handleCheckboxClick(habit)}
+                      className="form-checkbox h-6 w-6 text-indigo-500 transition-all duration-300"
+                      disabled={habit.isComplete}
+                    />
+                    <span
+                      className={`ml-4 text-lg font-medium transition-all duration-300 ${
+                        habit.isComplete
+                          ? "line-through text-gray-500"
+                          : "text-base-content"
+                      }`}
+                    >
+                      {habit.title} -{" "}
+                      {habit.duration
+                        ? `(${habit.duration} mins)`
+                        : `(${habit.count}) `}
+                    </span>
+                  </div>
+
+                  <button
+                    onClick={() => handleDeleteHabit(habit._id)}
+                    className="text-red-500 hover:text-red-700 transition-colors duration-200"
+                  >
+                    <FaRegTrashAlt className="h-6 w-6" />
+                  </button>
+                </div>
+              ))}
+              {habits.length > 5 && (
+                <button
+                  onClick={() => setShowMore(!showMore)}
+                  className="mt-4 text-indigo-500 hover:underline"
+                >
+                  {showMore ? "Show Less" : "Show More"}
                 </button>
-              </div>
-            ))
+              )}
+            </>
           ) : (
             <p className="text-gray-400 text-center">
               Add habits to get started
@@ -159,7 +174,7 @@ function Habits({ habits, deleteHabit, onHabitsChange }) {
                     Cancel
                   </button>
                   <button
-                    className="px-4 py-2 bg-indigo-500 text-base-content rounded-md"
+                    className="px-4 py-2 bg-indigo-500 text-white rounded-md"
                     onClick={confirmHabitCompletion}
                   >
                     Confirm

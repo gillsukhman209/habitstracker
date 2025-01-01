@@ -5,7 +5,8 @@ const habitSchema = new mongoose.Schema({
   _id: { type: mongoose.Schema.Types.ObjectId, auto: true },
   title: { type: String, required: true },
   isComplete: { type: Boolean, default: false },
-  duration: { type: String, required: true },
+  duration: { type: Number, required: true, default: 0 },
+  count: { type: Number, required: true, default: 0 },
   dateAdded: { type: Date, default: Date.now },
 });
 
@@ -54,7 +55,7 @@ const userSchema = mongoose.Schema(
     },
     penaltyAmount: {
       type: Number,
-      default: 5, // Amount in dollars
+      default: 1, // Amount in dollars
     },
     quote: {
       type: String,

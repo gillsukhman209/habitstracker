@@ -9,10 +9,11 @@ import { useSession } from "next-auth/react";
 
 export default function Dashboard() {
   const [showPopup, setShowPopup] = useState(false);
-  const [habitInputs, setHabitInputs] = useState([{ title: "", duration: "" }]);
-  const [penaltyAmount, setPenaltyAmount] = useState("");
+  const [habitInputs, setHabitInputs] = useState([
+    { title: "", duration: "", count: "", penalty: "" },
+  ]);
+  const [toggleOption, setToggleOption] = useState("count"); // "count" or "duration"
   const [habits, setHabits] = useState([]);
-  const [canAddHabits, setCanAddHabits] = useState(true);
   const { data: session } = useSession();
 
   useEffect(() => {
@@ -24,87 +25,44 @@ export default function Dashboard() {
       const response = await fetch("/api/user/getHabits");
       const data = await response.json();
       setHabits(data.habits);
-      setCanAddHabits(data.habits.length === 0);
     } catch (error) {
       toast.error("Failed to fetch habits");
     }
   };
 
-  const deleteHabit = async (habitId) => {
-    if (!habitId) return;
-
-    if (habits.length === 1) {
-      await fetch("/api/user/resetProgress", {
-        method: "POST",
-        body: JSON.stringify({ userId: session.user.id }),
-        headers: { "Content-Type": "application/json" },
-      });
-    }
-
-    try {
-      const response = await fetch("/api/user/deleteHabit", {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ habitId }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) throw new Error(data.error || "Failed to delete habit");
-
-      await fetchHabits();
-    } catch (error) {
-      console.error(error.message);
-    }
-  };
-
   const addHabits = async () => {
     const validInputs = habitInputs.filter(
-      (input) => input.title && input.duration
+      (input) =>
+        input.title &&
+        (toggleOption === "count" ? input.count : input.duration) &&
+        input.penalty
     );
     if (validInputs.length === 0) {
-      toast.error("Please enter habit titles and durations.");
-      return;
-    }
-
-    if (parseFloat(penaltyAmount) < 5) {
-      toast.error("Penalty amount must be at least $5.");
+      toast.error("Please fill out all fields for each habit.");
       return;
     }
 
     try {
       for (const input of validInputs) {
-        const response = await fetch("/api/user/addHabit", {
+        await fetch("/api/user/addHabit", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             habitTitle: input.title,
-            habitDuration: input.duration,
-            penaltyAmount: parseFloat(penaltyAmount),
+            habitDuration: toggleOption === "duration" ? input.duration : 0,
+            habitCount: toggleOption === "count" ? input.count : 0,
+            penalty: input.penalty,
           }),
         });
-
-        if (!response.ok) throw new Error("Failed to add habit");
-
-        setHabits((prevHabits) => [
-          ...prevHabits,
-          { title: input.title, duration: input.duration, isComplete: false },
-        ]);
       }
 
       toast.success("Habits added successfully!");
       setShowPopup(false);
-      setHabitInputs([{ title: "", duration: "" }]);
-      setPenaltyAmount("");
+      setHabitInputs([{ title: "", duration: "", count: "", penalty: "" }]);
       await fetchHabits();
-      setCanAddHabits(false);
     } catch (error) {
       toast.error(error.message);
     }
-  };
-
-  const handleKeyPress = (e) => {
-    if (e.key === "Enter") addHabits();
   };
 
   const handleInputChange = (index, field, value) => {
@@ -114,13 +72,27 @@ export default function Dashboard() {
   };
 
   const addMoreHabitFields = () => {
-    setHabitInputs([...habitInputs, { title: "", duration: "" }]);
+    if (habitInputs.length < 5) {
+      setHabitInputs([
+        ...habitInputs,
+        { title: "", duration: "", count: "", penalty: "" },
+      ]);
+    } else {
+      toast.error("You can only add a maximum of 5 habit fields.");
+    }
+  };
+
+  const handleToggleChange = () => {
+    setToggleOption(toggleOption === "count" ? "duration" : "count");
+    // Clear the duration and count fields when toggling
+    setHabitInputs(
+      habitInputs.map((input) => ({ ...input, duration: "", count: "" }))
+    );
   };
 
   return (
     <main className="min-h-screen pb-24 w-full bg-base-100 text-base-content">
       <section className="space-y-8">
-        {/* Header Section */}
         <div className="w-full flex flex-row justify-between items-center space-x-4 p-8">
           <div className="flex-1">
             <ButtonAccount />
@@ -130,25 +102,24 @@ export default function Dashboard() {
             <ButtonGradient
               title="Add Habits"
               onClick={() => setShowPopup(true)}
-              disabled={!canAddHabits}
             />
           </div>
         </div>
 
-        {/* Habits Section */}
         <Habits
           habits={habits}
-          deleteHabit={deleteHabit}
+          deleteHabit={() => {}}
           onHabitsChange={fetchHabits}
         />
 
-        {/* Add Habit Popup */}
         {showPopup && (
           <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
             <div className="bg-base-100 p-6 rounded-md shadow-lg w-96 transform scale-105 transition-all duration-300">
               <h2 className="text-xl font-bold mb-4">Add New Habits</h2>
+
               {habitInputs.map((input, index) => (
                 <div key={index} className="mb-4">
+                  {/* Habit Title */}
                   <input
                     type="text"
                     placeholder="Habit Title"
@@ -156,54 +127,78 @@ export default function Dashboard() {
                     onChange={(e) =>
                       handleInputChange(index, "title", e.target.value)
                     }
-                    className="input input-bordered input-info w-full max-w-xs mb-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    onKeyPress={handleKeyPress}
+                    className="input input-bordered input-info w-full max-w-xs mb-2"
                   />
+
+                  {toggleOption === "count" ? (
+                    <input
+                      type="text"
+                      placeholder="Count"
+                      value={input.count}
+                      onChange={(e) =>
+                        handleInputChange(index, "count", e.target.value)
+                      }
+                      className="input input-bordered input-info w-full max-w-xs mb-2"
+                    />
+                  ) : (
+                    <input
+                      type="text"
+                      placeholder="Duration (mins)"
+                      value={input.duration}
+                      onChange={(e) =>
+                        handleInputChange(index, "duration", e.target.value)
+                      }
+                      className="input input-bordered input-info w-full max-w-xs mb-2"
+                    />
+                  )}
+
+                  {/* Penalty Field */}
                   <input
-                    type="text"
-                    placeholder="Duration in minutes"
-                    value={input.duration}
+                    type="number"
+                    placeholder="Penalty"
+                    value={input.penalty}
                     onChange={(e) =>
-                      handleInputChange(index, "duration", e.target.value)
+                      handleInputChange(index, "penalty", e.target.value)
                     }
-                    className="input input-bordered input-info w-full max-w-xs mb-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    onKeyPress={handleKeyPress}
+                    className="input input-bordered input-info w-full max-w-xs"
                   />
                 </div>
               ))}
-              <div className="mb-4">
-                <input
-                  type="number"
-                  placeholder="Penalty Amount Minimum $5"
-                  value={penaltyAmount}
-                  onChange={(e) => setPenaltyAmount(e.target.value)}
-                  className="input input-bordered input-info w-full max-w-xs"
-                  min="5"
-                  step="0.01"
-                />
+
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-gray-500">Duration</span>
+                <label className="relative inline-flex items-center cursor-pointer">
+                  <input
+                    type="checkbox"
+                    className="sr-only peer"
+                    checked={toggleOption === "count"}
+                    onChange={handleToggleChange}
+                  />
+                  <div className="w-11 h-6 bg-gray-200 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                </label>
+                <span className="text-gray-500">count</span>
               </div>
-              <div className="flex justify-between mt-4">
+
+              <div className="flex justify-between mt-4 items-center">
                 <button
-                  className="px-4 py-2 bg-gray-300 text-gray-900 dark:bg-gray-700 dark:text-gray-100 rounded-md"
-                  onClick={addMoreHabitFields}
-                  disabled={!canAddHabits}
-                >
-                  Add More Habits
-                </button>
-                <button
-                  className="px-4 py-2 bg-blue-500 text-white rounded-md"
-                  onClick={addHabits}
-                  disabled={!canAddHabits}
-                >
-                  Save
-                </button>
-              </div>
-              <div className="flex justify-end space-x-4 mt-4">
-                <button
-                  className="px-4 py-2 bg-gray-300 text-gray-900 dark:bg-gray-700 dark:text-gray-100 rounded-md"
+                  className="px-4 py-2 bg-gray-300 text-gray-900 rounded-md"
                   onClick={() => setShowPopup(false)}
                 >
                   Cancel
+                </button>
+
+                <button
+                  className="px-4 py-2 bg-gray-300 text-gray-900 rounded-md"
+                  onClick={addMoreHabitFields}
+                >
+                  Add More
+                </button>
+
+                <button
+                  className="px-4 py-2 bg-blue-500 text-white rounded-md"
+                  onClick={addHabits}
+                >
+                  Save
                 </button>
               </div>
             </div>
