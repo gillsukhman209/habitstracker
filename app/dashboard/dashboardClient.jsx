@@ -130,7 +130,6 @@ export default function Dashboard() {
             <ButtonGradient
               title="Add Habits"
               onClick={() => setShowPopup(true)}
-              disabled={!canAddHabits}
             />
           </div>
         </div>
