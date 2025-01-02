@@ -13,9 +13,12 @@ function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
   const [timers, setTimers] = useState({}); // Track timers
 
   useEffect(() => {
-    setHabits(parentHabits); // Sync with parent state
+    if (parentHabits.length === 0) {
+      setHabits([]); // Clear the local state when no habits are left
+    } else {
+      setHabits(parentHabits); // Sync with parent state
+    }
   }, [parentHabits]);
-
   const updateHabit = async (habitId, isComplete, duration, count) => {
     try {
       const response = await fetch("/api/user/updateHabit", {

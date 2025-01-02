@@ -33,14 +33,6 @@ export default function Dashboard() {
   const deleteHabit = async (habitId) => {
     if (!habitId) return;
 
-    if (habits.length === 1) {
-      await fetch("/api/user/resetProgress", {
-        method: "POST",
-        body: JSON.stringify({ userId: session.user.id }),
-        headers: { "Content-Type": "application/json" },
-      });
-    }
-
     try {
       const response = await fetch("/api/user/deleteHabit", {
         method: "DELETE",
@@ -49,12 +41,27 @@ export default function Dashboard() {
       });
 
       const data = await response.json();
-
       if (!response.ok) throw new Error(data.error || "Failed to delete habit");
 
-      await fetchHabits();
+      // Optimistically update habits state
+      setHabits((prevHabits) =>
+        prevHabits.filter((habit) => habit._id !== habitId)
+      );
+
+      // If no habits are left, explicitly clear the habits state
+      if (habits.length === 1) {
+        setHabits([]);
+        await fetch("/api/user/resetProgress", {
+          method: "POST",
+          body: JSON.stringify({ userId: session.user.id }),
+          headers: { "Content-Type": "application/json" },
+        });
+      }
+
+      toast.success("Habit deleted successfully!");
     } catch (error) {
       console.error(error.message);
+      toast.error("Failed to delete habit");
     }
   };
 
