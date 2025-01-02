@@ -9,7 +9,13 @@ export async function POST(req) {
     await connectMongo();
     const session = await getServerSession(authOptions);
     const body = await req.json();
-    const { habitTitle, habitDuration, habitCount } = body; // Include penaltyAmount
+    const { habitTitle, habitDuration, habitCount } = body;
+    console.log(
+      "habit title, duration, count",
+      habitTitle,
+      habitDuration,
+      habitCount
+    );
     if (!habitTitle) {
       return NextResponse.json(
         { error: "Habit name is required" },
@@ -29,12 +35,17 @@ export async function POST(req) {
     }
 
     user.habits = user.habits || [];
-    user.habits.push({
+    console.log("updating count in route", habitCount);
+    const newHabit = {
       title: habitTitle,
-      duration: habitDuration,
       count: habitCount,
+      duration: habitDuration,
+      // duration: habitDuration,
       createdAt: new Date(),
-    });
+    };
+
+    console.log("new habit", newHabit);
+    user.habits.push(newHabit);
 
     await user.save();
 

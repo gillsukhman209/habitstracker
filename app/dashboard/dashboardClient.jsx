@@ -92,7 +92,6 @@ export default function Dashboard() {
             habitTitle: input.title,
             habitDuration: toggleOption === "duration" ? input.duration : 0,
             habitCount: toggleOption === "count" ? input.count : 0,
-            penalty: input.penalty,
           }),
         });
 

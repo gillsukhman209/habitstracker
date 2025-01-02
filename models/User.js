@@ -5,6 +5,7 @@ const habitSchema = new mongoose.Schema({
   _id: { type: mongoose.Schema.Types.ObjectId, auto: true },
   title: { type: String, required: true },
   isComplete: { type: Boolean, default: false },
+  count: { type: Number, required: true, default: 0 },
   duration: { type: String, required: true },
   dateAdded: { type: Date, default: Date.now },
 });

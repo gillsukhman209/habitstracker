@@ -75,9 +75,15 @@ function Habits({ habits, deleteHabit, onHabitsChange }) {
     }
   };
 
-  const handleDecrementCount = async (habit, decrementValue) => {
+  const handleDecrementCount = (habit, decrementValue) => {
     const newCount = habit.count - decrementValue;
-    await updateHabit(habit._id, habit.isComplete, habit.duration, newCount);
+    // Update the habit state immediately
+    const updatedHabit = { ...habit, count: newCount };
+    const updatedHabits = habits.map((h) =>
+      h._id === habit._id ? updatedHabit : h
+    );
+    onHabitsChange && onHabitsChange(updatedHabits); // Update the parent component if needed
+    updateHabit(habit._id, habit.isComplete, habit.duration, newCount);
   };
 
   useEffect(() => {
@@ -117,10 +123,10 @@ function Habits({ habits, deleteHabit, onHabitsChange }) {
                     {habit.title}
                   </span>
                   <span className="ml-4 text-base-content">
-                    {habit.duration
-                      ? `Mins: ${habit.duration}`
-                      : habit.count
+                    {habit.count > 0
                       ? `Count: ${habit.count} `
+                      : habit.duration
+                      ? `Mins: ${habit.duration}`
                       : ""}
                   </span>
                 </div>
