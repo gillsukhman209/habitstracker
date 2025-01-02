@@ -13,11 +13,8 @@ export async function PATCH(req) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Parse the request body
     const body = await req.json();
-    const { habitId, isComplete, duration, count } = body;
-
-    console.log("duration received", duration);
+    const { habitId, isComplete, duration, count, progress } = body;
 
     if (!habitId || typeof isComplete !== "boolean") {
       return NextResponse.json(
@@ -26,26 +23,24 @@ export async function PATCH(req) {
       );
     }
 
-    // Find the user by their ID
     const user = await User.findById(session.user.id);
 
     if (!user) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    // Find the habit to update
     const habit = user.habits.find((habit) => habit._id.toString() === habitId);
 
     if (!habit) {
       return NextResponse.json({ error: "Habit not found" }, { status: 404 });
     }
 
-    // Update the isComplete, duration, and count properties
+    // Update habit fields
     habit.isComplete = isComplete;
     if (duration !== undefined) habit.duration = duration;
     if (count !== undefined) habit.count = count;
+    if (progress !== undefined) habit.progress = progress;
 
-    // Save the updated user
     await user.save();
 
     return NextResponse.json({

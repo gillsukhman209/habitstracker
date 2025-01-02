@@ -40,7 +40,7 @@ export async function POST(req) {
       title: habitTitle,
       count: habitCount,
       duration: habitDuration,
-      // duration: habitDuration,
+      progress: 0,
       createdAt: new Date(),
     };
 

@@ -8,6 +8,7 @@ const habitSchema = new mongoose.Schema({
   count: { type: Number, required: true, default: 0 },
   duration: { type: String, required: true },
   dateAdded: { type: Date, default: Date.now },
+  progress: { type: Number, default: 0 }, // Progress percentage
 });
 
 const userSchema = mongoose.Schema(

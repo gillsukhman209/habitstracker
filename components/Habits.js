@@ -19,23 +19,47 @@ function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
       setHabits(parentHabits); // Sync with parent state
     }
   }, [parentHabits]);
-  const updateHabit = async (habitId, isComplete, duration, count) => {
+
+  const updateHabit = async (
+    habitId,
+    isComplete,
+    duration,
+    count,
+    progress
+  ) => {
     try {
       const response = await fetch("/api/user/updateHabit", {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ habitId, isComplete, duration, count }),
+        body: JSON.stringify({
+          habitId,
+          isComplete,
+          duration,
+          count,
+          progress,
+        }),
       });
 
       if (!response.ok) throw new Error("Failed to update habit");
 
+      const updatedHabit = await response.json();
+
       setHabits((prevHabits) =>
         prevHabits.map((h) =>
-          h._id === habitId ? { ...h, isComplete, duration, count } : h
+          h._id === habitId
+            ? {
+                ...h,
+                isComplete: updatedHabit.habit.isComplete,
+                duration: updatedHabit.habit.duration,
+                count: updatedHabit.habit.count,
+                progress: updatedHabit.habit.progress,
+              }
+            : h
         )
       );
+
       onHabitsChange && onHabitsChange(habits);
     } catch (error) {
       toast.error("Failed to update habit");
@@ -43,85 +67,63 @@ function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
     }
   };
 
-  const handleDecrementCount = (habit, decrementValue) => {
-    const newCount = Math.max(habit.count - decrementValue, 0);
-    const isComplete = newCount === 0;
-
-    // Optimistic UI update
-    setHabits((prevHabits) =>
-      prevHabits.map((h) =>
-        h._id === habit._id ? { ...h, count: newCount, isComplete } : h
-      )
-    );
-
-    // Send API request to update the habit
-    updateHabit(habit._id, isComplete, habit.duration, newCount);
-
-    if (isComplete) {
-      toast.success(`${habit.title} has been marked as completed!`);
+  const calculateProgress = (habit) => {
+    if (habit.progress) {
+      return habit.progress;
     }
-  };
-
-  const handlePauseTimer = (habit) => {
-    if (timers[habit._id]?.interval) {
-      clearInterval(timers[habit._id].interval);
-
-      const remainingTime = habit.timer || timers[habit._id]?.remaining;
-
-      // Update the backend with the remaining duration in minutes
-      updateHabit(habit._id, false, Math.ceil(remainingTime / 60), habit.count);
-
-      // Update the local state with the new remaining time
-      setHabits((prevHabits) =>
-        prevHabits.map((h) =>
-          h._id === habit._id
-            ? {
-                ...h,
-                timer: remainingTime,
-                duration: Math.ceil(remainingTime / 60),
-              }
-            : h
-        )
-      );
-
-      // Clean up the interval
-      setTimers((prevTimers) => {
-        const updatedTimers = { ...prevTimers };
-        updatedTimers[habit._id] = { remaining: remainingTime };
-        delete updatedTimers[habit._id].interval;
-        return updatedTimers;
-      });
-
-      toast.success(`${habit.title} paused successfully.`);
+    if (habit.duration > 0) {
+      const totalDuration = habit.duration * 60;
+      const elapsed = totalDuration - (habit.timer || totalDuration);
+      const progress = ((elapsed / totalDuration) * 100).toFixed(2);
+      return Math.min(progress, 100);
     }
+    return 0;
   };
 
   const handleStartTimer = (habit) => {
     if (timers[habit._id]?.interval) {
-      clearInterval(timers[habit._id].interval);
+      return; // Prevent starting a new timer if one is already running
     }
 
     const startTime = Date.now();
-    const duration = habit.timer || habit.duration * 60;
+    const savedRemaining = habit.timer || habit.duration * 60;
 
     const interval = setInterval(() => {
-      const elapsed = Math.floor((Date.now() - startTime) / 1000) * 30;
-      const remaining = Math.max(duration - elapsed, 0);
+      const elapsed = Math.floor((Date.now() - startTime) / 1000);
+      const remaining = Math.max(savedRemaining - elapsed, 0);
+
+      const progress = Math.min(
+        ((habit.duration * 60 - remaining) / (habit.duration * 60)) * 100,
+        100
+      );
 
       setHabits((prevHabits) =>
         prevHabits.map((h) =>
-          h._id === habit._id ? { ...h, timer: remaining } : h
+          h._id === habit._id ? { ...h, timer: remaining, progress } : h
         )
       );
+
+      // Sync with the backend every 10 seconds or when the timer ends
+      if (elapsed % 10 === 0 || remaining === 0) {
+        updateHabit(
+          habit._id,
+          false,
+          Math.ceil(remaining / 60),
+          habit.count,
+          progress
+        );
+      }
 
       if (remaining === 0) {
         clearInterval(interval);
 
-        updateHabit(habit._id, true, 0, habit.count);
+        updateHabit(habit._id, true, 0, habit.count, 100);
 
         setHabits((prevHabits) =>
           prevHabits.map((h) =>
-            h._id === habit._id ? { ...h, isComplete: true, timer: 0 } : h
+            h._id === habit._id
+              ? { ...h, isComplete: true, timer: 0, progress: 100 }
+              : h
           )
         );
 
@@ -137,8 +139,65 @@ function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
 
     setTimers((prevTimers) => ({
       ...prevTimers,
-      [habit._id]: { interval, remaining: duration },
+      [habit._id]: { interval, remaining: savedRemaining },
     }));
+  };
+
+  const handlePauseTimer = (habit) => {
+    if (timers[habit._id]?.interval) {
+      clearInterval(timers[habit._id].interval);
+
+      const remainingTime =
+        habit.timer || timers[habit._id]?.remaining || habit.duration * 60;
+      const progress = calculateProgress(habit);
+
+      updateHabit(
+        habit._id,
+        false,
+        Math.ceil(remainingTime / 60),
+        habit.count,
+        progress
+      );
+
+      setHabits((prevHabits) =>
+        prevHabits.map((h) =>
+          h._id === habit._id
+            ? {
+                ...h,
+                timer: remainingTime,
+                duration: Math.ceil(remainingTime / 60),
+                progress,
+              }
+            : h
+        )
+      );
+
+      setTimers((prevTimers) => {
+        const updatedTimers = { ...prevTimers };
+        updatedTimers[habit._id] = { remaining: remainingTime };
+        delete updatedTimers[habit._id].interval;
+        return updatedTimers;
+      });
+
+      toast.success(`${habit.title} paused successfully.`);
+    }
+  };
+
+  const handleDecrementCount = (habit, decrementValue) => {
+    const newCount = Math.max(habit.count - decrementValue, 0);
+    const isComplete = newCount === 0;
+
+    setHabits((prevHabits) =>
+      prevHabits.map((h) =>
+        h._id === habit._id ? { ...h, count: newCount, isComplete } : h
+      )
+    );
+
+    updateHabit(habit._id, isComplete, habit.duration, newCount);
+
+    if (isComplete) {
+      toast.success(`${habit.title} has been marked as completed!`);
+    }
   };
 
   const handleDeleteHabit = async (habitId) => {
@@ -165,7 +224,12 @@ function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
         if (!response.ok) throw new Error("Failed to fetch habits");
 
         const data = await response.json();
-        setHabits(data.habits);
+        setHabits(
+          data.habits.map((habit) => ({
+            ...habit,
+            progress: calculateProgress(habit), // Initialize progress
+          }))
+        );
         setPenaltyAmount(data.penaltyAmount);
         setQuote(data.quote);
 
@@ -208,15 +272,20 @@ function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
             habits.map((habit) => (
               <div
                 key={habit._id}
-                className="flex items-center justify-between p-6 rounded-lg shadow-2xl transition-all transform border-[0.1px] border-base-content"
+                className="relative flex items-center justify-between p-6 rounded-lg shadow-2xl transition-all transform border-[0.1px] border-base-content"
               >
-                <div className="flex flex-col items-start">
+                <div
+                  className="absolute top-0 left-0 h-full bg-green-500 rounded-lg transition-all"
+                  style={{ width: `${habit.progress}%` }}
+                ></div>
+                <div className="relative flex flex-col items-start z-10">
                   <span
                     className={`ml-4 text-lg font-medium transition-all duration-300 ${
                       habit.isComplete ? "line-through " : "text-base-content"
                     }`}
                   >
-                    {habit.title}
+                    {habit.title} - Progress:{" "}
+                    {habit.progress > 0 ? habit.progress.toFixed(0) : 0}%
                   </span>
                   {habit.isComplete && <span className="ml-4 ">Completed</span>}
                   {!habit.isComplete && habit.count > 0 && (
@@ -234,7 +303,7 @@ function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
                   )}
                 </div>
 
-                <div className="flex space-x-2">
+                <div className="relative flex space-x-2 z-10">
                   {!habit.isComplete && habit.count > 0 && (
                     <>
                       <button

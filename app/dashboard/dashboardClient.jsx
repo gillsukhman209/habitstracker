@@ -10,7 +10,13 @@ import { useSession } from "next-auth/react";
 export default function Dashboard() {
   const [showPopup, setShowPopup] = useState(false);
   const [habitInputs, setHabitInputs] = useState([
-    { title: "", duration: "", count: "", penalty: "", toggleOption: "count" },
+    {
+      title: "",
+      duration: "",
+      count: "",
+      penalty: "",
+      toggleOption: "duration",
+    },
   ]);
 
   const [habits, setHabits] = useState([]);
@@ -64,6 +70,7 @@ export default function Dashboard() {
       toast.error("Failed to delete habit");
     }
   };
+
   const handleInputChange = (index, field, value) => {
     const newHabitInputs = [...habitInputs];
     newHabitInputs[index][field] = value;
@@ -142,6 +149,13 @@ export default function Dashboard() {
     setHabitInputs(newHabitInputs);
   };
 
+  const handleKeyDown = (event) => {
+    if (event.key === "Enter") {
+      event.preventDefault(); // Prevent default form submission
+      addHabits(); // Call addHabits function
+    }
+  };
+
   return (
     <main className="min-h-screen pb-24 w-full bg-base-100 text-base-content">
       <section className="space-y-8">
@@ -182,6 +196,7 @@ export default function Dashboard() {
                       handleInputChange(index, "title", e.target.value)
                     }
                     className="input input-bordered input-info w-full max-w-xs mb-2"
+                    onKeyDown={handleKeyDown} // Add key down event
                   />
 
                   {input.toggleOption === "count" ? (
@@ -193,6 +208,7 @@ export default function Dashboard() {
                         handleInputChange(index, "count", e.target.value)
                       }
                       className="input input-bordered input-info w-full max-w-xs mb-2"
+                      onKeyDown={handleKeyDown} // Add key down event
                     />
                   ) : (
                     <input
@@ -203,6 +219,7 @@ export default function Dashboard() {
                         handleInputChange(index, "duration", e.target.value)
                       }
                       className="input input-bordered input-info w-full max-w-xs mb-2"
+                      onKeyDown={handleKeyDown} // Add key down event
                     />
                   )}
 
