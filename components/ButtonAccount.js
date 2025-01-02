@@ -12,6 +12,8 @@ const ButtonAccount = () => {
   const { data: session, status } = useSession();
   const [isLoading, setIsLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [penaltyAmount, setPenaltyAmount] = useState(1); // State for penalty amount
+  const [isPenaltyModalOpen, setIsPenaltyModalOpen] = useState(false); // State for penalty modal
 
   const handleSignOut = () => {
     signOut({ callbackUrl: "/" });
@@ -29,6 +31,25 @@ const ButtonAccount = () => {
       toast.error("Failed to redirect to billing.");
     }
     setIsLoading(false);
+  };
+
+  const handlePenalty = () => {
+    setIsPenaltyModalOpen(true); // Open penalty modal
+  };
+
+  const updatePenalty = async () => {
+    // make a post request to the /api/user/updatePenalty route
+    const response = await fetch("/api/user/updatePenalty", {
+      method: "POST",
+      body: JSON.stringify({ penaltyAmount }),
+    });
+
+    if (response.ok) {
+      toast.success("Penalty updated successfully");
+    } else {
+      toast.error("Failed to update penalty");
+    }
+    setIsPenaltyModalOpen(false); // Close penalty modal
   };
 
   const handleResetProgress = async () => {
@@ -130,6 +151,20 @@ const ButtonAccount = () => {
                   </button>
                   <button
                     className="flex items-center gap-2 hover:bg-error/20 hover:text-error duration-200 py-1.5 px-4 w-full rounded-lg font-medium text-base-content"
+                    onClick={handlePenalty}
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                      className="w-5 h-5"
+                    >
+                      <path d="M10 1a9 9 0 100 18 9 9 0 000-18zm0 16a7 7 0 110-14 7 7 0 010 14zm-1-10h2v5h-2V7zm0 6h2v2h-2v-2z" />
+                    </svg>
+                    Adjust Penalty
+                  </button>
+                  <button
+                    className="flex items-center gap-2 hover:bg-error/20 hover:text-error duration-200 py-1.5 px-4 w-full rounded-lg font-medium text-base-content"
                     onClick={handleSignOut}
                   >
                     <svg
@@ -155,6 +190,37 @@ const ButtonAccount = () => {
               </div>
             </Popover.Panel>
           </Transition>
+
+          {/* Modal for Adjust Penalty */}
+          <Modal
+            isModalOpen={isPenaltyModalOpen}
+            onClose={() => setIsPenaltyModalOpen(false)}
+          >
+            <p className="text-base-content dark:text-white">
+              Enter the new penalty amount (minimum value is 1):
+            </p>
+            <input
+              type="number"
+              min="1"
+              value={penaltyAmount}
+              onChange={(e) => setPenaltyAmount(Math.max(1, e.target.value))}
+              className="mt-2 p-2 border rounded-md"
+            />
+            <div className="flex justify-end space-x-4 mt-4">
+              <button
+                className="px-4 py-2 bg-gray-300 text-base-content dark:bg-gray-700 dark:text-white rounded-md"
+                onClick={() => setIsPenaltyModalOpen(false)}
+              >
+                Cancel
+              </button>
+              <button
+                className="px-4 py-2 bg-red-500 text-white rounded-md"
+                onClick={updatePenalty}
+              >
+                Save
+              </button>
+            </div>
+          </Modal>
 
           {/* Modal for Reset Progress */}
           <Modal
