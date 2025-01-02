@@ -279,6 +279,10 @@ function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
     };
   }, [habits, timers]);
 
+  const isAnyTimerRunning = Object.values(timers).some(
+    (timer) => timer.interval !== undefined
+  );
+
   return (
     <div className="w-full flex flex-col gap-8 p-8 rounded-lg shadow-xl text-base-content">
       {loading ? (
@@ -345,18 +349,21 @@ function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
                       <button
                         className="px-4 py-2 bg-blue-500 text-white rounded-md shadow-md hover:bg-blue-600 transition duration-200"
                         onClick={() => handleDecrementCount(habit, 1)}
+                        disabled={isAnyTimerRunning}
                       >
                         -1
                       </button>
                       <button
                         className="px-4 py-2 bg-blue-500 text-white rounded-md shadow-md hover:bg-blue-600 transition duration-200"
                         onClick={() => handleDecrementCount(habit, 5)}
+                        disabled={isAnyTimerRunning}
                       >
                         -5
                       </button>
                       <button
                         className="px-4 py-2 bg-blue-500 text-white rounded-md shadow-md hover:bg-blue-600 transition duration-200"
                         onClick={() => handleDecrementCount(habit, 10)}
+                        disabled={isAnyTimerRunning}
                       >
                         -10
                       </button>
@@ -368,6 +375,7 @@ function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
                         <button
                           className="px-2 py-1  text-white rounded-md"
                           onClick={() => handleStartTimer(habit)}
+                          disabled={isAnyTimerRunning}
                         >
                           <FaPlay className="h-5 w-5 text-gray-400" />{" "}
                           {/* Replaced Start with Play icon */}
