@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-hot-toast";
-import { FaRegTrashAlt } from "react-icons/fa";
+import { FaRegTrashAlt, FaPlay, FaPause } from "react-icons/fa"; // Importing the play and pause icons
 import Chart from "./Chart";
 
 function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
@@ -305,7 +305,7 @@ function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
                 className="relative flex items-center justify-between p-6 rounded-lg shadow-2xl transition-all transform border-[0.1px] border-base-content"
               >
                 <div
-                  className="absolute top-0 left-0 h-full bg-green-500 rounded-lg transition-all"
+                  className="absolute top-0 left-0 h-full bg-green-300 rounded-lg transition-all"
                   style={{ width: `${habit.progress}%` }}
                 ></div>
                 <div className="relative flex flex-col items-start z-10">
@@ -337,19 +337,19 @@ function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
                   {!habit.isComplete && habit.count > 0 && (
                     <>
                       <button
-                        className="px-2 py-1 bg-gray-300 text-gray-900 rounded-md"
+                        className="px-4 py-2 bg-blue-500 text-white rounded-md shadow-md hover:bg-blue-600 transition duration-200"
                         onClick={() => handleDecrementCount(habit, 1)}
                       >
                         -1
                       </button>
                       <button
-                        className="px-2 py-1 bg-gray-300 text-gray-900 rounded-md"
+                        className="px-4 py-2 bg-blue-500 text-white rounded-md shadow-md hover:bg-blue-600 transition duration-200"
                         onClick={() => handleDecrementCount(habit, 5)}
                       >
                         -5
                       </button>
                       <button
-                        className="px-2 py-1 bg-gray-300 text-gray-900 rounded-md"
+                        className="px-4 py-2 bg-blue-500 text-white rounded-md shadow-md hover:bg-blue-600 transition duration-200"
                         onClick={() => handleDecrementCount(habit, 10)}
                       >
                         -10
@@ -358,23 +358,23 @@ function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
                   )}
                   {!habit.isComplete && habit.duration !== "0" && (
                     <>
-                      <button
-                        className={`px-2 py-1 rounded-md ${
-                          timers[habit._id]?.interval !== undefined
-                            ? "bg-gray-300 text-gray-500"
-                            : "bg-green-500 text-white"
-                        }`}
-                        onClick={() => handleStartTimer(habit)}
-                        disabled={timers[habit._id]?.interval !== undefined}
-                      >
-                        Start
-                      </button>
-                      <button
-                        className="px-2 py-1 bg-yellow-500 text-white rounded-md"
-                        onClick={() => handlePauseTimer(habit)}
-                      >
-                        Pause
-                      </button>
+                      {timers[habit._id]?.interval === undefined && (
+                        <button
+                          className="px-2 py-1  text-white rounded-md"
+                          onClick={() => handleStartTimer(habit)}
+                        >
+                          <FaPlay className="h-5 w-5" />{" "}
+                          {/* Replaced Start with Play icon */}
+                        </button>
+                      )}
+                      {timers[habit._id]?.interval !== undefined && (
+                        <button
+                          className="px-2 py-1  text-white rounded-md"
+                          onClick={() => handlePauseTimer(habit)}
+                        >
+                          <FaPause className="h-5 w-5" /> {/* Pause icon */}
+                        </button>
+                      )}
                     </>
                   )}
                   <button
