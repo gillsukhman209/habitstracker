@@ -283,6 +283,9 @@ function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
     (timer) => timer.interval !== undefined
   );
 
+  const activeHabits = habits.filter((habit) => !habit.isComplete);
+  const completedHabits = habits.filter((habit) => habit.isComplete);
+
   return (
     <div className="w-full flex flex-col gap-8 p-8 rounded-lg shadow-xl text-base-content">
       {loading ? (
@@ -300,8 +303,8 @@ function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
               <p className="text-lg italic">&quot;{quote}&quot;</p>
             </div>
           )}
-          {habits.length > 0 ? (
-            habits.map((habit) => (
+          {activeHabits.length > 0 ? (
+            activeHabits.map((habit) => (
               <div
                 key={habit._id}
                 className="relative flex items-center justify-between p-6 rounded-lg shadow-2xl transition-all transform border-[0.1px] border-base-content"
@@ -327,7 +330,7 @@ function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
                   {!habit.isComplete && habit.duration !== "0" && (
                     <span className="ml-4 text-base-content">
                       <div>
-                        Timer:{" "}
+                        Duration:{" "}
                         {habit.timer
                           ? `${Math.floor(habit.timer / 60)}:${
                               habit.timer % 60
@@ -405,6 +408,30 @@ function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
             <p className="text-gray-400 text-center">
               Add habits to get started
             </p>
+          )}
+          {completedHabits.length > 0 && (
+            <div>
+              {/* <h3 className="text-lg font-semibold">Completed Habits</h3> */}
+              {completedHabits.map((habit) => (
+                <div
+                  key={habit._id}
+                  className="relative flex items-center justify-between p-6 mb-4 rounded-lg shadow-2xl transition-all transform border-[0.1px] border-base-content"
+                >
+                  <div className="relative flex flex-col items-start z-10 ">
+                    <span className={`ml-4 text-lg font-medium line-through`}>
+                      {habit.title}
+                    </span>
+                    <span className="ml-4 ">Completed</span>
+                  </div>
+                  <button
+                    onClick={() => handleDeleteHabit(habit._id)}
+                    className="text-red-500 hover:text-red-700 transition-colors duration-200"
+                  >
+                    <FaRegTrashAlt className="h-6 w-6" />
+                  </button>
+                </div>
+              ))}
+            </div>
           )}
           <Chart
             habits={habits}
