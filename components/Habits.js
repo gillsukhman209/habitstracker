@@ -39,11 +39,31 @@ function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
       console.error("Error updating habit:", error);
     }
   };
+
+  const handleDecrementCount = (habit, decrementValue) => {
+    const newCount = Math.max(habit.count - decrementValue, 0);
+    const isComplete = newCount === 0;
+
+    // Optimistic UI update
+    setHabits((prevHabits) =>
+      prevHabits.map((h) =>
+        h._id === habit._id ? { ...h, count: newCount, isComplete } : h
+      )
+    );
+
+    // Send API request to update the habit
+    updateHabit(habit._id, isComplete, habit.duration, newCount);
+
+    if (isComplete) {
+      toast.success(`${habit.title} has been marked as completed!`);
+    }
+  };
+
   const handlePauseTimer = (habit) => {
     if (timers[habit._id]?.interval) {
       clearInterval(timers[habit._id].interval);
 
-      const remainingTime = habit.timer || timers[habit._id]?.remaining; // Use existing timer or calculated remaining
+      const remainingTime = habit.timer || timers[habit._id]?.remaining;
 
       // Update the backend with the remaining duration in minutes
       updateHabit(habit._id, false, Math.ceil(remainingTime / 60), habit.count);
@@ -54,8 +74,8 @@ function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
           h._id === habit._id
             ? {
                 ...h,
-                timer: remainingTime, // Persist the current timer value
-                duration: Math.ceil(remainingTime / 60), // Convert to minutes
+                timer: remainingTime,
+                duration: Math.ceil(remainingTime / 60),
               }
             : h
         )
@@ -64,27 +84,27 @@ function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
       // Clean up the interval
       setTimers((prevTimers) => {
         const updatedTimers = { ...prevTimers };
-        updatedTimers[habit._id] = { remaining: remainingTime }; // Save remaining time
-        delete updatedTimers[habit._id].interval; // Clear the interval
+        updatedTimers[habit._id] = { remaining: remainingTime };
+        delete updatedTimers[habit._id].interval;
         return updatedTimers;
       });
 
       toast.success(`${habit.title} paused successfully.`);
     }
   };
+
   const handleStartTimer = (habit) => {
     if (timers[habit._id]?.interval) {
       clearInterval(timers[habit._id].interval);
     }
 
     const startTime = Date.now();
-    const duration = habit.timer || habit.duration * 60; // Start from remaining timer or total duration in seconds
+    const duration = habit.timer || habit.duration * 60;
 
     const interval = setInterval(() => {
-      const elapsed = Math.floor((Date.now() - startTime) / 1000) * 30; // Drop by 30 seconds every second
+      const elapsed = Math.floor((Date.now() - startTime) / 1000) * 30;
       const remaining = Math.max(duration - elapsed, 0);
 
-      // Update the timer in the local state
       setHabits((prevHabits) =>
         prevHabits.map((h) =>
           h._id === habit._id ? { ...h, timer: remaining } : h
@@ -94,10 +114,8 @@ function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
       if (remaining === 0) {
         clearInterval(interval);
 
-        // Update the habit as complete in the backend
         updateHabit(habit._id, true, 0, habit.count);
 
-        // Update local and parent state to mark as complete
         setHabits((prevHabits) =>
           prevHabits.map((h) =>
             h._id === habit._id ? { ...h, isComplete: true, timer: 0 } : h
@@ -112,7 +130,7 @@ function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
 
         toast.success(`${habit.title} has been marked as completed!`);
       }
-    }, 1000); // Run every second
+    }, 1000);
 
     setTimers((prevTimers) => ({
       ...prevTimers,
@@ -215,6 +233,28 @@ function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
                 </div>
 
                 <div className="flex space-x-2">
+                  {!habit.isComplete && habit.count > 0 && (
+                    <>
+                      <button
+                        className="px-2 py-1 bg-gray-300 text-gray-900 rounded-md"
+                        onClick={() => handleDecrementCount(habit, 1)}
+                      >
+                        -1
+                      </button>
+                      <button
+                        className="px-2 py-1 bg-gray-300 text-gray-900 rounded-md"
+                        onClick={() => handleDecrementCount(habit, 5)}
+                      >
+                        -5
+                      </button>
+                      <button
+                        className="px-2 py-1 bg-gray-300 text-gray-900 rounded-md"
+                        onClick={() => handleDecrementCount(habit, 10)}
+                      >
+                        -10
+                      </button>
+                    </>
+                  )}
                   {!habit.isComplete && habit.duration !== "0" && (
                     <>
                       <button
