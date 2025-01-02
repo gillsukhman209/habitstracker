@@ -39,6 +39,39 @@ function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
       console.error("Error updating habit:", error);
     }
   };
+  const handlePauseTimer = (habit) => {
+    if (timers[habit._id]?.interval) {
+      clearInterval(timers[habit._id].interval);
+
+      const remainingTime = habit.timer || timers[habit._id]?.remaining; // Use existing timer or calculated remaining
+
+      // Update the backend with the remaining duration in minutes
+      updateHabit(habit._id, false, Math.ceil(remainingTime / 60), habit.count);
+
+      // Update the local state with the new remaining time
+      setHabits((prevHabits) =>
+        prevHabits.map((h) =>
+          h._id === habit._id
+            ? {
+                ...h,
+                timer: remainingTime, // Persist the current timer value
+                duration: Math.ceil(remainingTime / 60), // Convert to minutes
+              }
+            : h
+        )
+      );
+
+      // Clean up the interval
+      setTimers((prevTimers) => {
+        const updatedTimers = { ...prevTimers };
+        updatedTimers[habit._id] = { remaining: remainingTime }; // Save remaining time
+        delete updatedTimers[habit._id].interval; // Clear the interval
+        return updatedTimers;
+      });
+
+      toast.success(`${habit.title} paused successfully.`);
+    }
+  };
 
   const handleStartTimer = (habit) => {
     if (timers[habit._id]?.interval) {
@@ -46,12 +79,13 @@ function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
     }
 
     const startTime = Date.now();
-    const duration = habit.timer || habit.duration * 60; // If timer exists, continue; otherwise, start from duration
+    const duration = habit.timer || habit.duration * 60; // Start from existing timer or total duration in seconds
 
     const interval = setInterval(() => {
-      const elapsed = Math.floor((Date.now() - startTime) / 1000);
+      const elapsed = Math.floor((Date.now() - startTime) / 1000) * 30; // Drop by 30 seconds every second
       const remaining = Math.max(duration - elapsed, 0);
 
+      // Update the timer in the local state
       setHabits((prevHabits) =>
         prevHabits.map((h) =>
           h._id === habit._id ? { ...h, timer: remaining } : h
@@ -66,27 +100,15 @@ function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
           return updatedTimers;
         });
 
-        updateHabit(habit._id, true, 0, habit.count);
+        updateHabit(habit._id, true, 0, habit.count); // Mark habit as complete
         toast.success(`${habit.title} has been marked as completed!`);
       }
-    }, 1000);
+    }, 1000); // Run every second
 
     setTimers((prevTimers) => ({
       ...prevTimers,
       [habit._id]: { interval, remaining: duration },
     }));
-  };
-
-  const handlePauseTimer = (habit) => {
-    if (timers[habit._id]?.interval) {
-      clearInterval(timers[habit._id].interval);
-
-      setTimers((prevTimers) => {
-        const updatedTimers = { ...prevTimers };
-        updatedTimers[habit._id].remaining = habit.timer;
-        return updatedTimers;
-      });
-    }
   };
 
   const handleDeleteHabit = async (habitId) => {
@@ -187,8 +209,13 @@ function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
                   {!habit.isComplete && habit.duration !== "0" && (
                     <>
                       <button
-                        className="px-2 py-1 bg-green-500 text-white rounded-md"
+                        className={`px-2 py-1 rounded-md ${
+                          timers[habit._id]?.interval !== undefined
+                            ? "bg-gray-300 text-gray-500"
+                            : "bg-green-500 text-white"
+                        }`}
                         onClick={() => handleStartTimer(habit)}
+                        disabled={timers[habit._id]?.interval !== undefined}
                       >
                         Start
                       </button>

@@ -17,6 +17,8 @@ export async function PATCH(req) {
     const body = await req.json();
     const { habitId, isComplete, duration, count } = body;
 
+    console.log("duration received", duration);
+
     if (!habitId || typeof isComplete !== "boolean") {
       return NextResponse.json(
         { error: "Habit ID and isComplete status are required" },
