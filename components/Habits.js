@@ -314,8 +314,7 @@ function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
                       habit.isComplete ? "line-through " : "text-base-content"
                     }`}
                   >
-                    {habit.title} - Progress:{" "}
-                    {habit.progress > 0 ? habit.progress.toFixed(0) : 0}%
+                    {habit.title}
                   </span>
                   {habit.isComplete && <span className="ml-4 ">Completed</span>}
                   {!habit.isComplete && habit.count > 0 && (
@@ -325,10 +324,19 @@ function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
                   )}
                   {!habit.isComplete && habit.duration !== "0" && (
                     <span className="ml-4 text-base-content">
-                      Timer:{" "}
-                      {habit.timer
-                        ? `${Math.floor(habit.timer / 60)}:${habit.timer % 60}`
-                        : `${habit.duration}:00`}
+                      <div>
+                        Timer:{" "}
+                        {habit.timer
+                          ? `${Math.floor(habit.timer / 60)}:${
+                              habit.timer % 60
+                            }`
+                          : `${habit.duration}:00`}
+                      </div>
+
+                      <div>
+                        Progress:{" "}
+                        {habit.progress > 0 ? habit.progress.toFixed(0) : 0}%
+                      </div>
                     </span>
                   )}
                 </div>
@@ -363,16 +371,17 @@ function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
                           className="px-2 py-1  text-white rounded-md"
                           onClick={() => handleStartTimer(habit)}
                         >
-                          <FaPlay className="h-5 w-5" />{" "}
+                          <FaPlay className="h-5 w-5 text-green-400" />{" "}
                           {/* Replaced Start with Play icon */}
                         </button>
                       )}
                       {timers[habit._id]?.interval !== undefined && (
                         <button
-                          className="px-2 py-1  text-white rounded-md"
+                          className="px-2 py-1  text-white rounded-md "
                           onClick={() => handlePauseTimer(habit)}
                         >
-                          <FaPause className="h-5 w-5" /> {/* Pause icon */}
+                          <FaPause className="h-5 w-5 text-red-400" />{" "}
+                          {/* Pause icon */}
                         </button>
                       )}
                     </>
