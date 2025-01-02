@@ -77,6 +77,7 @@ function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
     }
     return habit.progress || 0;
   };
+
   const handleStartTimer = (habit) => {
     if (timers[habit._id]?.interval) {
       return; // Prevent starting a new timer if one is already running
@@ -257,6 +258,28 @@ function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
       Object.values(timers).forEach((timer) => clearInterval(timer.interval));
     };
   }, [today]);
+
+  useEffect(() => {
+    const handleBeforeUnload = (event) => {
+      const activeTimers = Object.keys(timers).length;
+      if (activeTimers > 0) {
+        event.preventDefault();
+        event.returnValue = ""; // Required for most browsers
+        Object.keys(timers).forEach((habitId) => {
+          const habit = habits.find((h) => h._id === habitId);
+          if (habit && timers[habitId].remaining) {
+            handlePauseTimer(habit); // Save progress
+          }
+        });
+      }
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, [habits, timers]);
 
   return (
     <div className="w-full flex flex-col gap-8 p-8 rounded-lg shadow-xl text-base-content">
