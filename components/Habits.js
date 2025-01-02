@@ -180,8 +180,6 @@ function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
         delete updatedTimers[habit._id].interval;
         return updatedTimers;
       });
-
-      toast.success(`${habit.title} paused successfully.`);
     }
   };
 
@@ -305,7 +303,7 @@ function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
                 className="relative flex items-center justify-between p-6 rounded-lg shadow-2xl transition-all transform border-[0.1px] border-base-content"
               >
                 <div
-                  className="absolute top-0 left-0 h-full bg-green-300 rounded-lg transition-all"
+                  className="absolute top-0 left-0 h-full bg-base-content opacity-25 rounded-lg transition-all"
                   style={{ width: `${habit.progress}%` }}
                 ></div>
                 <div className="relative flex flex-col items-start z-10">
@@ -371,7 +369,7 @@ function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
                           className="px-2 py-1  text-white rounded-md"
                           onClick={() => handleStartTimer(habit)}
                         >
-                          <FaPlay className="h-5 w-5 text-green-400" />{" "}
+                          <FaPlay className="h-5 w-5 text-gray-400" />{" "}
                           {/* Replaced Start with Play icon */}
                         </button>
                       )}

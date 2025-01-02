@@ -231,7 +231,7 @@ export default function Dashboard() {
                         className="sr-only"
                         onChange={() => handleToggleChange(index)}
                       />
-                      <div className="w-10 h-6 bg-gray-300 rounded-full shadow-inner"></div>
+                      <div className="w-10 h-6 bg-gray-700 rounded-full shadow-inner"></div>
                       <div
                         className={`dot absolute w-4 h-4 bg-white rounded-full shadow transition-transform duration-200 ease-in-out ${
                           input.toggleOption === "count"
