@@ -189,7 +189,7 @@ export default function Dashboard() {
                   )}
 
                   <div className="flex items-center justify-around w-full ">
-                    <span className="mr-2 text-gray-200">Count</span>
+                    <span className="mr-2 text-base-content">Count</span>
                     <label className="relative inline-flex items-center cursor-pointer">
                       <input
                         type="checkbox"
@@ -205,7 +205,7 @@ export default function Dashboard() {
                         }`}
                       ></div>
                     </label>
-                    <span className="ml-2 text-gray-200">Duration</span>
+                    <span className="ml-2 text-base-content">Duration</span>
                   </div>
                 </div>
               ))}

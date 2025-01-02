@@ -66,6 +66,7 @@ function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
     try {
       await deleteHabit(habitId);
       toast.success("Habit deleted successfully");
+      await fetchHabits();
     } catch (error) {
       toast.error("Failed to delete habit");
       // Revert the optimistic update if deletion fails
@@ -74,30 +75,28 @@ function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
       setLoading(false);
     }
   };
+  const fetchHabits = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch("/api/user/getHabits");
+      if (!response.ok) throw new Error("Failed to fetch habits");
 
-  useEffect(() => {
-    const fetchHabits = async () => {
-      setLoading(true);
-      try {
-        const response = await fetch("/api/user/getHabits");
-        if (!response.ok) throw new Error("Failed to fetch habits");
+      const data = await response.json();
+      setHabits(data.habits);
+      setPenaltyAmount(data.penaltyAmount);
+      setQuote(data.quote);
 
-        const data = await response.json();
-        setHabits(data.habits);
-        setPenaltyAmount(data.penaltyAmount);
-        setQuote(data.quote);
-
-        if (data.habits[0]?.dateAdded) {
-          const firstHabitDate = new Date(data.habits[0]?.dateAdded).getDate();
-          setCurrentDay(today - firstHabitDate + 1);
-        } else {
-          setCurrentDay(1);
-        }
-      } finally {
-        setLoading(false);
+      if (data.habits[0]?.dateAdded) {
+        const firstHabitDate = new Date(data.habits[0]?.dateAdded).getDate();
+        setCurrentDay(today - firstHabitDate + 1);
+      } else {
+        setCurrentDay(1);
       }
-    };
-
+    } finally {
+      setLoading(false);
+    }
+  };
+  useEffect(() => {
     fetchHabits();
   }, [today]);
 
@@ -141,7 +140,7 @@ function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
                 </div>
 
                 <div className="flex space-x-2">
-                  {!habit.isComplete && habit.count > 0 ? (
+                  {!habit.isComplete ? (
                     <>
                       <button
                         className="px-2 py-1 bg-gray-300 text-gray-900 rounded-md"
@@ -162,14 +161,7 @@ function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
                         -10
                       </button>
                     </>
-                  ) : (
-                    <button
-                      className="px-2 py-1 bg-blue-500 text-white rounded-md"
-                      disabled
-                    >
-                      Start
-                    </button>
-                  )}
+                  ) : null}
 
                   <button
                     onClick={() => handleDeleteHabit(habit._id)}
