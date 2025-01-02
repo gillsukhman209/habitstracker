@@ -9,11 +9,16 @@ export async function POST(req) {
     await connectMongo();
     const session = await getServerSession(authOptions);
     const body = await req.json();
-    const { habitTitle, habitDuration, penaltyAmount } = body; // Include penaltyAmount
-
+    const { habitTitle, habitDuration, habitCount } = body; // Include penaltyAmount
     if (!habitTitle) {
       return NextResponse.json(
         { error: "Habit name is required" },
+        { status: 400 }
+      );
+    }
+    if (!habitDuration && !habitCount) {
+      return NextResponse.json(
+        { error: "Either habit duration or habit count is required" },
         { status: 400 }
       );
     }
@@ -27,10 +32,9 @@ export async function POST(req) {
     user.habits.push({
       title: habitTitle,
       duration: habitDuration,
-
+      count: habitCount,
       createdAt: new Date(),
     });
-    user.penaltyAmount = penaltyAmount;
 
     await user.save();
 
