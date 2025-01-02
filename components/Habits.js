@@ -72,14 +72,13 @@ function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
       toast.success(`${habit.title} paused successfully.`);
     }
   };
-
   const handleStartTimer = (habit) => {
     if (timers[habit._id]?.interval) {
       clearInterval(timers[habit._id].interval);
     }
 
     const startTime = Date.now();
-    const duration = habit.timer || habit.duration * 60; // Start from existing timer or total duration in seconds
+    const duration = habit.timer || habit.duration * 60; // Start from remaining timer or total duration in seconds
 
     const interval = setInterval(() => {
       const elapsed = Math.floor((Date.now() - startTime) / 1000) * 30; // Drop by 30 seconds every second
@@ -94,13 +93,23 @@ function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
 
       if (remaining === 0) {
         clearInterval(interval);
+
+        // Update the habit as complete in the backend
+        updateHabit(habit._id, true, 0, habit.count);
+
+        // Update local and parent state to mark as complete
+        setHabits((prevHabits) =>
+          prevHabits.map((h) =>
+            h._id === habit._id ? { ...h, isComplete: true, timer: 0 } : h
+          )
+        );
+
         setTimers((prevTimers) => {
           const updatedTimers = { ...prevTimers };
           delete updatedTimers[habit._id];
           return updatedTimers;
         });
 
-        updateHabit(habit._id, true, 0, habit.count); // Mark habit as complete
         toast.success(`${habit.title} has been marked as completed!`);
       }
     }, 1000); // Run every second
