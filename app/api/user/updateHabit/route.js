@@ -14,7 +14,7 @@ export async function PATCH(req) {
     }
 
     const body = await req.json();
-    const { habitId, isComplete, duration, count, progress } = body;
+    const { habitId, isComplete, duration, count, progress, timer } = body;
 
     if (!habitId || typeof isComplete !== "boolean") {
       return NextResponse.json(
@@ -35,11 +35,11 @@ export async function PATCH(req) {
       return NextResponse.json({ error: "Habit not found" }, { status: 404 });
     }
 
-    // Update habit fields
     habit.isComplete = isComplete;
     if (duration !== undefined) habit.duration = duration;
     if (count !== undefined) habit.count = count;
     if (progress !== undefined) habit.progress = progress;
+    if (timer !== undefined) habit.timer = timer; // Update timer in the backend
 
     await user.save();
 

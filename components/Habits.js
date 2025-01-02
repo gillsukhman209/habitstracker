@@ -25,7 +25,8 @@ function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
     isComplete,
     duration,
     count,
-    progress
+    progress,
+    timer
   ) => {
     try {
       const response = await fetch("/api/user/updateHabit", {
@@ -39,10 +40,9 @@ function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
           duration,
           count,
           progress,
+          timer,
         }),
       });
-
-      if (!response.ok) throw new Error("Failed to update habit");
 
       const updatedHabit = await response.json();
 
@@ -55,6 +55,7 @@ function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
                 duration: updatedHabit.habit.duration,
                 count: updatedHabit.habit.count,
                 progress: updatedHabit.habit.progress,
+                timer: updatedHabit.habit.timer, // Update timer from the backend
               }
             : h
         )
@@ -68,18 +69,14 @@ function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
   };
 
   const calculateProgress = (habit) => {
-    if (habit.progress) {
-      return habit.progress;
-    }
     if (habit.duration > 0) {
       const totalDuration = habit.duration * 60;
       const elapsed = totalDuration - (habit.timer || totalDuration);
       const progress = ((elapsed / totalDuration) * 100).toFixed(2);
       return Math.min(progress, 100);
     }
-    return 0;
+    return habit.progress || 0;
   };
-
   const handleStartTimer = (habit) => {
     if (timers[habit._id]?.interval) {
       return; // Prevent starting a new timer if one is already running
@@ -110,14 +107,15 @@ function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
           false,
           Math.ceil(remaining / 60),
           habit.count,
-          progress
+          progress,
+          remaining
         );
       }
 
       if (remaining === 0) {
         clearInterval(interval);
 
-        updateHabit(habit._id, true, 0, habit.count, 100);
+        updateHabit(habit._id, true, 0, habit.count, 100, 0);
 
         setHabits((prevHabits) =>
           prevHabits.map((h) =>
@@ -149,14 +147,18 @@ function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
 
       const remainingTime =
         habit.timer || timers[habit._id]?.remaining || habit.duration * 60;
-      const progress = calculateProgress(habit);
+      const progress = Math.min(
+        ((habit.duration * 60 - remainingTime) / (habit.duration * 60)) * 100,
+        100
+      );
 
       updateHabit(
         habit._id,
         false,
         Math.ceil(remainingTime / 60),
         habit.count,
-        progress
+        progress,
+        remainingTime // Pass the remaining time to the backend
       );
 
       setHabits((prevHabits) =>
@@ -165,7 +167,6 @@ function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
             ? {
                 ...h,
                 timer: remainingTime,
-                duration: Math.ceil(remainingTime / 60),
                 progress,
               }
             : h
@@ -193,7 +194,13 @@ function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
       )
     );
 
-    updateHabit(habit._id, isComplete, habit.duration, newCount);
+    updateHabit(
+      habit._id,
+      isComplete,
+      habit.duration,
+      newCount,
+      habit.progress
+    );
 
     if (isComplete) {
       toast.success(`${habit.title} has been marked as completed!`);

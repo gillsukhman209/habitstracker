@@ -6,11 +6,11 @@ const habitSchema = new mongoose.Schema({
   title: { type: String, required: true },
   isComplete: { type: Boolean, default: false },
   count: { type: Number, required: true, default: 0 },
-  duration: { type: String, required: true },
+  duration: { type: String, required: true }, // Total duration in minutes
+  timer: { type: Number, default: 0 }, // Remaining time in seconds
   dateAdded: { type: Date, default: Date.now },
   progress: { type: Number, default: 0 }, // Progress percentage
 });
-
 const userSchema = mongoose.Schema(
   {
     name: {
