@@ -64,7 +64,6 @@ export default function Dashboard() {
       toast.error("Failed to delete habit");
     }
   };
-
   const handleInputChange = (index, field, value) => {
     const newHabitInputs = [...habitInputs];
     newHabitInputs[index][field] = value;

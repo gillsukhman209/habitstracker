@@ -149,7 +149,6 @@ function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
     setLoading(true);
     try {
       await deleteHabit(habitId);
-      toast.success("Habit deleted successfully");
     } catch (error) {
       toast.error("Failed to delete habit");
       setHabits(habits);
