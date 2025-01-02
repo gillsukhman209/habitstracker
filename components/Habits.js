@@ -10,6 +10,7 @@ function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
   const [penaltyAmount, setPenaltyAmount] = useState(0);
   const [quote, setQuote] = useState("");
   const [habits, setHabits] = useState(parentHabits); // Local state
+  const [timers, setTimers] = useState({}); // Track timers
 
   useEffect(() => {
     setHabits(parentHabits); // Sync with parent state
@@ -27,77 +28,112 @@ function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
 
       if (!response.ok) throw new Error("Failed to update habit");
 
-      // Update local state immediately after successful backend update
       setHabits((prevHabits) =>
         prevHabits.map((h) =>
           h._id === habitId ? { ...h, isComplete, duration, count } : h
         )
       );
-      onHabitsChange && onHabitsChange(habits); // Update parent state
+      onHabitsChange && onHabitsChange(habits);
     } catch (error) {
       toast.error("Failed to update habit");
       console.error("Error updating habit:", error);
     }
   };
 
-  const handleDecrementCount = (habit, decrementValue) => {
-    const newCount = Math.max(habit.count - decrementValue, 0);
-    const isComplete = newCount === 0;
+  const handleStartTimer = (habit) => {
+    if (timers[habit._id]?.interval) {
+      clearInterval(timers[habit._id].interval);
+    }
 
-    // Optimistic UI update
-    setHabits((prevHabits) =>
-      prevHabits.map((h) =>
-        h._id === habit._id ? { ...habit, count: newCount, isComplete } : h
-      )
-    ); // Update local state
+    const startTime = Date.now();
+    const duration = habit.timer || habit.duration * 60; // If timer exists, continue; otherwise, start from duration
 
-    // Send API request to update the habit
-    updateHabit(habit._id, isComplete, habit.duration, newCount);
+    const interval = setInterval(() => {
+      const elapsed = Math.floor((Date.now() - startTime) / 1000);
+      const remaining = Math.max(duration - elapsed, 0);
+
+      setHabits((prevHabits) =>
+        prevHabits.map((h) =>
+          h._id === habit._id ? { ...h, timer: remaining } : h
+        )
+      );
+
+      if (remaining === 0) {
+        clearInterval(interval);
+        setTimers((prevTimers) => {
+          const updatedTimers = { ...prevTimers };
+          delete updatedTimers[habit._id];
+          return updatedTimers;
+        });
+
+        updateHabit(habit._id, true, 0, habit.count);
+        toast.success(`${habit.title} has been marked as completed!`);
+      }
+    }, 1000);
+
+    setTimers((prevTimers) => ({
+      ...prevTimers,
+      [habit._id]: { interval, remaining: duration },
+    }));
+  };
+
+  const handlePauseTimer = (habit) => {
+    if (timers[habit._id]?.interval) {
+      clearInterval(timers[habit._id].interval);
+
+      setTimers((prevTimers) => {
+        const updatedTimers = { ...prevTimers };
+        updatedTimers[habit._id].remaining = habit.timer;
+        return updatedTimers;
+      });
+    }
   };
 
   const handleDeleteHabit = async (habitId) => {
-    // Optimistically update UI
     const updatedHabits = habits.filter((h) => h._id !== habitId);
     setHabits(updatedHabits);
     onHabitsChange && onHabitsChange(updatedHabits);
 
-    // Show loading state while deleting
     setLoading(true);
     try {
       await deleteHabit(habitId);
       toast.success("Habit deleted successfully");
-      await fetchHabits();
     } catch (error) {
       toast.error("Failed to delete habit");
-      // Revert the optimistic update if deletion fails
       setHabits(habits);
     } finally {
       setLoading(false);
     }
   };
-  const fetchHabits = async () => {
-    setLoading(true);
-    try {
-      const response = await fetch("/api/user/getHabits");
-      if (!response.ok) throw new Error("Failed to fetch habits");
 
-      const data = await response.json();
-      setHabits(data.habits);
-      setPenaltyAmount(data.penaltyAmount);
-      setQuote(data.quote);
-
-      if (data.habits[0]?.dateAdded) {
-        const firstHabitDate = new Date(data.habits[0]?.dateAdded).getDate();
-        setCurrentDay(today - firstHabitDate + 1);
-      } else {
-        setCurrentDay(1);
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
   useEffect(() => {
+    const fetchHabits = async () => {
+      setLoading(true);
+      try {
+        const response = await fetch("/api/user/getHabits");
+        if (!response.ok) throw new Error("Failed to fetch habits");
+
+        const data = await response.json();
+        setHabits(data.habits);
+        setPenaltyAmount(data.penaltyAmount);
+        setQuote(data.quote);
+
+        if (data.habits[0]?.dateAdded) {
+          const firstHabitDate = new Date(data.habits[0]?.dateAdded).getDate();
+          setCurrentDay(today - firstHabitDate + 1);
+        } else {
+          setCurrentDay(1);
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchHabits();
+
+    return () => {
+      Object.values(timers).forEach((timer) => clearInterval(timer.interval));
+    };
   }, [today]);
 
   return (
@@ -137,32 +173,33 @@ function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
                       Count: {habit.count}
                     </span>
                   )}
+                  {!habit.isComplete && habit.duration !== "0" && (
+                    <span className="ml-4 text-base-content">
+                      Timer:{" "}
+                      {habit.timer
+                        ? `${Math.floor(habit.timer / 60)}:${habit.timer % 60}`
+                        : `${habit.duration}:00`}
+                    </span>
+                  )}
                 </div>
 
                 <div className="flex space-x-2">
-                  {!habit.isComplete ? (
+                  {!habit.isComplete && habit.duration !== "0" && (
                     <>
                       <button
-                        className="px-2 py-1 bg-gray-300 text-gray-900 rounded-md"
-                        onClick={() => handleDecrementCount(habit, 1)}
+                        className="px-2 py-1 bg-green-500 text-white rounded-md"
+                        onClick={() => handleStartTimer(habit)}
                       >
-                        -1
+                        Start
                       </button>
                       <button
-                        className="px-2 py-1 bg-gray-300 text-gray-900 rounded-md"
-                        onClick={() => handleDecrementCount(habit, 5)}
+                        className="px-2 py-1 bg-yellow-500 text-white rounded-md"
+                        onClick={() => handlePauseTimer(habit)}
                       >
-                        -5
-                      </button>
-                      <button
-                        className="px-2 py-1 bg-gray-300 text-gray-900 rounded-md"
-                        onClick={() => handleDecrementCount(habit, 10)}
-                      >
-                        -10
+                        Pause
                       </button>
                     </>
-                  ) : null}
-
+                  )}
                   <button
                     onClick={() => handleDeleteHabit(habit._id)}
                     className="text-red-500 hover:text-red-700 transition-colors duration-200"
