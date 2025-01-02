@@ -3,40 +3,17 @@ import { toast } from "react-hot-toast";
 import { FaRegTrashAlt } from "react-icons/fa";
 import Chart from "./Chart";
 
-function Habits({ habits, deleteHabit, onHabitsChange }) {
+function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
   const [today] = useState(parseInt(new Date().getDate() + 0));
   const [currentDay, setCurrentDay] = useState(1);
   const [loading, setLoading] = useState(true);
   const [penaltyAmount, setPenaltyAmount] = useState(0);
   const [quote, setQuote] = useState("");
+  const [habits, setHabits] = useState(parentHabits); // Local state
 
-  const [confirmModal, setConfirmModal] = useState({
-    open: false,
-    habit: null,
-  });
-
-  const fetchHabits = async () => {
-    setLoading(true);
-    try {
-      const response = await fetch("/api/user/getHabits");
-      if (!response.ok) throw new Error("Failed to fetch habits");
-
-      const data = await response.json();
-
-      onHabitsChange && onHabitsChange();
-      setPenaltyAmount(data.penaltyAmount);
-      setQuote(data.quote);
-
-      if (data.habits[0]?.dateAdded) {
-        const firstHabitDate = new Date(data.habits[0]?.dateAdded).getDate();
-        setCurrentDay(today - firstHabitDate + 1);
-      } else {
-        setCurrentDay(1);
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
+  useEffect(() => {
+    setHabits(parentHabits); // Sync with parent state
+  }, [parentHabits]);
 
   const updateHabit = async (habitId, isComplete, duration, count) => {
     try {
@@ -50,45 +27,80 @@ function Habits({ habits, deleteHabit, onHabitsChange }) {
 
       if (!response.ok) throw new Error("Failed to update habit");
 
-      await fetchHabits();
+      // Update local state immediately after successful backend update
+      setHabits((prevHabits) =>
+        prevHabits.map((h) =>
+          h._id === habitId ? { ...h, isComplete, duration, count } : h
+        )
+      );
+      onHabitsChange && onHabitsChange(habits); // Update parent state
     } catch (error) {
       toast.error("Failed to update habit");
       console.error("Error updating habit:", error);
     }
   };
 
-  const confirmHabitCompletion = async () => {
-    const { habit } = confirmModal;
-    await updateHabit(habit._id, true);
+  const handleDecrementCount = (habit, decrementValue) => {
+    const newCount = Math.max(habit.count - decrementValue, 0);
+    const isComplete = newCount === 0;
 
-    setConfirmModal({ open: false, habit: null });
+    // Optimistic UI update
+    setHabits((prevHabits) =>
+      prevHabits.map((h) =>
+        h._id === habit._id ? { ...habit, count: newCount, isComplete } : h
+      )
+    ); // Update local state
+
+    // Send API request to update the habit
+    updateHabit(habit._id, isComplete, habit.duration, newCount);
   };
 
   const handleDeleteHabit = async (habitId) => {
+    // Optimistically update UI
+    const updatedHabits = habits.filter((h) => h._id !== habitId);
+    setHabits(updatedHabits);
+    onHabitsChange && onHabitsChange(updatedHabits);
+
+    // Show loading state while deleting
+    setLoading(true);
     try {
       await deleteHabit(habitId);
-
-      await fetchHabits();
       toast.success("Habit deleted successfully");
     } catch (error) {
       toast.error("Failed to delete habit");
+      // Revert the optimistic update if deletion fails
+      setHabits(habits);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleDecrementCount = (habit, decrementValue) => {
-    const newCount = habit.count - decrementValue;
-    // Update the habit state immediately
-    const updatedHabit = { ...habit, count: newCount };
-    const updatedHabits = habits.map((h) =>
-      h._id === habit._id ? updatedHabit : h
-    );
-    onHabitsChange && onHabitsChange(updatedHabits); // Update the parent component if needed
-    updateHabit(habit._id, habit.isComplete, habit.duration, newCount);
-  };
-
   useEffect(() => {
+    const fetchHabits = async () => {
+      setLoading(true);
+      try {
+        const response = await fetch("/api/user/getHabits");
+        if (!response.ok) throw new Error("Failed to fetch habits");
+
+        const data = await response.json();
+        setHabits(data.habits);
+        setPenaltyAmount(data.penaltyAmount);
+        setQuote(data.quote);
+
+        if (data.habits[0]?.dateAdded) {
+          const firstHabitDate = new Date(data.habits[0]?.dateAdded).getDate();
+          setCurrentDay(today - firstHabitDate + 1);
+        } else {
+          setCurrentDay(1);
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchHabits();
-  }, []);
+  }, [today]);
+
   return (
     <div className="w-full flex flex-col gap-8 p-8 rounded-lg shadow-xl text-base-content">
       {loading ? (
@@ -115,24 +127,21 @@ function Habits({ habits, deleteHabit, onHabitsChange }) {
                 <div className="flex flex-col items-start">
                   <span
                     className={`ml-4 text-lg font-medium transition-all duration-300 ${
-                      habit.isComplete
-                        ? "line-through text-green-500"
-                        : "text-base-content"
+                      habit.isComplete ? "line-through " : "text-base-content"
                     }`}
                   >
                     {habit.title}
                   </span>
-                  <span className="ml-4 text-base-content">
-                    {habit.count > 0
-                      ? `Count: ${habit.count} `
-                      : habit.duration
-                      ? `Mins: ${habit.duration}`
-                      : ""}
-                  </span>
+                  {habit.isComplete && <span className="ml-4 ">Completed</span>}
+                  {!habit.isComplete && habit.count > 0 && (
+                    <span className="ml-4 text-base-content">
+                      Count: {habit.count}
+                    </span>
+                  )}
                 </div>
 
                 <div className="flex space-x-2">
-                  {habit.count ? (
+                  {!habit.isComplete && habit.count > 0 ? (
                     <>
                       <button
                         className="px-2 py-1 bg-gray-300 text-gray-900 rounded-md"
@@ -153,11 +162,14 @@ function Habits({ habits, deleteHabit, onHabitsChange }) {
                         -10
                       </button>
                     </>
-                  ) : habit.duration ? (
-                    <button className="px-2 py-1 bg-blue-500 text-white rounded-md">
+                  ) : (
+                    <button
+                      className="px-2 py-1 bg-blue-500 text-white rounded-md"
+                      disabled
+                    >
                       Start
                     </button>
-                  ) : null}
+                  )}
 
                   <button
                     onClick={() => handleDeleteHabit(habit._id)}
@@ -178,30 +190,6 @@ function Habits({ habits, deleteHabit, onHabitsChange }) {
             currentDay={currentDay}
             penaltyAmount={penaltyAmount}
           />
-          {confirmModal.open && (
-            <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50 text-black">
-              <div className="bg-white p-6 rounded-md shadow-lg w-96">
-                <h2 className="text-xl font-bold mb-4">Confirm Completion</h2>
-                <p>Are you sure you want to mark this habit as complete?</p>
-                <div className="flex justify-end space-x-4 mt-4">
-                  <button
-                    className="px-4 py-2 bg-gray-300 text-black rounded-md"
-                    onClick={() =>
-                      setConfirmModal({ open: false, habit: null })
-                    }
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    className="px-4 py-2 bg-indigo-500 text-base-content rounded-md"
-                    onClick={confirmHabitCompletion}
-                  >
-                    Confirm
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
         </div>
       )}
     </div>
