@@ -10,12 +10,10 @@ import { useSession } from "next-auth/react";
 export default function Dashboard() {
   const [showPopup, setShowPopup] = useState(false);
   const [habitInputs, setHabitInputs] = useState([
-    { title: "", duration: "", count: "", penalty: "" },
+    { title: "", duration: "", count: "", penalty: "", toggleOption: "count" },
   ]);
 
   const [habits, setHabits] = useState([]);
-  const [toggleOption, setToggleOption] = useState("count");
-
   const { data: session } = useSession();
 
   useEffect(() => {
@@ -68,7 +66,10 @@ export default function Dashboard() {
 
   const addMoreHabitFields = () => {
     if (habitInputs.length < 5) {
-      setHabitInputs([...habitInputs, { title: "", duration: "", count: "" }]);
+      setHabitInputs([
+        ...habitInputs,
+        { title: "", duration: "", count: "", toggleOption: "count" },
+      ]);
     } else {
       toast.error("You can only add a maximum of 5 habit fields.");
     }
@@ -76,7 +77,7 @@ export default function Dashboard() {
 
   const addHabits = async () => {
     const validInputs = habitInputs.filter((input) =>
-      toggleOption === "count" ? input.count : input.duration
+      input.toggleOption === "count" ? input.count : input.duration
     );
     if (validInputs.length === 0) {
       toast.error("Please fill out all fields for each habit.");
@@ -90,8 +91,9 @@ export default function Dashboard() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             habitTitle: input.title,
-            habitDuration: toggleOption === "duration" ? input.duration : 0,
-            habitCount: toggleOption === "count" ? input.count : 0,
+            habitDuration:
+              input.toggleOption === "duration" ? input.duration : 0,
+            habitCount: input.toggleOption === "count" ? input.count : 0,
           }),
         });
 
@@ -110,18 +112,28 @@ export default function Dashboard() {
 
       toast.success("Habits added successfully!");
       setShowPopup(false);
-      setHabitInputs([{ title: "", duration: "", count: "", penalty: "" }]);
+      setHabitInputs([
+        {
+          title: "",
+          duration: "",
+          count: "",
+          penalty: "",
+          toggleOption: "count",
+        },
+      ]);
       fetchHabits();
     } catch (error) {
       toast.error(error.message);
     }
   };
 
-  const handleToggleChange = () => {
-    setToggleOption(toggleOption === "count" ? "duration" : "count");
-    setHabitInputs(
-      habitInputs.map((input) => ({ ...input, duration: "", count: "" }))
-    );
+  const handleToggleChange = (index) => {
+    const newHabitInputs = [...habitInputs];
+    newHabitInputs[index].toggleOption =
+      newHabitInputs[index].toggleOption === "count" ? "duration" : "count";
+    newHabitInputs[index].duration = "";
+    newHabitInputs[index].count = "";
+    setHabitInputs(newHabitInputs);
   };
 
   return (
@@ -166,7 +178,7 @@ export default function Dashboard() {
                     className="input input-bordered input-info w-full max-w-xs mb-2"
                   />
 
-                  {toggleOption === "count" ? (
+                  {input.toggleOption === "count" ? (
                     <input
                       type="text"
                       placeholder="Count"
@@ -194,12 +206,12 @@ export default function Dashboard() {
                       <input
                         type="checkbox"
                         className="sr-only"
-                        onChange={handleToggleChange}
+                        onChange={() => handleToggleChange(index)}
                       />
                       <div className="w-10 h-6 bg-gray-300 rounded-full shadow-inner"></div>
                       <div
                         className={`dot absolute w-4 h-4 bg-white rounded-full shadow transition-transform duration-200 ease-in-out ${
-                          toggleOption === "count"
+                          input.toggleOption === "count"
                             ? "translate-x-0"
                             : "translate-x-4"
                         }`}
