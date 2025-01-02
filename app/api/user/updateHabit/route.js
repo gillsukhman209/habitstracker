@@ -15,7 +15,7 @@ export async function PATCH(req) {
 
     // Parse the request body
     const body = await req.json();
-    const { habitId, isComplete } = body;
+    const { habitId, isComplete, duration, count } = body;
 
     if (!habitId || typeof isComplete !== "boolean") {
       return NextResponse.json(
@@ -38,8 +38,10 @@ export async function PATCH(req) {
       return NextResponse.json({ error: "Habit not found" }, { status: 404 });
     }
 
-    // Update the isComplete property
+    // Update the isComplete, duration, and count properties
     habit.isComplete = isComplete;
+    if (duration !== undefined) habit.duration = duration;
+    if (count !== undefined) habit.count = count;
 
     // Save the updated user
     await user.save();

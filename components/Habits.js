@@ -38,14 +38,14 @@ function Habits({ habits, deleteHabit, onHabitsChange }) {
     }
   };
 
-  const updateHabit = async (habitId, isComplete) => {
+  const updateHabit = async (habitId, isComplete, duration, count) => {
     try {
       const response = await fetch("/api/user/updateHabit", {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ habitId, isComplete }),
+        body: JSON.stringify({ habitId, isComplete, duration, count }),
       });
 
       if (!response.ok) throw new Error("Failed to update habit");
@@ -54,12 +54,6 @@ function Habits({ habits, deleteHabit, onHabitsChange }) {
     } catch (error) {
       toast.error("Failed to update habit");
       console.error("Error updating habit:", error);
-    }
-  };
-
-  const handleCheckboxClick = (habit) => {
-    if (!habit.isComplete) {
-      setConfirmModal({ open: true, habit });
     }
   };
 
@@ -81,6 +75,11 @@ function Habits({ habits, deleteHabit, onHabitsChange }) {
     }
   };
 
+  const handleDecrementCount = async (habit, decrementValue) => {
+    const newCount = habit.count - decrementValue;
+    await updateHabit(habit._id, habit.isComplete, habit.duration, newCount);
+  };
+
   useEffect(() => {
     fetchHabits();
   }, []);
@@ -93,9 +92,7 @@ function Habits({ habits, deleteHabit, onHabitsChange }) {
       ) : (
         <div className="flex flex-col gap-6">
           <div className="text-center text-base-content mb-6 w-full">
-            <h2 className="text-2xl font-semibold">
-              Day {currentDay} / 21 main branch
-            </h2>
+            <h2 className="text-2xl font-semibold">Day {currentDay} / 21</h2>
           </div>
 
           {quote && (
@@ -109,31 +106,60 @@ function Habits({ habits, deleteHabit, onHabitsChange }) {
                 key={habit._id}
                 className="flex items-center justify-between p-6 rounded-lg shadow-2xl transition-all transform border-[0.1px] border-base-content"
               >
-                <div className="flex items-center">
-                  <input
-                    type="checkbox"
-                    checked={habit.isComplete}
-                    onChange={() => handleCheckboxClick(habit)}
-                    className="form-checkbox h-6 w-6 text-indigo-500 transition-all duration-300"
-                    disabled={habit.isComplete}
-                  />
+                <div className="flex flex-col items-start">
                   <span
                     className={`ml-4 text-lg font-medium transition-all duration-300 ${
                       habit.isComplete
-                        ? "line-through text-gray-500"
+                        ? "line-through text-green-500"
                         : "text-base-content"
                     }`}
                   >
-                    {habit.title} - {habit.duration} minutes
+                    {habit.title}
+                  </span>
+                  <span className="ml-4 text-base-content">
+                    {habit.duration
+                      ? `Mins: ${habit.duration}`
+                      : habit.count
+                      ? `Count: ${habit.count} `
+                      : ""}
                   </span>
                 </div>
 
-                <button
-                  onClick={() => handleDeleteHabit(habit._id)}
-                  className="text-red-500 hover:text-red-700 transition-colors duration-200"
-                >
-                  <FaRegTrashAlt className="h-6 w-6" />
-                </button>
+                <div className="flex space-x-2">
+                  {habit.count ? (
+                    <>
+                      <button
+                        className="px-2 py-1 bg-gray-300 text-gray-900 rounded-md"
+                        onClick={() => handleDecrementCount(habit, 1)}
+                      >
+                        -1
+                      </button>
+                      <button
+                        className="px-2 py-1 bg-gray-300 text-gray-900 rounded-md"
+                        onClick={() => handleDecrementCount(habit, 5)}
+                      >
+                        -5
+                      </button>
+                      <button
+                        className="px-2 py-1 bg-gray-300 text-gray-900 rounded-md"
+                        onClick={() => handleDecrementCount(habit, 10)}
+                      >
+                        -10
+                      </button>
+                    </>
+                  ) : habit.duration ? (
+                    <button className="px-2 py-1 bg-blue-500 text-white rounded-md">
+                      Start
+                    </button>
+                  ) : null}
+
+                  <button
+                    onClick={() => handleDeleteHabit(habit._id)}
+                    className="text-red-500 hover:text-red-700 transition-colors duration-200"
+                  >
+                    <FaRegTrashAlt className="h-6 w-6" />
+                  </button>
+                </div>
               </div>
             ))
           ) : (
