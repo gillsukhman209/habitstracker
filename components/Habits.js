@@ -352,14 +352,14 @@ function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
                       {habit.count >= 100 && (
                         <>
                           <button
-                            className="px-4 py-2 bg-blue-500 text-white rounded-md shadow-md hover:bg-blue-600 transition duration-200"
+                            className="px-4 py-2 bg-transparent text-white border border-white rounded-full hover:bg-blue-500 hover:text-white transition duration-200"
                             onClick={() => handleDecrementCount(habit, 100)}
                             disabled={isAnyTimerRunning}
                           >
                             -100
                           </button>
                           <button
-                            className="px-4 py-2 bg-blue-500 text-white rounded-md shadow-md hover:bg-blue-600 transition duration-200"
+                            className="px-4 py-2 bg-transparent text-white border border-white rounded-full hover:bg-blue-500 hover:text-white transition duration-200"
                             onClick={() => handleDecrementCount(habit, 500)}
                             disabled={isAnyTimerRunning}
                           >
@@ -371,7 +371,7 @@ function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
                         <>
                           {habit.count >= 50 && (
                             <button
-                              className="px-4 py-2 bg-blue-500 text-white rounded-md shadow-md hover:bg-blue-600 transition duration-200"
+                              className="px-4 py-2 bg-transparent text-white border border-white rounded-full hover:bg-blue-500 hover:text-white transition duration-200"
                               onClick={() => handleDecrementCount(habit, 50)}
                               disabled={isAnyTimerRunning}
                             >
@@ -380,7 +380,7 @@ function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
                           )}
                           {habit.count >= 10 && (
                             <button
-                              className="px-4 py-2 bg-blue-500 text-white rounded-md shadow-md hover:bg-blue-600 transition duration-200"
+                              className="px-4 py-2 bg-transparent text-white border border-white rounded-full hover:bg-blue-500 hover:text-white transition duration-200"
                               onClick={() => handleDecrementCount(habit, 10)}
                               disabled={isAnyTimerRunning}
                             >
@@ -388,7 +388,7 @@ function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
                             </button>
                           )}
                           <button
-                            className="px-4 py-2 bg-blue-500 text-white rounded-md shadow-md hover:bg-blue-600 transition duration-200"
+                            className="px-4 py-2 bg-transparent text-white border border-white rounded-full hover:bg-blue-500 hover:text-white transition duration-200"
                             onClick={() => handleDecrementCount(habit, 1)}
                             disabled={isAnyTimerRunning}
                           >
