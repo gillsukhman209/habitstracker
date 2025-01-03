@@ -329,14 +329,14 @@ function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
                 {!habit.isComplete && habit.count > 0 && (
                   <>
                     <button
-                      className="px-2 py-1 bg-gray-500 text-white rounded-md"
+                      className="px-2 py-1 border border-white rounded-md shadow-xl bg-transparent text-base-content"
                       onClick={() => handleDecrementCount(habit, 10)}
                       disabled={isAnyTimerRunning}
                     >
                       -10
                     </button>
                     <button
-                      className="px-2 py-1 bg-gray-500 text-white rounded-md"
+                      className="px-2 py-1 border border-white rounded-md shadow-xl bg-transparent text-base-content"
                       onClick={() => handleDecrementCount(habit, 1)}
                       disabled={isAnyTimerRunning}
                     >
@@ -348,7 +348,7 @@ function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
                   <>
                     {timers[habit._id]?.interval === undefined && (
                       <button
-                        className="px-2 py-1 bg-green-500 text-white rounded-md"
+                        className="px-2 py-1 border border-white rounded-md shadow-xl bg-transparent text-base-content"
                         onClick={() => handleStartTimer(habit)}
                         disabled={isAnyTimerRunning}
                       >
@@ -357,7 +357,7 @@ function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
                     )}
                     {timers[habit._id]?.interval !== undefined && (
                       <button
-                        className="px-2 py-1 bg-red-500 text-white rounded-md"
+                        className="px-2 py-1 border border-white rounded-md shadow-xl bg-transparent text-base-content"
                         onClick={() => handlePauseTimer(habit)}
                       >
                         <FaPause />
