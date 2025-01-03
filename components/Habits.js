@@ -370,20 +370,51 @@ function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
               <div className="relative flex space-x-2 z-10">
                 {!habit.isComplete && habit.count > 0 && (
                   <>
-                    <button
-                      className="px-2 py-1 border border-white rounded-md shadow-xl bg-transparent text-base-content"
-                      onClick={() => handleDecrementCount(habit, 10)}
-                      disabled={isAnyTimerRunning}
-                    >
-                      -10
-                    </button>
-                    <button
-                      className="px-2 py-1 border border-white rounded-md shadow-xl bg-transparent text-base-content"
-                      onClick={() => handleDecrementCount(habit, 1)}
-                      disabled={isAnyTimerRunning}
-                    >
-                      -1
-                    </button>
+                    {habit.count > 1000 && (
+                      <button
+                        className="px-2 py-1 border border-base-content rounded-md shadow-xl bg-transparent text-base-content"
+                        onClick={() => handleDecrementCount(habit, 1000)}
+                        disabled={isAnyTimerRunning}
+                      >
+                        -1000
+                      </button>
+                    )}
+                    {habit.count > 500 && (
+                      <button
+                        className="px-2 py-1 border border-base-content rounded-md shadow-xl bg-transparent text-base-content"
+                        onClick={() => handleDecrementCount(habit, 500)}
+                        disabled={isAnyTimerRunning}
+                      >
+                        -500
+                      </button>
+                    )}
+                    {habit.count <= 500 && habit.count <= 1000 && (
+                      <>
+                        {habit.count > 100 && (
+                          <button
+                            className="px-2 py-1 border border-base-content rounded-md shadow-xl bg-transparent text-base-content"
+                            onClick={() => handleDecrementCount(habit, 100)}
+                            disabled={isAnyTimerRunning}
+                          >
+                            -100
+                          </button>
+                        )}
+                        <button
+                          className="px-2 py-1 border border-base-content rounded-md shadow-xl bg-transparent text-base-content"
+                          onClick={() => handleDecrementCount(habit, 10)}
+                          disabled={isAnyTimerRunning}
+                        >
+                          -10
+                        </button>
+                        <button
+                          className="px-2 py-1 border border-base-content rounded-md shadow-xl bg-transparent text-base-content"
+                          onClick={() => handleDecrementCount(habit, 1)}
+                          disabled={isAnyTimerRunning}
+                        >
+                          -1
+                        </button>
+                      </>
+                    )}
                   </>
                 )}
                 {!habit.isComplete && habit.duration !== "0" && (

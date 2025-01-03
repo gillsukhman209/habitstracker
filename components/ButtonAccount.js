@@ -94,13 +94,11 @@ const ButtonAccount = () => {
             ) : (
               <span className="w-6 h-6 bg-base-300 flex justify-center items-center rounded-full shrink-0">
                 {session?.user?.name?.charAt(0) ||
-                  session?.user?.email?.charAt(0)}
+                  session?.user?.email?.charAt(0)}{" "}
               </span>
             )}
 
-            <span className="hidden md:inline">
-              {session?.user?.name || "Account"}
-            </span>
+            <span className="hidden md:inline">Settings</span>
 
             {isLoading ? (
               <span className="loading loading-spinner loading-xs"></span>
