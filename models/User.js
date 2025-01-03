@@ -44,16 +44,7 @@ const userSchema = mongoose.Schema(
         return value.includes("pm_");
       },
     },
-    lastChargeDate: {
-      // New field
-      type: Date,
-      default: null,
-    },
-    totalCharges: {
-      // New field
-      type: Number,
-      default: 0, // Amount in dollars
-    },
+
     penaltyAmount: {
       type: Number,
       default: 5, // Amount in dollars
@@ -68,10 +59,7 @@ const userSchema = mongoose.Schema(
       default: false,
     },
     habits: [habitSchema],
-    lastResetDate: {
-      type: Number,
-      default: parseInt(new Date().getDate()),
-    },
+
     completedDays: {
       type: [Number],
       default: [],

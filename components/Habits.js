@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-hot-toast";
-import { FaRegTrashAlt, FaPlay, FaPause } from "react-icons/fa";
+import { FaRegTrashAlt, FaPlay, FaPause } from "react-icons/fa"; // Removed FaMinus as it's not needed
 import Chart from "./Chart";
+
+import { MdRemoveCircle } from "react-icons/md";
 
 function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
   const [today] = useState(parseInt(new Date().getDate() + 0));
@@ -11,8 +13,10 @@ function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
   const [quote, setQuote] = useState("");
   const [habits, setHabits] = useState(parentHabits);
   const [timers, setTimers] = useState({});
-  const [showMore, setShowMore] = useState(false); // State to manage showing more habits
-  const [confirmDeleteId, setConfirmDeleteId] = useState(null); // State to manage confirmation modal
+  const [showMore, setShowMore] = useState(false);
+  const [confirmDeleteId, setConfirmDeleteId] = useState(null);
+  const [decrementVisible, setDecrementVisible] = useState({});
+  const [decrementAnimation, setDecrementAnimation] = useState({});
 
   useEffect(() => {
     if (parentHabits.length === 0) {
@@ -225,7 +229,7 @@ function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
       } finally {
         setLoading(false);
       }
-      setConfirmDeleteId(null); // Reset confirmation
+      setConfirmDeleteId(null);
     }
   };
 
@@ -269,19 +273,17 @@ function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
     };
   }, [today]);
 
-  // Categorizing habits
   const categorizedHabits = [
-    ...habits.filter((h) => !h.isComplete && h.duration > 0), // Habits with duration
-    ...habits.filter((h) => !h.isComplete && h.count > 0 && h.duration < 1), // Habits with count but no duration
-    ...habits.filter((h) => !h.isComplete && h.duration < 1 && h.count < 1), // Habits with neither duration nor count
-    ...habits.filter((h) => h.isComplete), // Completed habits
+    ...habits.filter((h) => !h.isComplete && h.duration > 0),
+    ...habits.filter((h) => !h.isComplete && h.count > 0 && h.duration < 1),
+    ...habits.filter((h) => !h.isComplete && h.duration < 1 && h.count < 1),
+    ...habits.filter((h) => h.isComplete),
   ];
 
   const isAnyTimerRunning = Object.values(timers).some(
     (timer) => timer.interval
   );
 
-  // Determine how many habits to show
   const displayedHabits = showMore
     ? categorizedHabits
     : categorizedHabits.slice(0, 5);
@@ -347,52 +349,86 @@ function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
               </div>
 
               <div className="relative flex space-x-2 z-10">
-                {!habit.isComplete && habit.count > 0 && (
+                {habit.count > 0 && ( // Show decrement button only for habits with count
                   <>
-                    {habit.count > 1000 && (
-                      <button
-                        className="px-2 py-1 border border-base-content rounded-md shadow-xl bg-transparent text-base-content"
-                        onClick={() => handleDecrementCount(habit, 1000)}
-                        disabled={isAnyTimerRunning}
+                    <button
+                      onClick={() => {
+                        setDecrementAnimation((prev) => ({
+                          ...prev,
+                          [habit._id]: !prev[habit._id],
+                        }));
+                        setDecrementVisible((prev) => ({
+                          ...prev,
+                          [habit._id]: !prev[habit._id],
+                        }));
+                      }}
+                      className="px-4 py-2 rounded-xl justify-center text-3xl bg-transparent text-base-content flex items-center"
+                    >
+                      <MdRemoveCircle />
+                    </button>
+                    {decrementVisible[habit._id] && (
+                      <div
+                        className={`flex space-x-3 transition-transform duration-300 transform ${
+                          decrementAnimation[habit._id]
+                            ? "scale-100"
+                            : "scale-0"
+                        }`}
                       >
-                        -1000
-                      </button>
-                    )}
-                    {habit.count > 500 && (
-                      <button
-                        className="px-2 py-1 border border-base-content rounded-md shadow-xl bg-transparent text-base-content"
-                        onClick={() => handleDecrementCount(habit, 500)}
-                        disabled={isAnyTimerRunning}
-                      >
-                        -500
-                      </button>
-                    )}
-                    {habit.count <= 500 && habit.count <= 1000 && (
-                      <>
-                        {habit.count > 100 && (
+                        {habit.count >= 1000 && (
                           <button
-                            className="px-2 py-1 border border-base-content rounded-md shadow-xl bg-transparent text-base-content"
+                            className="px-2 py-1 border border-base-content rounded-md shadow-xl  text-base-content"
+                            onClick={() => handleDecrementCount(habit, 1000)}
+                            disabled={isAnyTimerRunning}
+                          >
+                            -1000
+                          </button>
+                        )}
+                        {habit.count >= 500 && (
+                          <button
+                            className="px-2 py-1 border border-base-content rounded-md shadow-xl  text-base-content"
+                            onClick={() => handleDecrementCount(habit, 500)}
+                            disabled={isAnyTimerRunning}
+                          >
+                            -500
+                          </button>
+                        )}
+                        {habit.count >= 100 && (
+                          <button
+                            className="px-2 py-1 border border-base-content rounded-md shadow-xl  text-base-content"
                             onClick={() => handleDecrementCount(habit, 100)}
                             disabled={isAnyTimerRunning}
                           >
                             -100
                           </button>
                         )}
-                        <button
-                          className="px-2 py-1 border border-base-content rounded-md shadow-xl bg-transparent text-base-content"
-                          onClick={() => handleDecrementCount(habit, 10)}
-                          disabled={isAnyTimerRunning}
-                        >
-                          -10
-                        </button>
-                        <button
-                          className="px-2 py-1 border border-base-content rounded-md shadow-xl bg-transparent text-base-content"
-                          onClick={() => handleDecrementCount(habit, 1)}
-                          disabled={isAnyTimerRunning}
-                        >
-                          -1
-                        </button>
-                      </>
+                        {habit.count >= 50 && (
+                          <button
+                            className="px-2 py-1 border border-base-content rounded-md shadow-xl  text-base-content"
+                            onClick={() => handleDecrementCount(habit, 50)}
+                            disabled={isAnyTimerRunning}
+                          >
+                            -50
+                          </button>
+                        )}
+                        {habit.count >= 10 && (
+                          <button
+                            className="px-2 py-1 border border-base-content rounded-md shadow-xl  text-base-content"
+                            onClick={() => handleDecrementCount(habit, 10)}
+                            disabled={isAnyTimerRunning}
+                          >
+                            -10
+                          </button>
+                        )}
+                        {habit.count >= 1 && (
+                          <button
+                            className="px-2 py-1 border border-base-content rounded-md shadow-xl  text-base-content"
+                            onClick={() => handleDecrementCount(habit, 1)}
+                            disabled={isAnyTimerRunning}
+                          >
+                            -1
+                          </button>
+                        )}
+                      </div>
                     )}
                   </>
                 )}
@@ -400,7 +436,7 @@ function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
                   <>
                     {timers[habit._id]?.interval === undefined && (
                       <button
-                        className="px-2 py-1 border border-base-content rounded-md shadow-xl bg-transparent text-base-content"
+                        className="px-4 py-2 rounded-xl justify-center text-2xl bg-transparent text-base-content flex items-center"
                         onClick={() => handleStartTimer(habit)}
                         disabled={isAnyTimerRunning}
                       >
@@ -409,7 +445,7 @@ function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
                     )}
                     {timers[habit._id]?.interval !== undefined && (
                       <button
-                        className="px-2 py-1 border border-base-content rounded-md shadow-xl bg-transparent text-base-content"
+                        className="px-4 py-2 rounded-xl justify-center text-3xl bg-transparent text-base-content flex items-center"
                         onClick={() => handlePauseTimer(habit)}
                       >
                         <FaPause />
@@ -417,14 +453,13 @@ function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
                     )}
                   </>
                 )}
-                {/* Checkbox for habits with no duration or count */}
                 {!habit.isComplete &&
                   habit.duration === "0" &&
                   habit.count < 1 && (
-                    <div className="flex items-center ">
+                    <div className="px-4 py-2 rounded-xl justify-center text-3xl bg-transparent text-base-content flex items-center">
                       <input
                         type="checkbox"
-                        className="w-6 h-6" // Increased size of the checkbox
+                        className="w-6 h-6"
                         onChange={() => handleCompleteHabit(habit)}
                       />
                     </div>

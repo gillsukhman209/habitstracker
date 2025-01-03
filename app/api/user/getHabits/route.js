@@ -21,7 +21,6 @@ export async function GET() {
 
     return NextResponse.json({
       habits: user.habits,
-      lastResetDate: user.lastResetDate,
       customerId: user.customerId,
       completedDays: user.completedDays,
       penaltyAmount: user.penaltyAmount,

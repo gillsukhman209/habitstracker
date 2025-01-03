@@ -83,8 +83,6 @@ export async function POST(req) {
       return NextResponse.json({
         success: true,
         message: "Charged",
-        lastChargeDate: user.lastChargeDate,
-        totalCharges: user.totalCharges,
       });
     } catch (error) {
       if (error.type === "StripeCardError") {

@@ -14,14 +14,10 @@ export async function POST(req) {
         status: 404,
       });
     }
-
     user.habits = [];
     user.completedDays = [];
-    user.lastResetDay = new Date().getDate(); // Set to current date (day of the month)
     user.penaltyAmount = 5;
-    user.totalCharges = 0;
     await user.save();
-
     return new Response(
       JSON.stringify({ message: "Progress reset successfully" }),
       {
