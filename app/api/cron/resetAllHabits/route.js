@@ -50,7 +50,6 @@ export async function POST(req) {
 
         const currentDay = today - firstHabitDate;
 
-        // Check if user has completed all the habits for today if so then add currentDay to winning streak
         if (user.habits.every((habit) => habit.isComplete)) {
           user.completedDays.push(currentDay + 1);
 
