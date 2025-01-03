@@ -7,12 +7,12 @@ function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
   const [today] = useState(parseInt(new Date().getDate() + 0));
   const [currentDay, setCurrentDay] = useState(1);
   const [loading, setLoading] = useState(true);
-
   const [penaltyAmount, setPenaltyAmount] = useState(0);
   const [quote, setQuote] = useState("");
   const [habits, setHabits] = useState(parentHabits);
   const [timers, setTimers] = useState({});
   const [showMore, setShowMore] = useState(false); // State to manage showing more habits
+  const [confirmDeleteId, setConfirmDeleteId] = useState(null); // State to manage confirmation modal
 
   useEffect(() => {
     if (parentHabits.length === 0) {
@@ -206,19 +206,26 @@ function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
     }
   };
 
-  const handleDeleteHabit = async (habitId) => {
-    const updatedHabits = habits.filter((h) => h._id !== habitId);
-    setHabits(updatedHabits);
-    onHabitsChange && onHabitsChange(updatedHabits);
+  const confirmDeleteHabit = (habitId) => {
+    setConfirmDeleteId(habitId);
+  };
 
-    setLoading(true);
-    try {
-      await deleteHabit(habitId);
-    } catch (error) {
-      toast.error("Failed to delete habit");
-      setHabits(habits);
-    } finally {
-      setLoading(false);
+  const handleDeleteHabit = async () => {
+    if (confirmDeleteId) {
+      const updatedHabits = habits.filter((h) => h._id !== confirmDeleteId);
+      setHabits(updatedHabits);
+      onHabitsChange && onHabitsChange(updatedHabits);
+
+      setLoading(true);
+      try {
+        await deleteHabit(confirmDeleteId);
+      } catch (error) {
+        toast.error("Failed to delete habit");
+        setHabits(habits);
+      } finally {
+        setLoading(false);
+      }
+      setConfirmDeleteId(null); // Reset confirmation
     }
   };
 
@@ -423,7 +430,7 @@ function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
                     </div>
                   )}
                 <button
-                  onClick={() => handleDeleteHabit(habit._id)}
+                  onClick={() => confirmDeleteHabit(habit._id)}
                   className="text-red-500 hover:text-red-700 transition-colors duration-200"
                 >
                   <FaRegTrashAlt className="h-6 w-6" />
@@ -444,6 +451,29 @@ function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
             currentDay={currentDay}
             penaltyAmount={penaltyAmount}
           />
+        </div>
+      )}
+      {confirmDeleteId && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-4 rounded shadow-lg">
+            <h3 className="text-lg">
+              Are you sure you want to delete this habit?
+            </h3>
+            <div className="flex justify-end mt-4">
+              <button
+                onClick={() => setConfirmDeleteId(null)}
+                className="mr-2 px-4 py-2 bg-gray-300 rounded"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDeleteHabit}
+                className="px-4 py-2 bg-red-500 text-white rounded"
+              >
+                Confirm
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>
