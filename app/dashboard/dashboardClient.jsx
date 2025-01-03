@@ -89,19 +89,8 @@ export default function Dashboard() {
   };
 
   const addHabits = async () => {
-    const validInputs = habitInputs.filter((input) =>
-      input.toggleOption === "count"
-        ? input.count !== ""
-        : input.duration !== ""
-    );
-
-    if (validInputs.length === 0) {
-      toast.error("Please fill out all fields for each habit.");
-      return;
-    }
-
     try {
-      for (const input of validInputs) {
+      for (const input of habitInputs) {
         const response = await fetch("/api/user/addHabit", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -205,7 +194,7 @@ export default function Dashboard() {
                   {input.toggleOption === "count" ? (
                     <input
                       type="text"
-                      placeholder="Count"
+                      placeholder="Count (optional)"
                       value={input.count}
                       onChange={(e) =>
                         handleInputChange(index, "count", e.target.value)
@@ -216,7 +205,7 @@ export default function Dashboard() {
                   ) : (
                     <input
                       type="text"
-                      placeholder="Duration (mins)"
+                      placeholder="Duration (mins, optional)"
                       value={input.duration}
                       onChange={(e) =>
                         handleInputChange(index, "duration", e.target.value)

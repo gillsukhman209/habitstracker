@@ -311,7 +311,9 @@ function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
       ) : (
         <div className="flex flex-col gap-6">
           <div className="text-center text-base-content mb-6 w-full">
-            <h2 className="text-2xl font-semibold">Day {currentDay} / 21</h2>
+            <h2 className="text-2xl font-semibold">
+              Day {currentDay} / 21 latest update
+            </h2>
           </div>
 
           {quote ? (
@@ -390,7 +392,7 @@ function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
                   <>
                     {timers[habit._id]?.interval === undefined && (
                       <button
-                        className="px-2 py-1 border border-white rounded-md shadow-xl bg-transparent text-base-content"
+                        className="px-2 py-1 border border-base-content rounded-md shadow-xl bg-transparent text-base-content"
                         onClick={() => handleStartTimer(habit)}
                         disabled={isAnyTimerRunning}
                       >
@@ -399,7 +401,7 @@ function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
                     )}
                     {timers[habit._id]?.interval !== undefined && (
                       <button
-                        className="px-2 py-1 border border-white rounded-md shadow-xl bg-transparent text-base-content"
+                        className="px-2 py-1 border border-base-content rounded-md shadow-xl bg-transparent text-base-content"
                         onClick={() => handlePauseTimer(habit)}
                       >
                         <FaPause />
