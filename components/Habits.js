@@ -283,9 +283,15 @@ function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
             <h2 className="text-2xl font-semibold">Day {currentDay} / 21</h2>
           </div>
 
-          {quote && (
+          {quote ? (
             <div className="text-center text-base-content mb-4">
               <p className="text-lg italic">&quot;{quote}&quot;</p>
+            </div>
+          ) : (
+            <div className="text-center text-base-content mb-4">
+              <p className="text-lg italic">
+                &quot;Stay positive and keep pushing forward!&quot;
+              </p>
             </div>
           )}
           {categorizedHabits.map((habit) => (

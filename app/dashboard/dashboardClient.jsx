@@ -89,10 +89,14 @@ export default function Dashboard() {
   };
 
   const addHabits = async () => {
-    const validInputs = habitInputs.filter((input) => input.title !== "");
+    const validInputs = habitInputs.filter((input) =>
+      input.toggleOption === "count"
+        ? input.count !== ""
+        : input.duration !== ""
+    );
 
     if (validInputs.length === 0) {
-      toast.error("Please fill out the title for each habit.");
+      toast.error("Please fill out all fields for each habit.");
       return;
     }
 
