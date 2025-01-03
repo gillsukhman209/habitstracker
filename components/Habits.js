@@ -7,10 +7,12 @@ function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
   const [today] = useState(parseInt(new Date().getDate() + 0));
   const [currentDay, setCurrentDay] = useState(1);
   const [loading, setLoading] = useState(true);
+
   const [penaltyAmount, setPenaltyAmount] = useState(0);
   const [quote, setQuote] = useState("");
   const [habits, setHabits] = useState(parentHabits);
   const [timers, setTimers] = useState({});
+  const [showMore, setShowMore] = useState(false); // State to manage showing more habits
 
   useEffect(() => {
     if (parentHabits.length === 0) {
@@ -272,6 +274,11 @@ function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
     (timer) => timer.interval
   );
 
+  // Determine how many habits to show
+  const displayedHabits = showMore
+    ? categorizedHabits
+    : categorizedHabits.slice(0, 5);
+
   return (
     <div className="w-full flex flex-col gap-8 p-8 rounded-lg shadow-xl text-base-content">
       {loading ? (
@@ -295,7 +302,7 @@ function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
               </p>
             </div>
           )}
-          {categorizedHabits.map((habit) => (
+          {displayedHabits.map((habit) => (
             <div
               key={habit._id}
               className={`habit-item relative flex items-center justify-between p-6 rounded-lg shadow-2xl transition-all transform border-[0.1px] border-base-content ${
@@ -424,6 +431,14 @@ function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
               </div>
             </div>
           ))}
+          {habits.length > 5 && (
+            <button
+              onClick={() => setShowMore(!showMore)}
+              className="mt-4 w-full sm:w-auto mx-auto px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors duration-200"
+            >
+              {showMore ? "Show Less" : "Show More"}
+            </button>
+          )}
           <Chart
             habits={habits}
             currentDay={currentDay}
