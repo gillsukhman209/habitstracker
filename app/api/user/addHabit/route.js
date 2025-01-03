@@ -5,26 +5,23 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/libs/next-auth";
 
 export async function POST(req) {
+  console.log("add habit route");
   try {
     await connectMongo();
     const session = await getServerSession(authOptions);
     const body = await req.json();
     const { habitTitle, habitDuration, habitCount } = body;
     console.log(
-      "habit title, duration, count",
+      "habitTitle",
       habitTitle,
+      "habitDuration",
       habitDuration,
+      "habitCount",
       habitCount
     );
     if (!habitTitle) {
       return NextResponse.json(
         { error: "Habit name is required" },
-        { status: 400 }
-      );
-    }
-    if (!habitDuration && !habitCount) {
-      return NextResponse.json(
-        { error: "Either habit duration or habit count is required" },
         { status: 400 }
       );
     }
@@ -35,7 +32,7 @@ export async function POST(req) {
     }
 
     user.habits = user.habits || [];
-    console.log("updating count in route", habitCount);
+
     const newHabit = {
       title: habitTitle,
       count: habitCount,
@@ -44,13 +41,13 @@ export async function POST(req) {
       createdAt: new Date(),
     };
 
-    console.log("new habit", newHabit);
     user.habits.push(newHabit);
 
     await user.save();
 
     return NextResponse.json({ success: true, habit: habitTitle });
   } catch (error) {
+    console.log("error", error);
     return NextResponse.json(
       { error: "Failed to add habit server error" },
       { status: 500 }

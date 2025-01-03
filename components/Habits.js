@@ -349,27 +349,53 @@ function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
                 <div className="relative flex space-x-2 z-10">
                   {!habit.isComplete && habit.count > 0 && (
                     <>
-                      <button
-                        className="px-4 py-2 bg-blue-500 text-white rounded-md shadow-md hover:bg-blue-600 transition duration-200"
-                        onClick={() => handleDecrementCount(habit, 1)}
-                        disabled={isAnyTimerRunning}
-                      >
-                        -1
-                      </button>
-                      <button
-                        className="px-4 py-2 bg-blue-500 text-white rounded-md shadow-md hover:bg-blue-600 transition duration-200"
-                        onClick={() => handleDecrementCount(habit, 5)}
-                        disabled={isAnyTimerRunning}
-                      >
-                        -5
-                      </button>
-                      <button
-                        className="px-4 py-2 bg-blue-500 text-white rounded-md shadow-md hover:bg-blue-600 transition duration-200"
-                        onClick={() => handleDecrementCount(habit, 10)}
-                        disabled={isAnyTimerRunning}
-                      >
-                        -10
-                      </button>
+                      {habit.count >= 100 && (
+                        <>
+                          <button
+                            className="px-4 py-2 bg-blue-500 text-white rounded-md shadow-md hover:bg-blue-600 transition duration-200"
+                            onClick={() => handleDecrementCount(habit, 100)}
+                            disabled={isAnyTimerRunning}
+                          >
+                            -100
+                          </button>
+                          <button
+                            className="px-4 py-2 bg-blue-500 text-white rounded-md shadow-md hover:bg-blue-600 transition duration-200"
+                            onClick={() => handleDecrementCount(habit, 500)}
+                            disabled={isAnyTimerRunning}
+                          >
+                            -500
+                          </button>
+                        </>
+                      )}
+                      {habit.count < 100 && (
+                        <>
+                          {habit.count >= 50 && (
+                            <button
+                              className="px-4 py-2 bg-blue-500 text-white rounded-md shadow-md hover:bg-blue-600 transition duration-200"
+                              onClick={() => handleDecrementCount(habit, 50)}
+                              disabled={isAnyTimerRunning}
+                            >
+                              -50
+                            </button>
+                          )}
+                          {habit.count >= 10 && (
+                            <button
+                              className="px-4 py-2 bg-blue-500 text-white rounded-md shadow-md hover:bg-blue-600 transition duration-200"
+                              onClick={() => handleDecrementCount(habit, 10)}
+                              disabled={isAnyTimerRunning}
+                            >
+                              -10
+                            </button>
+                          )}
+                          <button
+                            className="px-4 py-2 bg-blue-500 text-white rounded-md shadow-md hover:bg-blue-600 transition duration-200"
+                            onClick={() => handleDecrementCount(habit, 1)}
+                            disabled={isAnyTimerRunning}
+                          >
+                            -1
+                          </button>
+                        </>
+                      )}
                     </>
                   )}
                   {!habit.isComplete && habit.duration !== "0" && (
