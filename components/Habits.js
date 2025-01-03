@@ -311,9 +311,7 @@ function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
       ) : (
         <div className="flex flex-col gap-6">
           <div className="text-center text-base-content mb-6 w-full">
-            <h2 className="text-2xl font-semibold">
-              Day {currentDay} / 21 latest update
-            </h2>
+            <h2 className="text-2xl font-semibold">Day {currentDay} / 21</h2>
           </div>
 
           {quote ? (
