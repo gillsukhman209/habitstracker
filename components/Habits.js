@@ -260,6 +260,37 @@ function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
     };
   }, [today]);
 
+  // Drag and drop functionality
+  const handleDragStart = (e, habit) => {
+    e.dataTransfer.setData("text/plain", habit._id);
+  };
+
+  const handleDrop = (e) => {
+    const habitId = e.dataTransfer.getData("text/plain");
+    const targetHabitId = e.target.closest(".habit-item").dataset.id;
+
+    if (habitId && targetHabitId && habitId !== targetHabitId) {
+      const updatedHabits = [...habits];
+      const draggedHabitIndex = updatedHabits.findIndex(
+        (h) => h._id === habitId
+      );
+      const targetHabitIndex = updatedHabits.findIndex(
+        (h) => h._id === targetHabitId
+      );
+
+      // Move the dragged habit to the new position
+      const [movedHabit] = updatedHabits.splice(draggedHabitIndex, 1);
+      updatedHabits.splice(targetHabitIndex, 0, movedHabit);
+
+      setHabits(updatedHabits);
+      onHabitsChange && onHabitsChange(updatedHabits);
+    }
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+  };
+
   // Categorizing habits
   const categorizedHabits = [
     ...habits.filter((h) => !h.isComplete && (h.count || h.penalty)),
@@ -297,9 +328,14 @@ function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
           {categorizedHabits.map((habit) => (
             <div
               key={habit._id}
-              className={`relative flex items-center justify-between p-6 rounded-lg shadow-2xl transition-all transform border-[0.1px] border-base-content ${
+              className={`habit-item relative flex items-center justify-between p-6 rounded-lg shadow-2xl transition-all transform border-[0.1px] border-base-content ${
                 habit.isComplete ? " opacity-50 text-base-content" : ""
               }`}
+              data-id={habit._id}
+              draggable
+              onDragStart={(e) => handleDragStart(e, habit)}
+              onDrop={handleDrop}
+              onDragOver={handleDragOver}
             >
               <div
                 className={`absolute top-0 left-0 h-full ${
