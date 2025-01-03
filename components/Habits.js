@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-hot-toast";
-import { FaRegTrashAlt, FaPlay, FaPause } from "react-icons/fa"; // Importing the play and pause icons
+import { FaRegTrashAlt, FaPlay, FaPause } from "react-icons/fa";
 import Chart from "./Chart";
 
 function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
@@ -9,14 +9,14 @@ function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
   const [loading, setLoading] = useState(true);
   const [penaltyAmount, setPenaltyAmount] = useState(0);
   const [quote, setQuote] = useState("");
-  const [habits, setHabits] = useState(parentHabits); // Local state
-  const [timers, setTimers] = useState({}); // Track timers
+  const [habits, setHabits] = useState(parentHabits);
+  const [timers, setTimers] = useState({});
 
   useEffect(() => {
     if (parentHabits.length === 0) {
-      setHabits([]); // Clear the local state when no habits are left
+      setHabits([]);
     } else {
-      setHabits(parentHabits); // Sync with parent state
+      setHabits(parentHabits);
     }
   }, [parentHabits]);
 
@@ -55,7 +55,7 @@ function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
                 duration: updatedHabit.habit.duration,
                 count: updatedHabit.habit.count,
                 progress: updatedHabit.habit.progress,
-                timer: updatedHabit.habit.timer, // Update timer from the backend
+                timer: updatedHabit.habit.timer,
               }
             : h
         )
@@ -64,7 +64,6 @@ function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
       onHabitsChange && onHabitsChange(habits);
     } catch (error) {
       toast.error("Failed to update habit");
-      console.error("Error updating habit:", error);
     }
   };
 
@@ -80,7 +79,7 @@ function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
 
   const handleStartTimer = (habit) => {
     if (timers[habit._id]?.interval) {
-      return; // Prevent starting a new timer if one is already running
+      return;
     }
 
     const startTime = Date.now();
@@ -101,7 +100,6 @@ function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
         )
       );
 
-      // Sync with the backend every 10 seconds or when the timer ends
       if (elapsed % 10 === 0 || remaining === 0) {
         updateHabit(
           habit._id,
@@ -159,7 +157,7 @@ function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
         Math.ceil(remainingTime / 60),
         habit.count,
         progress,
-        remainingTime // Pass the remaining time to the backend
+        remainingTime
       );
 
       setHabits((prevHabits) =>
@@ -222,6 +220,11 @@ function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
     }
   };
 
+  const handleCompleteHabit = (habit) => {
+    updateHabit(habit._id, true, habit.duration, habit.count, 100, 0);
+    toast.success(`${habit.title} has been marked as completed!`);
+  };
+
   useEffect(() => {
     const fetchHabits = async () => {
       setLoading(true);
@@ -233,7 +236,7 @@ function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
         setHabits(
           data.habits.map((habit) => ({
             ...habit,
-            progress: calculateProgress(habit), // Initialize progress
+            progress: calculateProgress(habit),
           }))
         );
         setPenaltyAmount(data.penaltyAmount);
@@ -257,34 +260,16 @@ function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
     };
   }, [today]);
 
-  useEffect(() => {
-    const handleBeforeUnload = (event) => {
-      const activeTimers = Object.keys(timers).length;
-      if (activeTimers > 0) {
-        event.preventDefault();
-        event.returnValue = ""; // Required for most browsers
-        Object.keys(timers).forEach((habitId) => {
-          const habit = habits.find((h) => h._id === habitId);
-          if (habit && timers[habitId].remaining) {
-            handlePauseTimer(habit); // Save progress
-          }
-        });
-      }
-    };
-
-    window.addEventListener("beforeunload", handleBeforeUnload);
-
-    return () => {
-      window.removeEventListener("beforeunload", handleBeforeUnload);
-    };
-  }, [habits, timers]);
+  // Categorizing habits
+  const categorizedHabits = [
+    ...habits.filter((h) => !h.isComplete && (h.count || h.penalty)),
+    ...habits.filter((h) => !h.isComplete && !h.count && !h.penalty),
+    ...habits.filter((h) => h.isComplete),
+  ];
 
   const isAnyTimerRunning = Object.values(timers).some(
-    (timer) => timer.interval !== undefined
+    (timer) => timer.interval
   );
-
-  const activeHabits = habits.filter((habit) => !habit.isComplete);
-  const completedHabits = habits.filter((habit) => habit.isComplete);
 
   return (
     <div className="w-full flex flex-col gap-8 p-8 rounded-lg shadow-xl text-base-content">
@@ -303,162 +288,104 @@ function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
               <p className="text-lg italic">&quot;{quote}&quot;</p>
             </div>
           )}
-          {activeHabits.length > 0 ? (
-            activeHabits.map((habit) => (
+          {categorizedHabits.map((habit) => (
+            <div
+              key={habit._id}
+              className={`relative flex items-center justify-between p-6 rounded-lg shadow-2xl transition-all transform border-[0.1px] border-base-content ${
+                habit.isComplete ? " opacity-50 text-base-content" : ""
+              }`}
+            >
               <div
-                key={habit._id}
-                className="relative flex items-center justify-between p-6 rounded-lg shadow-2xl transition-all transform border-[0.1px] border-base-content"
-              >
-                <div
-                  className="absolute top-0 left-0 h-full bg-base-content opacity-25 rounded-lg transition-all"
-                  style={{ width: `${habit.progress}%` }}
-                ></div>
-                <div className="relative flex flex-col items-start z-10">
-                  <span
-                    className={`ml-4 text-lg font-medium transition-all duration-300 ${
-                      habit.isComplete ? "line-through " : "text-base-content"
-                    }`}
-                  >
-                    {habit.title}
-                  </span>
-                  {habit.isComplete && <span className="ml-4 ">Completed</span>}
-                  {!habit.isComplete && habit.count > 0 && (
-                    <span className="ml-4 text-base-content">
-                      Count: {habit.count}
-                    </span>
-                  )}
-                  {!habit.isComplete && habit.duration !== "0" && (
-                    <span className="ml-4 text-base-content">
-                      <div>
-                        Duration:{" "}
-                        {habit.timer
-                          ? `${Math.floor(habit.timer / 60)}:${
-                              habit.timer % 60
-                            }`
-                          : `${habit.duration}:00`}
-                      </div>
-
-                      <div>
-                        Progress:{" "}
-                        {habit.progress > 0 ? habit.progress.toFixed(0) : 0}%
-                      </div>
-                    </span>
-                  )}
-                </div>
-
-                <div className="relative flex space-x-2 z-10">
-                  {!habit.isComplete && habit.count > 0 && (
-                    <>
-                      {habit.count >= 100 && (
-                        <>
-                          <button
-                            className="px-4 py-2 bg-transparent text-white border border-white rounded-full hover:bg-blue-500 hover:text-white transition duration-200"
-                            onClick={() => handleDecrementCount(habit, 100)}
-                            disabled={isAnyTimerRunning}
-                          >
-                            -100
-                          </button>
-                          <button
-                            className="px-4 py-2 bg-transparent text-white border border-white rounded-full hover:bg-blue-500 hover:text-white transition duration-200"
-                            onClick={() => handleDecrementCount(habit, 500)}
-                            disabled={isAnyTimerRunning}
-                          >
-                            -500
-                          </button>
-                        </>
-                      )}
-                      {habit.count < 100 && (
-                        <>
-                          {habit.count >= 50 && (
-                            <button
-                              className="px-4 py-2 bg-transparent text-white border border-white rounded-full hover:bg-blue-500 hover:text-white transition duration-200"
-                              onClick={() => handleDecrementCount(habit, 50)}
-                              disabled={isAnyTimerRunning}
-                            >
-                              -50
-                            </button>
-                          )}
-                          {habit.count >= 10 && (
-                            <button
-                              className="px-4 py-2 bg-transparent text-white border border-white rounded-full hover:bg-blue-500 hover:text-white transition duration-200"
-                              onClick={() => handleDecrementCount(habit, 10)}
-                              disabled={isAnyTimerRunning}
-                            >
-                              -10
-                            </button>
-                          )}
-                          <button
-                            className="px-4 py-2 bg-transparent text-white border border-white rounded-full hover:bg-blue-500 hover:text-white transition duration-200"
-                            onClick={() => handleDecrementCount(habit, 1)}
-                            disabled={isAnyTimerRunning}
-                          >
-                            -1
-                          </button>
-                        </>
-                      )}
-                    </>
-                  )}
-                  {!habit.isComplete && habit.duration !== "0" && (
-                    <>
-                      {timers[habit._id]?.interval === undefined && (
-                        <button
-                          className="px-2 py-1  text-white rounded-md"
-                          onClick={() => handleStartTimer(habit)}
-                          disabled={isAnyTimerRunning}
-                        >
-                          <FaPlay className="h-5 w-5 text-gray-400" />{" "}
-                          {/* Replaced Start with Play icon */}
-                        </button>
-                      )}
-                      {timers[habit._id]?.interval !== undefined && (
-                        <button
-                          className="px-2 py-1  text-white rounded-md "
-                          onClick={() => handlePauseTimer(habit)}
-                        >
-                          <FaPause className="h-5 w-5 text-red-400" />{" "}
-                          {/* Pause icon */}
-                        </button>
-                      )}
-                    </>
-                  )}
-                  <button
-                    onClick={() => handleDeleteHabit(habit._id)}
-                    className="text-red-500 hover:text-red-700 transition-colors duration-200"
-                  >
-                    <FaRegTrashAlt className="h-6 w-6" />
-                  </button>
-                </div>
-              </div>
-            ))
-          ) : (
-            <p className="text-gray-400 text-center">
-              Add habits to get started
-            </p>
-          )}
-          {completedHabits.length > 0 && (
-            <div>
-              {/* <h3 className="text-lg font-semibold">Completed Habits</h3> */}
-              {completedHabits.map((habit) => (
-                <div
-                  key={habit._id}
-                  className="relative flex items-center justify-between p-6 mb-4 rounded-lg shadow-2xl transition-all transform border-[0.1px] border-base-content"
+                className={`absolute top-0 left-0 h-full ${
+                  habit.isComplete ? "" : "bg-base-content"
+                } opacity-25 rounded-lg transition-all`}
+                style={{ width: `${habit.progress}%` }}
+              ></div>
+              <div className="relative flex flex-col items-start z-10">
+                <span
+                  className={`ml-4 text-lg font-medium transition-all duration-300 ${
+                    habit.isComplete ? "line-through " : "text-base-content"
+                  }`}
                 >
-                  <div className="relative flex flex-col items-start z-10 ">
-                    <span className={`ml-4 text-lg font-medium line-through`}>
-                      {habit.title}
-                    </span>
-                    <span className="ml-4 ">Completed</span>
-                  </div>
-                  <button
-                    onClick={() => handleDeleteHabit(habit._id)}
-                    className="text-red-500 hover:text-red-700 transition-colors duration-200"
-                  >
-                    <FaRegTrashAlt className="h-6 w-6" />
-                  </button>
-                </div>
-              ))}
+                  {habit.title}
+                </span>
+                {habit.isComplete && <span className="ml-4 ">Completed</span>}
+                {habit.count > 0 && (
+                  <span className="ml-4 text-base-content">
+                    Count: {habit.count}
+                  </span>
+                )}
+                {habit.duration !== "0" && (
+                  <span className="ml-4 text-base-content">
+                    Duration:{" "}
+                    {habit.timer
+                      ? `${Math.floor(habit.timer / 60)}:${habit.timer % 60}`
+                      : `${habit.duration}:00`}
+                  </span>
+                )}
+              </div>
+
+              <div className="relative flex space-x-2 z-10">
+                {!habit.isComplete && habit.count > 0 && (
+                  <>
+                    <button
+                      className="px-2 py-1 bg-gray-500 text-white rounded-md"
+                      onClick={() => handleDecrementCount(habit, 10)}
+                      disabled={isAnyTimerRunning}
+                    >
+                      -10
+                    </button>
+                    <button
+                      className="px-2 py-1 bg-gray-500 text-white rounded-md"
+                      onClick={() => handleDecrementCount(habit, 1)}
+                      disabled={isAnyTimerRunning}
+                    >
+                      -1
+                    </button>
+                  </>
+                )}
+                {!habit.isComplete && habit.duration !== "0" && (
+                  <>
+                    {timers[habit._id]?.interval === undefined && (
+                      <button
+                        className="px-2 py-1 bg-green-500 text-white rounded-md"
+                        onClick={() => handleStartTimer(habit)}
+                        disabled={isAnyTimerRunning}
+                      >
+                        <FaPlay />
+                      </button>
+                    )}
+                    {timers[habit._id]?.interval !== undefined && (
+                      <button
+                        className="px-2 py-1 bg-red-500 text-white rounded-md"
+                        onClick={() => handlePauseTimer(habit)}
+                      >
+                        <FaPause />
+                      </button>
+                    )}
+                  </>
+                )}
+                {/* Checkbox for habits with no duration or count */}
+                {!habit.isComplete &&
+                  habit.duration === "0" &&
+                  habit.count < 1 && (
+                    <div className="flex items-center ">
+                      <input
+                        type="checkbox"
+                        className="w-6 h-6" // Increased size of the checkbox
+                        onChange={() => handleCompleteHabit(habit)}
+                      />
+                    </div>
+                  )}
+                <button
+                  onClick={() => handleDeleteHabit(habit._id)}
+                  className="text-red-500 hover:text-red-700 transition-colors duration-200"
+                >
+                  <FaRegTrashAlt className="h-6 w-6" />
+                </button>
+              </div>
             </div>
-          )}
+          ))}
           <Chart
             habits={habits}
             currentDay={currentDay}

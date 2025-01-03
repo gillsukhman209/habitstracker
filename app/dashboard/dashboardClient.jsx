@@ -89,7 +89,6 @@ export default function Dashboard() {
   };
 
   const addHabits = async () => {
-    // Only check for title, duration and count can be empty
     const validInputs = habitInputs.filter((input) => input.title !== "");
 
     if (validInputs.length === 0) {
