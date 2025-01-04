@@ -380,7 +380,7 @@ function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
                       >
                         {habit.count >= 1000 && (
                           <button
-                            className="px-2 py-1 border border-base-content rounded-md shadow-xl  text-base-content"
+                            className="px-2 py-1 border border-base-content rounded-md shadow-xl text-base-content flex items-center justify-center mt-2 h-8 w-14 "
                             onClick={() => handleDecrementCount(habit, 1000)}
                             disabled={isAnyTimerRunning}
                           >
@@ -389,7 +389,7 @@ function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
                         )}
                         {habit.count >= 500 && (
                           <button
-                            className="px-2 py-1 border border-base-content rounded-md shadow-xl  text-base-content"
+                            className="px-2 py-1 border border-base-content rounded-md shadow-xl text-base-content flex items-center justify-center mt-2 h-8 w-14 "
                             onClick={() => handleDecrementCount(habit, 500)}
                             disabled={isAnyTimerRunning}
                           >
@@ -398,7 +398,7 @@ function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
                         )}
                         {habit.count >= 100 && (
                           <button
-                            className="px-2 py-1 border border-base-content rounded-md shadow-xl  text-base-content"
+                            className="px-2 py-1 border border-base-content rounded-md shadow-xl text-base-content flex items-center justify-center mt-2 h-8 w-12 "
                             onClick={() => handleDecrementCount(habit, 100)}
                             disabled={isAnyTimerRunning}
                           >
@@ -407,7 +407,7 @@ function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
                         )}
                         {habit.count >= 50 && (
                           <button
-                            className="px-2 py-1 border border-base-content rounded-md shadow-xl  text-base-content"
+                            className="px-2 py-1 border border-base-content rounded-md shadow-xl text-base-content flex items-center justify-center mt-2 h-8 w-10 "
                             onClick={() => handleDecrementCount(habit, 50)}
                             disabled={isAnyTimerRunning}
                           >
@@ -416,7 +416,7 @@ function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
                         )}
                         {habit.count >= 10 && (
                           <button
-                            className="px-2 py-1 border border-base-content rounded-md shadow-xl  text-base-content"
+                            className="px-2 py-1 border border-base-content rounded-md shadow-xl text-base-content flex items-center justify-center mt-2 h-8 w-10 "
                             onClick={() => handleDecrementCount(habit, 10)}
                             disabled={isAnyTimerRunning}
                           >
@@ -425,7 +425,7 @@ function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
                         )}
                         {habit.count >= 1 && (
                           <button
-                            className="px-2 py-1 border border-base-content rounded-md shadow-xl  text-base-content"
+                            className={`px-2 py-1 border border-base-content rounded-md shadow-xl text-base-content flex items-center justify-center mt-2 h-8 w-10 `}
                             onClick={() => handleDecrementCount(habit, 1)}
                             disabled={isAnyTimerRunning}
                           >
