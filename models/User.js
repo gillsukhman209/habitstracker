@@ -6,7 +6,9 @@ const habitSchema = new mongoose.Schema({
   title: { type: String, required: true },
   isComplete: { type: Boolean, default: false },
   count: { type: Number, required: false, default: 0 },
+  originalCount: { type: Number, required: false }, // Store original count
   duration: { type: String, required: false }, // Total duration in minutes
+  originalDuration: { type: String, required: false }, // Store original duration
   timer: { type: Number, default: 0 }, // Remaining time in seconds
   dateAdded: { type: Date, default: Date.now },
   progress: { type: Number, default: 0 }, // Progress percentage

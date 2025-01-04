@@ -2,6 +2,7 @@ import { cors } from "@/libs/cors";
 
 export const GET = cors(async (req) => {
   try {
+    console.log("present sir");
     const { API_SECRET_TOKEN } = process.env;
     const authHeader = req.headers.get("Authorization");
     if (!API_SECRET_TOKEN) {

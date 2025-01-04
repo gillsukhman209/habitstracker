@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { toast } from "react-hot-toast";
 import { FaRegTrashAlt, FaPlay, FaPause } from "react-icons/fa"; // Removed FaMinus as it's not needed
 import Chart from "./Chart";
-
+import { useTheme } from "next-themes";
 import { MdRemoveCircle } from "react-icons/md";
 
 function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
@@ -17,7 +17,7 @@ function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
   const [confirmDeleteId, setConfirmDeleteId] = useState(null);
   const [decrementVisible, setDecrementVisible] = useState({});
   const [decrementAnimation, setDecrementAnimation] = useState({});
-
+  const { theme } = useTheme();
   useEffect(() => {
     if (parentHabits.length === 0) {
       setHabits([]);
@@ -320,8 +320,12 @@ function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
             >
               <div
                 className={`absolute top-0 left-0 h-full ${
-                  habit.isComplete ? "" : "bg-base-content"
-                } opacity-25 rounded-lg transition-all`}
+                  habit.isComplete
+                    ? "hidden"
+                    : theme === "dark"
+                    ? "bg-green-600 "
+                    : "bg-green-400"
+                }  rounded-lg transition-all`}
                 style={{ width: `${habit.progress}%` }}
               ></div>
               <div className="relative flex flex-col items-start z-10">

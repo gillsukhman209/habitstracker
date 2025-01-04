@@ -36,7 +36,9 @@ export async function POST(req) {
     const newHabit = {
       title: habitTitle,
       count: habitCount,
+      originalCount: habitCount,
       duration: habitDuration,
+      originalDuration: habitDuration,
       progress: 0,
       createdAt: new Date(),
     };

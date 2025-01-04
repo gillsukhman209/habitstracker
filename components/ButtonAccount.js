@@ -65,7 +65,7 @@ const ButtonAccount = () => {
       });
 
       if (response.ok) {
-        toast.success("Progress reset successfully");
+        toast.success("Progress reset successfully, please refresh the page");
       } else {
         toast.error("Failed to reset progress");
       }

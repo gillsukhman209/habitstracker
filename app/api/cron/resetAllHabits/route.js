@@ -69,6 +69,10 @@ export async function POST(req) {
 
       user.habits.forEach((habit) => {
         habit.isComplete = false;
+        habit.progress = 0;
+        habit.timer = 0;
+        habit.duration = habit.originalDuration;
+        habit.count = habit.originalCount;
       });
 
       // Save the updated user document
