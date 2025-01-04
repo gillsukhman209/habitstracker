@@ -11,7 +11,6 @@ export const sendEmail = async ({ to }) => {
       html: "<p>Congrats on sending your <strong>first email</strong>!</p>",
     });
 
-    console.log("Email sent successfully:", response);
     return response;
   } catch (error) {
     console.error("Error sending email:", error);

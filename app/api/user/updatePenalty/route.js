@@ -10,8 +10,6 @@ export async function POST(req) {
     const session = await getServerSession(authOptions);
     const { penaltyAmount } = await req.json(); // Get the penalty amount from the request body
 
-    console.log("penalty amount received in route.js", penaltyAmount);
-
     if (!session || !session.user) {
       return NextResponse.json(
         { error: "User not authenticated" },
@@ -21,7 +19,6 @@ export async function POST(req) {
 
     const userId = session.user.id; // Use the user ID from the session
     const user = await User.findById(userId);
-    console.log("user found in route.js", user);
 
     if (!user) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
