@@ -57,15 +57,35 @@ const Hero = () => {
 
         <TestimonialsAvatars priority={true} />
       </div>
-      <div className="lg:w-full lg:flex hidden ">
-        <Image
-          src="/hero.png"
-          alt="Hero Image"
-          priority={true}
-          width={1600} // Increased width for a bigger image
-          height={1000} // Increased height for a bigger image
+      {/* ARCADE EMBED START */}
+      <div
+        style={{
+          position: "relative",
+          paddingBottom: "calc(78.66430260047281% )",
+          height: 0,
+          width: "100%",
+        }}
+        className="hidden lg:block"
+      >
+        <iframe
+          src="https://demo.arcade.software/8YtKvG06xYtXlc0qARr8?embed&embed_mobile=inline&embed_desktop=inline&show_copy_link=true"
+          title="💪🏻 21 Habits"
+          frameBorder="0"
+          loading="lazy"
+          webkitAllowFullScreen
+          mozAllowFullScreen
+          allow="clipboard-write"
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            colorScheme: "light",
+          }}
         />
       </div>
+      {/* ARCADE EMBED END */}
     </section>
   );
 };
