@@ -30,7 +30,6 @@ function HabitChart({ currentDay, penaltyAmount }) {
       const isCurrent = i === currentDay;
       const isPast = i < currentDay;
       const isMissed = !isCompleted && isPast;
-
       days.push(
         <div
           key={i}

@@ -18,6 +18,7 @@ function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
   const [decrementVisible, setDecrementVisible] = useState({});
   const [decrementAnimation, setDecrementAnimation] = useState({});
   const { theme } = useTheme();
+
   useEffect(() => {
     if (parentHabits.length === 0) {
       setHabits([]);

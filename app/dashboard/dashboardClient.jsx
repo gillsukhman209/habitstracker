@@ -116,7 +116,6 @@ export default function Dashboard() {
       }
 
       toast.success("Habits added successfully!");
-      setShowPopup(false);
       setHabitInputs([
         {
           title: "",
@@ -127,6 +126,7 @@ export default function Dashboard() {
         },
       ]);
       fetchHabits();
+      setShowPopup(false); // Move this line to close the popup immediately
     } catch (error) {
       toast.error(error.message);
     }
