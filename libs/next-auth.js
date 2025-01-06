@@ -21,6 +21,11 @@ export const authOptions = {
           createdAt: new Date(),
         };
       },
+      authorization: {
+        params: {
+          prompt: "select_account",
+        },
+      },
     }),
     // Follow the "Login with Email" tutorial to set up your email server
     // Requires a MongoDB database. Set MONOGODB_URI env variable.
