@@ -290,7 +290,7 @@ function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
     : categorizedHabits.slice(0, 5);
 
   return (
-    <div className="w-full flex flex-col gap-8 p-8 rounded-lg shadow-xl text-base-content">
+    <div className="w-full flex flex-col gap-8 p-8 rounded-lg shadow-xl text-base-c tent">
       {loading ? (
         <div className="text-center text-base-content">
           <h2 className="text-xl">Loading...</h2>
@@ -298,7 +298,9 @@ function Habits({ habits: parentHabits, deleteHabit, onHabitsChange }) {
       ) : (
         <div className="flex flex-col gap-6">
           <div className="text-center text-base-content mb-6 w-full">
-            <h2 className="text-2xl font-semibold">Day {currentDay} / 21</h2>
+            <h2 className="text-2xl font-semibold">
+              Day {currentDay} / 21 draganddrop
+            </h2>
           </div>
 
           {quote ? (
