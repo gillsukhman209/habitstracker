@@ -11,20 +11,16 @@ export async function POST(req) {
     return new Response("Unauthorized", { status: 401 });
   }
 
-  const { habitTitle, habitDuration, habitCount } = await req.json();
+  const { habits } = await req.json();
+
   const user = await User.findById(session.user.id);
+  user.habits = habits.map((habit, index) => ({
+    ...habit,
+    order: index,
+  }));
 
-  const newHabit = {
-    title: habitTitle,
-    duration: habitDuration,
-    count: habitCount,
-    order: user.habits.length,
-  };
-
-  user.habits.push(newHabit);
   await user.save();
-
-  return new Response(JSON.stringify({ message: "Habit added" }), {
-    status: 201,
+  return new Response(JSON.stringify({ message: "Order updated" }), {
+    status: 200,
   });
 }
