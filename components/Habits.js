@@ -585,7 +585,7 @@ export default function Habits({
         ) : (
           <div className="flex flex-col gap-6">
             <div className="text-center mb-6 w-full">
-              <h2 className="text-2xl font-semibold">Day {currentDay} / 21</h2>
+              <h2 className="text-2xl font-semibold">Day {currentDay} / 21 </h2>
             </div>
 
             {quote ? (
@@ -600,7 +600,6 @@ export default function Habits({
               </div>
             )}
 
-            {/* Render each habit in sorted order */}
             {displayedHabits.map((habit, index) => (
               <HabitItem
                 key={habit._id}
