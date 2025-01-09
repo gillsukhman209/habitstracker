@@ -12,6 +12,7 @@ const habitSchema = new mongoose.Schema({
   timer: { type: Number, default: 0 }, // Remaining time in seconds
   dateAdded: { type: Date, default: Date.now },
   progress: { type: Number, default: 0 }, // Progress percentage
+  order: { type: Number, default: 0 }, // Order of the habit
 });
 const userSchema = mongoose.Schema(
   {
