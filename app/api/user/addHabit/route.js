@@ -33,6 +33,7 @@ export async function POST(req) {
       originalDuration: habitDuration,
       progress: 0,
       createdAt: new Date(),
+      order: user.habits.length,
     };
 
     user.habits.push(newHabit);
