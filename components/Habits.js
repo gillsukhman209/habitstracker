@@ -13,13 +13,6 @@ const ItemTypes = {
   HABIT: "HABIT",
 };
 
-/* 
-  Helper to move completed habits to the bottom. 
-  - First: gather all incomplete habits (isComplete === false).
-  - Then: gather all complete habits (isComplete === true).
-  - Combine them => incomplete... then complete...
-  - Reassign .order from top to bottom in that new list.
-*/
 function reorderWithCompletedAtBottom(arr) {
   const incomplete = arr.filter((h) => !h.isComplete);
   const complete = arr.filter((h) => h.isComplete);
@@ -57,6 +50,7 @@ function HabitItem({
   const [, drag] = useDrag({
     type: ItemTypes.HABIT,
     item: { index },
+    canDrag: !habit.isComplete, // Prevent dragging if habit is complete
   });
 
   // DROP
@@ -82,7 +76,10 @@ function HabitItem({
       className={`habit-item relative flex items-center justify-between p-6 rounded-lg shadow-2xl transition-all transform border border-base-content ${
         habit.isComplete ? "opacity-50" : ""
       }`}
-      style={{ cursor: "move", userSelect: "none" }}
+      style={{
+        cursor: habit.isComplete ? "default" : "move",
+        userSelect: "none",
+      }}
     >
       {/* Progress bar background */}
       <div
@@ -109,7 +106,7 @@ function HabitItem({
           {habit.count > 0 && (
             <span className="text-base-content text-left">{habit.count}</span>
           )}
-          {habit.duration !== "0" && (
+          {habit.duration > 0 && (
             <span className=" text-base-content">
               {habit.timer
                 ? `${Math.floor(habit.timer / 60)}:${
@@ -209,7 +206,7 @@ function HabitItem({
         )}
 
         {/* Timer start/pause */}
-        {!habit.isComplete && habit.duration !== "0" && (
+        {!habit.isComplete && habit.duration > 0 && (
           <>
             {timers[habit._id]?.interval === undefined && (
               <button
