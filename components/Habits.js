@@ -82,7 +82,7 @@ function HabitItem({
       className={`habit-item relative flex items-center justify-between p-6 rounded-lg shadow-2xl transition-all transform border border-base-content ${
         habit.isComplete ? "opacity-50" : ""
       }`}
-      style={{ cursor: "move" }}
+      style={{ cursor: "move", userSelect: "none" }}
     >
       {/* Progress bar background */}
       <div
