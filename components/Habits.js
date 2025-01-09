@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { toast } from "react-hot-toast";
-import { FaRegTrashAlt, FaPlay, FaPause, FaGripVertical } from "react-icons/fa";
+import { FaRegTrashAlt, FaPlay, FaPause } from "react-icons/fa";
 import { MdRemoveCircle } from "react-icons/md";
 import Chart from "./Chart";
 import { useTheme } from "next-themes";
@@ -95,11 +95,10 @@ function HabitItem({
         } rounded-lg transition-all`}
         style={{ width: `${habit.progress}%` }}
       />
-
-      {/* Left side: handle, name, count, duration */}
-      <div className="relative flex flex-col items-start z-10">
-        <div className="flex items-center mb-1">
-          <FaGripVertical className="text-gray-500 mr-2" />
+      {/* Left side: name, count, duration */}
+      <div className="relative flex flex-col items-start z-10 ml-4">
+        {/* Make this a column so title & count stack neatly on the left */}
+        <div className="flex flex-col items-start mb-1">
           <span
             className={`text-lg font-medium ${
               habit.isComplete ? "line-through" : ""
@@ -107,23 +106,21 @@ function HabitItem({
           >
             {habit.title}
           </span>
+          {habit.count > 0 && (
+            <span className="text-base-content text-left">{habit.count}</span>
+          )}
+          {habit.duration !== "0" && (
+            <span className=" text-base-content">
+              {habit.timer
+                ? `${Math.floor(habit.timer / 60)}:${
+                    habit.timer % 60 < 10
+                      ? "0" + (habit.timer % 60)
+                      : habit.timer % 60
+                  }`
+                : `${habit.duration}:00`}
+            </span>
+          )}
         </div>
-        {habit.isComplete && <span className="ml-1">Completed</span>}
-        {habit.count > 0 && (
-          <span className="ml-1 text-base-content">Count: {habit.count}</span>
-        )}
-        {habit.duration !== "0" && (
-          <span className="ml-1 text-base-content">
-            Duration:{" "}
-            {habit.timer
-              ? `${Math.floor(habit.timer / 60)}:${
-                  habit.timer % 60 < 10
-                    ? "0" + (habit.timer % 60)
-                    : habit.timer % 60
-                }`
-              : `${habit.duration}:00`}
-          </span>
-        )}
       </div>
 
       {/* Right side: buttons */}
@@ -591,9 +588,7 @@ export default function Habits({
         ) : (
           <div className="flex flex-col gap-6">
             <div className="text-center mb-6 w-full">
-              <h2 className="text-2xl font-semibold">
-                Day {currentDay} / 21 main branch
-              </h2>
+              <h2 className="text-2xl font-semibold">Day {currentDay} / 21</h2>
             </div>
 
             {quote ? (
