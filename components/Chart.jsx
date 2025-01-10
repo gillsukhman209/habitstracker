@@ -64,7 +64,10 @@ function HabitChart({ currentDay, penaltyAmount }) {
   };
 
   return (
-    <div className="w-full lg:h-[800px] md:h-[500px] xs:h-screen rounded-xl p-10 shadow-xl border border-gray-200 dark:border-gray-700 bg-base-100 text-base-content flex flex-col justify-between">
+    <div
+      className="w-full  md:h-[800px]  xs:h-screen rounded-xl p-10 shadow-xl border border-gray-200 dark:border-gray-700 
+         text-base-content flex flex-col justify-between"
+    >
       <div>
         <div className="mb-8 flex items-center justify-between">
           <span className="text-4xl font-bold">{calculateProgress()}%</span>
