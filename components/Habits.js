@@ -135,7 +135,9 @@ function HabitItem({
         {/* Mark as important button */}
         <button
           onClick={() => markAsImportant(habit)}
-          className="px-4 py-2 rounded-xl text-3xl bg-transparent"
+          className={`px-4 py-2 rounded-xl text-3xl bg-transparent ${
+            habit.isComplete ? "hidden" : ""
+          }`}
         >
           <FaExclamation />
         </button>

@@ -38,7 +38,14 @@ export async function POST(req) {
       isImportant: false,
     };
 
-    user.habits.push(newHabit);
+    // === Updated logic to add new habit on top ===
+    user.habits.unshift(newHabit);
+
+    // Reassign .order so the new habit gets order=0 and others shift down
+    user.habits.forEach((habit, index) => {
+      habit.order = index;
+    });
+    // =============================================
 
     await user.save();
 
