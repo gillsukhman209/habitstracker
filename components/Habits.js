@@ -135,9 +135,10 @@ function HabitItem({
         {/* Mark as important button */}
         <button
           onClick={() => markAsImportant(habit)}
-          className={`px-4 py-2 rounded-xl text-3xl bg-transparent ${
+          className={`px-4 py-2 rounded-xl text-xl bg-transparent ${
             habit.isComplete ? "hidden" : ""
           }`}
+          title="Mark as important"
         >
           <FaExclamation />
         </button>
@@ -157,6 +158,7 @@ function HabitItem({
                 }));
               }}
               className="px-4 py-2 rounded-xl text-3xl bg-transparent"
+              title="Decrement count"
             >
               <MdRemoveCircle />
             </button>
@@ -233,6 +235,7 @@ function HabitItem({
                 className="px-4 py-2 rounded-xl text-2xl bg-transparent"
                 onClick={() => handleStartTimer(habit)}
                 disabled={isAnyTimerRunning}
+                title="Start timer"
               >
                 <FaPlay />
               </button>
@@ -241,6 +244,7 @@ function HabitItem({
               <button
                 className="px-4 py-2 rounded-xl text-3xl bg-transparent"
                 onClick={() => handlePauseTimer(habit)}
+                title="Pause timer"
               >
                 <FaPause />
               </button>
@@ -265,6 +269,7 @@ function HabitItem({
         <button
           onClick={() => confirmDeleteHabit(habit._id)}
           className="text-red-500 hover:text-red-700 transition-colors duration-200"
+          title="Delete habit"
         >
           <FaRegTrashAlt className="h-6 w-6" />
         </button>
