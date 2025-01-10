@@ -24,7 +24,7 @@ function reorderWithCompletedAtBottom(arr) {
 }
 
 /**
- * Subcomponent for a single habit row
+ * Subcomponent for a single habit rowa
  */
 function HabitItem({
   habit,
@@ -599,6 +599,7 @@ export default function Habits({
     toast.success("Habit has been marked as completed!");
   }
 
+  // Only replace your current 'markAsImportant' function with this updated snippet:
   const markAsImportant = async (habit) => {
     const isImportant = !habit.isImportant; // Toggle importance
     await updateHabit(
@@ -611,11 +612,20 @@ export default function Habits({
       isImportant
     );
 
-    // Move the habit to the top of the array
+    // Move the habit to the top of the array in local state
     setHabits((prev) => {
       const updatedHabits = prev.filter((h) => h._id !== habit._id);
-      const reordered = [{ ...habit, isImportant }, ...updatedHabits];
-      updateHabitOrder(reordered); // Update the order in the backend
+      const updatedHabit = { ...habit, isImportant };
+      const reordered = [updatedHabit, ...updatedHabits];
+
+      // Important: reassign .order for each item before calling updateHabitOrder
+      reordered.forEach((item, index) => {
+        item.order = index;
+      });
+
+      // Update the new top position in the backend
+      updateHabitOrder(reordered);
+
       return reordered;
     });
 
