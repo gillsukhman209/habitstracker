@@ -71,8 +71,6 @@ function HabitItem({
 
   drag(drop(ref));
 
-  // New function to mark habit as important
-
   return (
     <div
       ref={ref}
@@ -337,7 +335,7 @@ export default function Habits({
     }
   }
 
-  // fucntion to update habit order
+  // function to update habit order
   async function updateHabitOrder(habits) {
     try {
       await fetch("/api/user/updateHabitOrder", {
@@ -602,6 +600,7 @@ export default function Habits({
   }
 
   const markAsImportant = async (habit) => {
+    const isImportant = !habit.isImportant; // Toggle importance
     await updateHabit(
       habit._id,
       habit.isComplete,
@@ -609,11 +608,20 @@ export default function Habits({
       habit.count,
       habit.progress,
       habit.timer,
-      !habit.isImportant // Toggle importance
+      isImportant
     );
+
+    // Move the habit to the top of the array
+    setHabits((prev) => {
+      const updatedHabits = prev.filter((h) => h._id !== habit._id);
+      const reordered = [{ ...habit, isImportant }, ...updatedHabits];
+      updateHabitOrder(reordered); // Update the order in the backend
+      return reordered;
+    });
+
     toast.success(
-      `${habit.isImportant ? "Unmarked" : "Marked"} ${habit.title} as ${
-        habit.isImportant ? "unimportant" : "important"
+      `${isImportant ? "Marked" : "Unmarked"} ${habit.title} as ${
+        isImportant ? "important" : "unimportant"
       }!`
     );
   };
