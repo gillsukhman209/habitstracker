@@ -101,7 +101,7 @@ function HabitItem({
               habit.isComplete ? "line-through" : ""
             }`}
           >
-            {habit.title} {habit.getCharged ? "(Charged)" : "No Charge"}
+            {habit.title} {habit.getCharged ? "💰" : ""}
           </span>
           {habit.count > 0 && (
             <span className="text-base-content text-left">{habit.count}</span>
