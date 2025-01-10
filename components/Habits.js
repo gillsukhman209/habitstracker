@@ -229,15 +229,17 @@ function HabitItem({
         )}
 
         {/* If no count/duration => checkbox */}
-        {!habit.isComplete && habit.duration === "0" && habit.count < 1 && (
-          <div className="px-4 py-2 rounded-xl text-3xl bg-transparent flex items-center">
-            <input
-              type="checkbox"
-              className="w-6 h-6"
-              onChange={() => handleCompleteHabit(habit)}
-            />
-          </div>
-        )}
+        {!habit.isComplete &&
+          (habit.duration == "0" || !habit.duration) &&
+          (habit.count < 1 || !habit.count) && (
+            <div className="px-4 py-2 rounded-xl text-3xl bg-transparent flex items-center">
+              <input
+                type="checkbox"
+                className="w-6 h-6"
+                onChange={() => handleCompleteHabit(habit)}
+              />
+            </div>
+          )}
 
         {/* Delete button */}
         <button
@@ -585,9 +587,7 @@ export default function Habits({
         ) : (
           <div className="flex flex-col gap-6">
             <div className="text-center mb-6 w-full">
-              <h2 className="text-2xl font-semibold">
-                Day {currentDay} / 30 new feature bsranch
-              </h2>
+              <h2 className="text-2xl font-semibold">Day {currentDay} / 30</h2>
             </div>
 
             {quote ? (

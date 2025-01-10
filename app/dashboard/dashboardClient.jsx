@@ -104,8 +104,8 @@ export default function Dashboard() {
           body: JSON.stringify({
             habitTitle: input.title,
             habitDuration:
-              input.toggleOption === "duration" ? input.duration : 0,
-            habitCount: input.toggleOption === "count" ? input.count : 0,
+              input.toggleOption === "duration" ? input.duration : "0",
+            habitCount: input.toggleOption === "count" ? input.count : "0",
             getCharged: input.getCharged, // Send getCharged property
           }),
         });
