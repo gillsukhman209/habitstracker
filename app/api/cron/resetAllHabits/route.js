@@ -40,30 +40,38 @@ export async function POST(req) {
         const quoteData = await quoteResponse.json();
 
         // get user and set quote to quoteData
-
         user.quote = quoteData;
         await user.save();
 
         const firstHabitDate = user.habits[0].dateAdded.getDate();
-
         const today = parseInt(new Date().getDate() + 0);
-
         const currentDay = today - firstHabitDate;
 
-        if (user.habits.every((habit) => habit.isComplete)) {
+        if (
+          user.habits
+            .filter((habit) => habit.getCharged) // Select only the habits marked as charged
+            .every((habit) => habit.isComplete) // Check if all of them are completed
+        ) {
           user.completedDays.push(currentDay + 1);
-
           await user.save();
         } else {
-          // Charge user
-          await fetch("https://www.21habits.co/api/user/chargeUser", {
-            method: "POST",
-            body: JSON.stringify({
-              day: currentDay,
-              userId: user._id,
-              penaltyAmount: user.penaltyAmount,
-            }),
-          });
+          // Charge user only if they have habits with getCharged property set to true
+          const shouldChargeUser = user.habits.some(
+            (habit) => habit.getCharged && !habit.isComplete
+          );
+          if (shouldChargeUser) {
+            console.log("charging user");
+            await fetch("https://www.21habits.co/api/user/chargeUser", {
+              method: "POST",
+              body: JSON.stringify({
+                day: currentDay,
+                userId: user._id,
+                penaltyAmount: user.penaltyAmount,
+              }),
+            });
+          } else {
+            console.log("not charging user");
+          }
         }
       }
 

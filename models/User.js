@@ -13,6 +13,7 @@ const habitSchema = new mongoose.Schema({
   dateAdded: { type: Date, default: Date.now },
   progress: { type: Number, default: 0 }, // Progress percentage
   order: { type: Number, default: 0 }, // Order of the habit
+  getCharged: { type: Boolean, default: true }, // Get charged
 });
 const userSchema = mongoose.Schema(
   {

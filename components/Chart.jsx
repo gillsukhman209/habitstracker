@@ -20,12 +20,12 @@ function HabitChart({ currentDay, penaltyAmount }) {
   }, []);
 
   const calculateProgress = () => {
-    return Math.round((completedDays.length / 21) * 100);
+    return Math.round((completedDays.length / 30) * 100);
   };
 
   const renderDays = () => {
     const days = [];
-    for (let i = 1; i <= 21; i++) {
+    for (let i = 1; i <= 30; i++) {
       const isCompleted = completedDays.includes(i);
       const isCurrent = i === currentDay;
       const isPast = i < currentDay;
@@ -64,22 +64,26 @@ function HabitChart({ currentDay, penaltyAmount }) {
   };
 
   return (
-    <div className="w-full lg:h-[600px] md:h-[500px] xs:h-screen rounded-xl p-10 shadow-xl border border-gray-200 dark:border-gray-700 bg-base-100 text-base-content">
-      <div className="mb-8 flex items-center justify-between">
-        <span className="text-4xl font-bold">{calculateProgress()}%</span>
+    <div className="w-full lg:h-[800px] md:h-[500px] xs:h-screen rounded-xl p-10 shadow-xl border border-gray-200 dark:border-gray-700 bg-base-100 text-base-content flex flex-col justify-between">
+      <div>
+        <div className="mb-8 flex items-center justify-between">
+          <span className="text-4xl font-bold">{calculateProgress()}%</span>
 
-        <div className="text-xl font-bold">Penalty: ${penaltyAmount}</div>
+          <div className="text-xl font-bold">Penalty: ${penaltyAmount}</div>
+        </div>
+        <div className="text-sm mb-4 text-center">
+          Updates every day at 12 AM
+        </div>
+        <div className="mt-14 grid xs:grid-cols-3 sm:grid-cols-5 md:grid-cols-5 gap-x-3 gap-y-4 place-items-center">
+          {renderDays()}
+        </div>
       </div>
-      <div className="text-sm mb-4 text-center">Updates every day at 12 AM</div>
-      <div className="mt-8 grid xs:grid-cols-3 sm:grid-cols-5 md:grid-cols-5 gap-x-3 gap-y-4 place-items-center">
-        {renderDays()}
-      </div>
-      <div className="flex justify-center gap-6 text-lg xs:order-1 lg:order-2 mt-4 lg:mt-0">
-        <div className="flex items-center gap-2 xs:mb-4 lg:mb-0">
+      <div className="flex justify-center gap-6 text-lg mb-4">
+        <div className="flex items-center gap-2">
           <div className="h-4 w-4 rounded-full bg-green-500"></div>
           <span>Completed</span>
         </div>
-        <div className="flex items-center gap-2 xs:mb-4 lg:mb-0">
+        <div className="flex items-center gap-2">
           <div className="h-4 w-4 rounded-full bg-red-500"></div>
           <span>Missed</span>
         </div>

@@ -8,6 +8,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY); // Initialize Stripe w
 
 export async function POST(req) {
   try {
+    console.log("charging user in chargeUser");
     await connectMongo();
 
     const { userId } = await req.json();
@@ -20,6 +21,13 @@ export async function POST(req) {
     }
 
     const user = await User.findById(userId);
+
+    if (!user) {
+      return NextResponse.json(
+        { message: "User not found in database" },
+        { status: 404 }
+      );
+    }
 
     const customerId = user.customerId; // Get the customer's ID from the user object
     const priceId = user.priceId;
@@ -79,6 +87,7 @@ export async function POST(req) {
 
       // Update the user record with charge details
       await user.save();
+      console.log("successfully charged user");
 
       return NextResponse.json({
         success: true,
@@ -90,9 +99,15 @@ export async function POST(req) {
           { message: "Payment failed: Card was declined" },
           { status: 402 }
         );
+      } else {
+        return NextResponse.json(
+          { message: "Payment failed due to an error" },
+          { status: 500 }
+        );
       }
     }
   } catch (error) {
+    console.log("error in chargeUser", error);
     return NextResponse.json(
       { message: "Failed to charge user due to server error" },
       { status: 500 }

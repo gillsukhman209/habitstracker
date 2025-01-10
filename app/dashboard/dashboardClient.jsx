@@ -16,6 +16,7 @@ export default function Dashboard() {
       count: "",
       penalty: "",
       toggleOption: "duration",
+      getCharged: true, // Set getCharged to true by default
     },
   ]);
 
@@ -81,7 +82,13 @@ export default function Dashboard() {
     if (habitInputs.length < 5) {
       setHabitInputs([
         ...habitInputs,
-        { title: "", duration: "", count: "", toggleOption: "count" },
+        {
+          title: "",
+          duration: "",
+          count: "",
+          toggleOption: "count",
+          getCharged: true, // Set getCharged to true by default for new fields
+        },
       ]);
     } else {
       toast.error("You can only add a maximum of 5 habit fields.");
@@ -99,6 +106,7 @@ export default function Dashboard() {
             habitDuration:
               input.toggleOption === "duration" ? input.duration : 0,
             habitCount: input.toggleOption === "count" ? input.count : 0,
+            getCharged: input.getCharged, // Send getCharged property
           }),
         });
 
@@ -111,6 +119,7 @@ export default function Dashboard() {
             title: input.title,
             duration: input.duration,
             count: input.count,
+            getCharged: input.getCharged, // Include getCharged in the habit state
           },
         ]);
       }
@@ -123,6 +132,7 @@ export default function Dashboard() {
           count: "",
           penalty: "",
           toggleOption: "count",
+          getCharged: true, // Reset getCharged property to true
         },
       ]);
       fetchHabits();
@@ -172,7 +182,6 @@ export default function Dashboard() {
           onHabitsChange={fetchHabits}
         />
 
-        {/* Add Habit Popup */}
         {showPopup && (
           <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
             <div className="bg-base-100 p-6 rounded-md shadow-lg w-96 transform scale-105 transition-all duration-300">
@@ -233,6 +242,19 @@ export default function Dashboard() {
                       ></div>
                     </label>
                     <span className="ml-2 text-base-content">Duration</span>
+                  </div>
+
+                  {/* New Checkbox for getCharged */}
+                  <div className="flex items-center mt-2">
+                    <input
+                      type="checkbox"
+                      checked={input.getCharged} // Checkbox should be checked by default
+                      onChange={(e) =>
+                        handleInputChange(index, "getCharged", e.target.checked)
+                      }
+                      className="mr-2"
+                    />
+                    <label className="text-base-content">Get Charged</label>
                   </div>
                 </div>
               ))}

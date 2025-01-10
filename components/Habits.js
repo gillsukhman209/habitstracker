@@ -101,7 +101,7 @@ function HabitItem({
               habit.isComplete ? "line-through" : ""
             }`}
           >
-            {habit.title}
+            {habit.title} {habit.getCharged ? "(Charged)" : "No Charge"}
           </span>
           {habit.count > 0 && (
             <span className="text-base-content text-left">{habit.count}</span>
@@ -585,7 +585,7 @@ export default function Habits({
         ) : (
           <div className="flex flex-col gap-6">
             <div className="text-center mb-6 w-full">
-              <h2 className="text-2xl font-semibold">Day {currentDay} / 21 </h2>
+              <h2 className="text-2xl font-semibold">Day {currentDay} / 30 </h2>
             </div>
 
             {quote ? (

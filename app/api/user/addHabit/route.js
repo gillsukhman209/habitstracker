@@ -9,7 +9,7 @@ export async function POST(req) {
     await connectMongo();
     const session = await getServerSession(authOptions);
     const body = await req.json();
-    const { habitTitle, habitDuration, habitCount } = body;
+    const { habitTitle, habitDuration, habitCount, getCharged } = body; // Added getCharged
 
     if (!habitTitle) {
       return NextResponse.json(
@@ -34,6 +34,7 @@ export async function POST(req) {
       progress: 0,
       createdAt: new Date(),
       order: user.habits.length,
+      getCharged: getCharged, // Handle getCharged
     };
 
     user.habits.push(newHabit);
