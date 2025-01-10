@@ -308,14 +308,23 @@ export default function Habits({
       const finalArr = reorderWithCompletedAtBottom([...habits]);
 
       setHabits(finalArr); // Ensure local state is correct
-      await fetch("/api/user/updateHabitOrder", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ habits: finalArr }),
-      });
+      await updateHabitOrder(finalArr);
       if (onHabitsChange) {
         onHabitsChange(finalArr);
       }
+    } catch (error) {
+      console.error("Failed to update habit order:", error);
+    }
+  }
+
+  // fucntion to update habit order
+  async function updateHabitOrder(habits) {
+    try {
+      await fetch("/api/user/updateHabitOrder", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ habits }),
+      });
     } catch (error) {
       console.error("Failed to update habit order:", error);
     }
@@ -384,28 +393,33 @@ export default function Habits({
   }
 
   function handleStartTimer(habit) {
-    if (timers[habit._id]?.interval) return;
+    if (timers[habit._id]?.interval) return; // If already running, do nothing
+
     const startTime = Date.now();
     const savedRemaining = habit.timer || habit.duration * 60;
 
     const interval = setInterval(() => {
       const elapsed = Math.floor((Date.now() - startTime) / 1000);
       const remaining = Math.max(savedRemaining - elapsed, 0);
+
+      // Calculate progress percentage
       const progress = Math.min(
         ((habit.duration * 60 - remaining) / (habit.duration * 60)) * 100,
         100
       );
 
+      // Update local timer & progress every second
       setHabits((prev) =>
         prev.map((h) =>
           h._id === habit._id ? { ...h, timer: remaining, progress } : h
         )
       );
 
+      // Update the backend every 10 seconds or when the timer ends
       if (elapsed % 10 === 0 || remaining === 0) {
         updateHabit(
           habit._id,
-          false,
+          false, // not complete yet unless remaining === 0
           Math.ceil(remaining / 60),
           habit.count,
           progress,
@@ -413,28 +427,48 @@ export default function Habits({
         );
       }
 
+      // If the timer finished
       if (remaining === 0) {
         clearInterval(interval);
-        updateHabit(habit._id, true, 0, habit.count, 100, 0);
 
-        setHabits((prev) =>
-          prev.map((h) =>
-            h._id === habit._id
-              ? { ...h, isComplete: true, timer: 0, progress: 100 }
-              : h
-          )
-        );
+        // Mark the habit as complete in the backend
+        updateHabit(habit._id, true, 0, habit.count, 0, 0)
+          .then(() => {
+            // Once backend confirms, update local state + reorder
+            setHabits((prev) => {
+              // Mark as complete locally
+              const updated = prev.map((h) =>
+                h._id === habit._id
+                  ? { ...h, isComplete: true, timer: 0, progress: 100 }
+                  : h
+              );
 
-        setTimers((prevTimers) => {
-          const updatedTimers = { ...prevTimers };
-          delete updatedTimers[habit._id];
-          return updatedTimers;
-        });
+              // Move the completed habit to the bottom
+              const reordered = reorderWithCompletedAtBottom(updated);
 
-        toast.success(`${habit.title} has been marked as completed!`);
+              // Send the new order to the backend
+              updateHabitOrder(reordered);
+
+              return reordered;
+            });
+
+            // Clear out the timer from our local timers object
+            setTimers((prevTimers) => {
+              const updatedTimers = { ...prevTimers };
+              delete updatedTimers[habit._id];
+              return updatedTimers;
+            });
+
+            toast.success(`${habit.title} has been marked as completed!`);
+          })
+          .catch((error) => {
+            console.error("Failed to complete timer-based habit:", error);
+            toast.error("Failed to complete timer-based habit");
+          });
       }
     }, 1000);
 
+    // Save the interval and remaining time so we can pause/resume if needed
     setTimers((prev) => ({
       ...prev,
       [habit._id]: { interval, remaining: savedRemaining },
@@ -480,36 +514,69 @@ export default function Habits({
     const newCount = Math.max(habit.count - decrementValue, 0);
     const isComplete = newCount === 0;
 
-    setHabits((prev) => {
-      const merged = prev.map((h) =>
-        h._id === habit._id
-          ? {
-              ...h,
-              count: newCount,
-              isComplete,
-            }
-          : h
-      );
-      return reorderWithCompletedAtBottom(merged);
-    });
-
+    // Immediately update the backend for the new count
     updateHabit(
       habit._id,
-      isComplete,
+      isComplete, // becomes true if newCount = 0
       habit.duration,
       newCount,
       habit.progress
-    );
+    )
+      .then(() => {
+        setHabits((prev) => {
+          // Decrement locally
+          const updated = prev.map((h) =>
+            h._id === habit._id ? { ...h, count: newCount, isComplete } : h
+          );
 
-    if (isComplete) {
-      toast.success(`${habit.title} has been marked as completed!`);
-    }
+          // Reorder if completed
+          if (isComplete) {
+            const reordered = reorderWithCompletedAtBottom(updated);
+            updateHabitOrder(reordered);
+            toast.success(`${habit.title} has been marked as completed!`);
+            return reordered;
+          }
+
+          return updated;
+        });
+      })
+      .catch((error) => {
+        toast.error("Failed to update habit count");
+        console.error(error);
+      });
   }
 
   function handleCompleteHabit(habit) {
-    // Mark as complete, reorder at bottom
-    updateHabit(habit._id, true, habit.duration, habit.count, 100, 0);
-    toast.success(`${habit.title} has been marked as completed!`);
+    updateHabit(habit._id, true, habit.duration, habit.count, 100, 0)
+      .then(() => {
+        finalizeHabitCompletion(habit._id);
+      })
+      .catch((error) => {
+        toast.error("Failed to complete habit");
+        console.error(error);
+      });
+  }
+
+  function finalizeHabitCompletion(habitId) {
+    setHabits((prev) => {
+      // 1) Set the habit to complete in local state
+      const updated = prev.map((h) =>
+        h._id === habitId
+          ? { ...h, isComplete: true, progress: 100, timer: 0 }
+          : h
+      );
+
+      // 2) Reorder to move completed habits to the bottom
+      const reordered = reorderWithCompletedAtBottom(updated);
+
+      // 3) Update the new order in the backend
+      updateHabitOrder(reordered);
+
+      return reordered;
+    });
+
+    // Show a toast for user feedback
+    toast.success("Habit has been marked as completed!");
   }
 
   function confirmDeleteHabit(habitId) {

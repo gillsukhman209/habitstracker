@@ -2,7 +2,6 @@ import connectMongo from "@/libs/mongoose";
 import User from "@/models/User";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/libs/next-auth";
-
 export async function POST(req) {
   await connectMongo();
   const session = await getServerSession(authOptions);
@@ -12,6 +11,7 @@ export async function POST(req) {
   }
 
   const { habits } = await req.json();
+  console.log("Received habits order update:", habits);
 
   const user = await User.findById(session.user.id);
   user.habits = habits.map((habit, index) => ({
@@ -20,6 +20,7 @@ export async function POST(req) {
   }));
 
   await user.save();
+
   return new Response(JSON.stringify({ message: "Order updated" }), {
     status: 200,
   });
