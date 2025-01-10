@@ -35,6 +35,7 @@ export async function POST(req) {
       createdAt: new Date(),
       order: user.habits.length,
       getCharged: getCharged, // Handle getCharged
+      isImportant: false,
     };
 
     user.habits.push(newHabit);

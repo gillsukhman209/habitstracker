@@ -14,7 +14,18 @@ export async function PATCH(req) {
     }
 
     const body = await req.json();
-    const { habitId, isComplete, duration, count, progress, timer } = body;
+    const {
+      habitId,
+      isComplete,
+      duration,
+      count,
+      progress,
+      timer,
+      isImportant,
+      order,
+    } = body;
+
+    console.log("is important", isImportant);
 
     if (!habitId || typeof isComplete !== "boolean") {
       return NextResponse.json(
@@ -40,6 +51,8 @@ export async function PATCH(req) {
     if (count !== undefined) habit.count = count;
     if (progress !== undefined) habit.progress = progress;
     if (timer !== undefined) habit.timer = timer; // Update timer in the backend
+    if (isImportant !== undefined) habit.isImportant = isImportant;
+    if (order !== undefined) habit.order = order;
 
     await user.save();
 

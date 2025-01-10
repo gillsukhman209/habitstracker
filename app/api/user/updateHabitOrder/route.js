@@ -11,7 +11,6 @@ export async function POST(req) {
   }
 
   const { habits } = await req.json();
-  console.log("Received habits order update:", habits);
 
   const user = await User.findById(session.user.id);
   user.habits = habits.map((habit, index) => ({

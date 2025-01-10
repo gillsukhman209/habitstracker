@@ -81,6 +81,7 @@ export async function POST(req) {
         habit.timer = 0;
         habit.duration = habit.originalDuration;
         habit.count = habit.originalCount;
+        habit.isImportant = false;
       });
 
       // Save the updated user document

@@ -14,6 +14,7 @@ const habitSchema = new mongoose.Schema({
   progress: { type: Number, default: 0 }, // Progress percentage
   order: { type: Number, default: 0 }, // Order of the habit
   getCharged: { type: Boolean, default: true }, // Get charged
+  isImportant: { type: Boolean, default: false }, // Is important
 });
 const userSchema = mongoose.Schema(
   {

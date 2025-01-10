@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { toast } from "react-hot-toast";
-import { FaRegTrashAlt, FaPlay, FaPause } from "react-icons/fa";
+import { FaRegTrashAlt, FaPlay, FaPause, FaExclamation } from "react-icons/fa"; // Imported FaExclamation
 import { MdRemoveCircle } from "react-icons/md";
 import Chart from "./Chart";
 import { useTheme } from "next-themes";
@@ -43,6 +43,7 @@ function HabitItem({
   handleCompleteHabit,
   confirmDeleteHabit,
   theme,
+  markAsImportant,
 }) {
   const ref = useRef(null);
 
@@ -70,6 +71,8 @@ function HabitItem({
 
   drag(drop(ref));
 
+  // New function to mark habit as important
+
   return (
     <div
       ref={ref}
@@ -81,6 +84,15 @@ function HabitItem({
         userSelect: "none",
       }}
     >
+      <div
+        className={`w-full absolute top-0 left-0 h-full ${
+          habit.isImportant && !habit.isComplete
+            ? theme === "dark"
+              ? "bg-red-900"
+              : "bg-red-200"
+            : ""
+        } rounded-lg transition-all`}
+      />
       {/* Progress bar background */}
       <div
         className={`absolute top-0 left-0 h-full ${
@@ -101,7 +113,7 @@ function HabitItem({
               habit.isComplete ? "line-through" : ""
             }`}
           >
-            {habit.title} {habit.getCharged ? "💰" : ""}
+            {habit.title} {habit.getCharged ? "💰" : ""}{" "}
           </span>
           {habit.count > 0 && (
             <span className="text-base-content text-left">{habit.count}</span>
@@ -122,6 +134,14 @@ function HabitItem({
 
       {/* Right side: buttons */}
       <div className="relative flex space-x-2 z-10">
+        {/* Mark as important button */}
+        <button
+          onClick={() => markAsImportant(habit)}
+          className="px-4 py-2 rounded-xl text-3xl bg-transparent"
+        >
+          <FaExclamation />
+        </button>
+
         {/* Decrement for count-based habits */}
         {habit.count > 0 && (
           <>
@@ -340,7 +360,8 @@ export default function Habits({
     duration,
     count,
     progress,
-    timer
+    timer,
+    isImportant
   ) {
     try {
       const response = await fetch("/api/user/updateHabit", {
@@ -353,6 +374,7 @@ export default function Habits({
           count,
           progress,
           timer,
+          isImportant,
         }),
       });
       const updatedHabit = await response.json();
@@ -579,6 +601,23 @@ export default function Habits({
     toast.success("Habit has been marked as completed!");
   }
 
+  const markAsImportant = async (habit) => {
+    await updateHabit(
+      habit._id,
+      habit.isComplete,
+      habit.duration,
+      habit.count,
+      habit.progress,
+      habit.timer,
+      !habit.isImportant // Toggle importance
+    );
+    toast.success(
+      `${habit.isImportant ? "Unmarked" : "Marked"} ${habit.title} as ${
+        habit.isImportant ? "unimportant" : "important"
+      }!`
+    );
+  };
+
   function confirmDeleteHabit(habitId) {
     setConfirmDeleteId(habitId);
   }
@@ -687,6 +726,7 @@ export default function Habits({
                 handlePauseTimer={handlePauseTimer}
                 handleCompleteHabit={handleCompleteHabit}
                 confirmDeleteHabit={confirmDeleteHabit}
+                markAsImportant={markAsImportant}
                 theme={theme}
               />
             ))}
