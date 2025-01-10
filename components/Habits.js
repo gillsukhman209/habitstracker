@@ -586,7 +586,7 @@ export default function Habits({
           <div className="flex flex-col gap-6">
             <div className="text-center mb-6 w-full">
               <h2 className="text-2xl font-semibold">
-                Day {currentDay} / 30 new feature branch
+                Day {currentDay} / 30 new feature bsranch
               </h2>
             </div>
 
