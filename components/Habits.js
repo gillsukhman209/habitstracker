@@ -619,22 +619,25 @@ export default function Habits({
       isImportant
     );
 
-    // Move the habit to the top of the array in local state
     setHabits((prev) => {
       const updatedHabits = prev.filter((h) => h._id !== habit._id);
       const updatedHabit = { ...habit, isImportant };
       const reordered = [updatedHabit, ...updatedHabits];
 
       // Important: reassign .order for each item before calling updateHabitOrder
-      reordered.forEach((item, index) => {
-        item.order = index;
-      });
+      if (isImportant) {
+        reordered.forEach((item, index) => {
+          item.order = index;
+        });
 
-      // Update the new top position in the backend
-      updateHabitOrder(reordered);
+        // Update the new top position in the backend
+        updateHabitOrder(reordered);
+      }
 
       return reordered;
     });
+
+    // Move the habit to the top of the array in local state
 
     toast.success(
       `${isImportant ? "Marked" : "Unmarked"} ${habit.title} as ${
