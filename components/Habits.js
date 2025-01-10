@@ -656,6 +656,7 @@ export default function Habits({
   }
 
   // On mount, fetch from server
+  // On mount, fetch from server
   useEffect(() => {
     const fetchHabits = async () => {
       setLoading(true);
@@ -663,17 +664,19 @@ export default function Habits({
         const response = await fetch("/api/user/getHabits");
         if (!response.ok) throw new Error("Failed to fetch habits");
         const data = await response.json();
+
+        // Because the server already sorts habits (incomplete first),
+        // we just map them to calculate progress, then setHabits.
         const finalData = data.habits.map((h) => ({
           ...h,
           progress: calculateProgress(h),
         }));
-        // automatically reorder completes at bottom
-        const finalArr = reorderWithCompletedAtBottom(finalData);
-        setHabits(finalArr);
+        setHabits(finalData);
 
         setPenaltyAmount(data.penaltyAmount);
         setQuote(data.quote);
 
+        // If dateAdded is part of each habit, figure out what day we're on
         if (data.habits[0]?.dateAdded) {
           const firstHabitDate = new Date(data.habits[0].dateAdded).getDate();
           setCurrentDay(today - firstHabitDate + 1);

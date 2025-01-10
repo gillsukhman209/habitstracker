@@ -87,7 +87,7 @@ export default function Dashboard() {
           duration: "",
           count: "",
           toggleOption: "count",
-          getCharged: true, // Set getCharged to true by default for new fields
+          getCharged: true,
         },
       ]);
     } else {
@@ -97,7 +97,27 @@ export default function Dashboard() {
 
   const addHabits = async () => {
     try {
+      // Loop through each habit input
       for (const input of habitInputs) {
+        // === CHANGED: Optimistically insert the new habit at the top ===
+        // We'll give a temporary ID like "temp-<timestamp>"
+        setHabits((prevHabits) => [
+          {
+            _id: "temp-" + Date.now(),
+            title: input.title,
+            duration: input.toggleOption === "duration" ? input.duration : "0",
+            count: input.toggleOption === "count" ? input.count : "0",
+            getCharged: input.getCharged,
+            isComplete: false,
+            isImportant: false,
+            progress: 0,
+            createdAt: new Date(),
+          },
+          ...prevHabits,
+        ]);
+        // ===============================================================
+
+        // Make the API call to actually add the habit to the server
         const response = await fetch("/api/user/addHabit", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -106,25 +126,18 @@ export default function Dashboard() {
             habitDuration:
               input.toggleOption === "duration" ? input.duration : "0",
             habitCount: input.toggleOption === "count" ? input.count : "0",
-            getCharged: input.getCharged, // Send getCharged property
+            getCharged: input.getCharged,
           }),
         });
 
         const data = await response.json();
         if (!response.ok) throw new Error(data.error || "Failed to add habit");
-
-        setHabits((prevHabits) => [
-          ...prevHabits,
-          {
-            title: input.title,
-            duration: input.duration,
-            count: input.count,
-            getCharged: input.getCharged, // Include getCharged in the habit state
-          },
-        ]);
       }
 
-      toast.success("Habits added successfully!");
+      // We added everything successfully, so let's re-fetch once to ensure data is correct
+      await fetchHabits();
+
+      // Reset inputs
       setHabitInputs([
         {
           title: "",
@@ -132,11 +145,14 @@ export default function Dashboard() {
           count: "",
           penalty: "",
           toggleOption: "count",
-          getCharged: true, // Reset getCharged property to true
+          getCharged: true,
         },
       ]);
-      fetchHabits();
-      setShowPopup(false); // Move this line to close the popup immediately
+
+      // Close the popup
+      setShowPopup(false);
+
+      toast.success("Habits added successfully!");
     } catch (error) {
       toast.error(error.message);
     }
