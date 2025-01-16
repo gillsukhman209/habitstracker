@@ -56,22 +56,22 @@ export async function POST(req) {
           await user.save();
         } else {
           // Charge user only if they have habits with getCharged property set to true
-          const shouldChargeUser = user.habits.some(
-            (habit) => habit.getCharged && !habit.isComplete
-          );
-          if (shouldChargeUser) {
-            console.log("charging user");
-            await fetch("https://www.21habits.co/api/user/chargeUser", {
-              method: "POST",
-              body: JSON.stringify({
-                day: currentDay,
-                userId: user._id,
-                penaltyAmount: user.penaltyAmount,
-              }),
-            });
-          } else {
-            console.log("not charging user");
-          }
+          // const shouldChargeUser = user.habits.some(
+          //   (habit) => habit.getCharged && !habit.isComplete
+          // );
+          // if (shouldChargeUser) {
+          //   console.log("charging user");
+          //   await fetch("https://www.21habits.co/api/user/chargeUser", {
+          //     method: "POST",
+          //     body: JSON.stringify({
+          //       day: currentDay,
+          //       userId: user._id,
+          //       penaltyAmount: user.penaltyAmount,
+          //     }),
+          //   });
+          // } else {
+          //   console.log("not charging user");
+          // }
         }
       }
 
