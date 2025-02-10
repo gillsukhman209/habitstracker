@@ -14,9 +14,18 @@ export async function POST(req) {
         status: 404,
       });
     }
-    user.habits = [];
+
     user.completedDays = [];
     user.penaltyAmount = 5;
+
+    // reset each habit properties
+    user.habits.forEach((habit) => {
+      habit.isComplete = false;
+      habit.count = habit.originalCount;
+      habit.duration = habit.originalDuration;
+      habit.timer = 0;
+      habit.progress = 0;
+    });
     await user.save();
     return new Response(
       JSON.stringify({ message: "Progress reset successfully" }),
