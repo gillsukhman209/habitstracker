@@ -712,7 +712,7 @@ export default function Habits({
   );
 
   // Show 5 or all
-  const displayedHabits = showMore ? sortedHabits : sortedHabits.slice(0, 5);
+  const displayedHabits = showMore ? sortedHabits : sortedHabits.slice(0, 6);
 
   return (
     <DndProvider backend={HTML5Backend}>
@@ -762,7 +762,7 @@ export default function Habits({
               />
             ))}
 
-            {sortedHabits.length > 5 && (
+            {sortedHabits.length > 6 && (
               <button
                 onClick={() => setShowMore(!showMore)}
                 className="mt-4 w-full sm:w-auto mx-auto px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition"
