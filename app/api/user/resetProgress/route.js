@@ -25,6 +25,7 @@ export async function POST(req) {
       habit.duration = habit.originalDuration;
       habit.timer = 0;
       habit.progress = 0;
+      habit.dateAdded = new Date();
     });
     await user.save();
     return new Response(
